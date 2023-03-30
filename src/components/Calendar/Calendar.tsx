@@ -1,27 +1,18 @@
-import { useContext, useMemo, useState, useRef, useEffect } from "react";
+import React from "react";
+import { useContext, useMemo, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import CalendarGroupHeader from "../UI/CalendarGroupHeader";
 import CalendarMonth from "./CalendarMonth";
 import { GroupsContext } from "@/store/groups-context";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import { ArrowForwardIos, ArrowBackIosNew } from "@mui/icons-material";
-import dayjs from "dayjs";
-import Button from "@mui/material/Button";
+import CalendarControls from "./CalendarControls";
 
 const months = Array.from(Array(12).keys());
-const monthNames = months.map((month) => dayjs().month(month).format("MMM"));
 
 const Calendar: React.FC<{}> = () => {
   const [year, setYear] = useState(new Date().getFullYear());
 
-  const increaseYear = (event: React.MouseEvent<HTMLElement>) => {
-    setYear((prevYear) => prevYear + 1);
-  };
-
-  const decreaseYear = (event: React.MouseEvent<HTMLElement>) => {
-    setYear((prevYear) => prevYear - 1);
-  };
+  const increaseYear = () => setYear((prevYear) => prevYear + 1);
+  const decreaseYear = () => setYear((prevYear) => prevYear - 1);
 
   const groupCtx = useContext(GroupsContext);
 
@@ -40,33 +31,48 @@ const Calendar: React.FC<{}> = () => {
     return headers;
   }, [groupCtx.groups]);
 
+  const monthRefs = useMemo(() => {
+    const refs = [];
+    for (let i = 0; i < months.length; i++) {
+      const ref = React.createRef<HTMLDivElement>();
+      refs.push(ref);
+    }
+    return refs;
+  }, []);
+
+
+  const [scrolledMonth, setScrolledMonth] = useState(new Date().getMonth());
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const scrollPosition = event.currentTarget.scrollLeft;
+    let i = 0;
+    let acc = 0;
+    while (i < monthRefs.length && acc + monthRefs[i].current!.offsetWidth < scrollPosition) {
+      acc += monthRefs[i].current!.offsetWidth;
+      i++;
+    }
+    setScrolledMonth(i);
+  };
+
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
-        <Typography variant='h4'>Naptár</Typography>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <IconButton onClick={decreaseYear}>
-            <ArrowBackIosNew />
-          </IconButton>
-          <Typography variant='h5'>{year}</Typography>
-          <IconButton onClick={increaseYear}>
-            <ArrowForwardIos />
-          </IconButton>
-        </Box>
-        {/* <Box sx={{ display: "flex", gap: 1 }}>
-          {monthNames.map((monthName) => {
-            return <Button key={monthName}>{monthName}</Button>;
-          })}
-        </Box> */}
-      </Box>
+      <CalendarControls
+        increaseYear={increaseYear}
+        decreaseYear={decreaseYear}
+        activeMonth={scrolledMonth}
+        year={year}
+      />
       <Box sx={{ display: "flex", marginTop: 1 }}>
         <Box>
           <CalendarGroupHeader />
           {generateGroupHeaders}
         </Box>
-        <Box sx={{ display: "flex", gap: 2, overflowX: "auto" }}>
-          {months.map((month) => {
-            return <CalendarMonth key={month} month={month} year={year} />;
+        <Box
+          sx={{ display: "flex", gap: 2, overflowX: "scroll" }}
+          onScroll={handleScroll}
+        >
+          {months.map((month, index) => {
+            return <CalendarMonth key={month} month={month} year={year} monthRef={monthRefs[index]} />;
           })}
         </Box>
       </Box>

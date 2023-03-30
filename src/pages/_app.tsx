@@ -28,7 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
     [prefersDarkMode]
   );
 
-  dayjs.locale("hu-hu");
+  // dayjs.locale("hu-hu");
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

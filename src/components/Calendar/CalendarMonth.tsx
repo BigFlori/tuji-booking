@@ -10,6 +10,7 @@ import CalendarGroup from "./CalendarGroup";
 type CalendarMonthProps = {
   month: number;
   year: number;
+  monthRef: React.RefObject<HTMLDivElement>;
 };
 
 const CalendarMonth: React.FC<CalendarMonthProps> = (
@@ -17,7 +18,7 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
 ) => {
   const groupCtx = useContext(GroupsContext);
   const monthDate = useMemo(() => {
-    return dayjs().year(props.year).month(props.month);
+    return dayjs().locale("hu-hu").year(props.year).month(props.month);
   }, [props.month, props.year]);
 
   //Dátumok generálása
@@ -57,6 +58,7 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
     <Box
       sx={{ display: "flex", flexDirection: "column" }}
       id={props.month.toString()}
+      ref={props.monthRef}
     >
       <Paper sx={{ display: "flex", zIndex: 1 }} elevation={6}>
         {generateDays}

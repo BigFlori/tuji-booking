@@ -18,11 +18,11 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (
         alignItems: 'center',
         border: "1px solid" + theme.palette.grey[300],
         borderBottom: props.isLast ? "1px solid" + theme.palette.grey[300] : "none",
-        height: "55px",
+        height: "60px",
         minWidth: "100px",
       })}
     >
-      <Typography variant='h6' fontWeight={"bold"}>
+      <Typography fontWeight={"bold"}>
         {props.group?.title}
       </Typography>
     </Box>

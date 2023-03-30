@@ -45,12 +45,13 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
         border: "1px solid #eee",
         borderRight: props.isLast ? "1px solid #eee" : "none",
         borderBottom: props.isLastGroup ? "1px solid #eee" : "none",
-        minWidth: "60px",
-        height: "55px",
+        minWidth: "65px",
+        height: "60px",
         backgroundColor: bgColor,
         ...props.sx,
       }}
       ref={isToday ? todayRef : null}
+      id={isToday ? "today" : ""}
     >
       {props.children}
     </Box>
