@@ -36,6 +36,7 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
     const handleResize = () => {
       setIsDesktop(window.innerWidth > foldMonthsAt);
     };
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
