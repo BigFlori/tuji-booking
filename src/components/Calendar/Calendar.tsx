@@ -53,11 +53,11 @@ const Calendar: React.FC<{}> = () => {
             <ArrowForwardIos />
           </IconButton>
         </Box>
-        <Box sx={{ display: "flex", gap: 2 }}>
+        {/* <Box sx={{ display: "flex", gap: 1 }}>
           {monthNames.map((monthName) => {
             return <Button key={monthName}>{monthName}</Button>;
           })}
-        </Box>
+        </Box> */}
       </Box>
       <Box sx={{ display: "flex", marginTop: 1 }}>
         <Box>
