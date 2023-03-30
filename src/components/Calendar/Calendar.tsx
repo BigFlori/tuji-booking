@@ -40,14 +40,16 @@ const Calendar: React.FC<{}> = () => {
     return refs;
   }, []);
 
-
   const [scrolledMonth, setScrolledMonth] = useState(new Date().getMonth());
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollPosition = event.currentTarget.scrollLeft;
     let i = 0;
     let acc = 0;
-    while (i < monthRefs.length && acc + monthRefs[i].current!.offsetWidth < scrollPosition) {
+    while (
+      i < monthRefs.length &&
+      acc + monthRefs[i].current!.offsetWidth < scrollPosition
+    ) {
       acc += monthRefs[i].current!.offsetWidth;
       i++;
     }
@@ -55,7 +57,7 @@ const Calendar: React.FC<{}> = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ marginTop: 1 }}>
       <CalendarControls
         increaseYear={increaseYear}
         decreaseYear={decreaseYear}
@@ -72,7 +74,14 @@ const Calendar: React.FC<{}> = () => {
           onScroll={handleScroll}
         >
           {months.map((month, index) => {
-            return <CalendarMonth key={month} month={month} year={year} monthRef={monthRefs[index]} />;
+            return (
+              <CalendarMonth
+                key={month}
+                month={month}
+                year={year}
+                monthRef={monthRefs[index]}
+              />
+            );
           })}
         </Box>
       </Box>

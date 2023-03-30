@@ -92,9 +92,11 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
           })}
         </Box>
       ) : (
-        <Box sx={{display: 'flex', gap: 2}}>
-          <Typography variant="h6">{monthNames[props.activeMonth]}</Typography>
-          <Button onClick={handleClick}>Hónapok</Button>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Typography variant='h6'>{monthNames[props.activeMonth]}</Typography>
+          <Button onClick={handleClick} variant='outlined'>
+            Hónapok
+          </Button>
           <Menu
             id='month-menu'
             anchorEl={anchorEl}
