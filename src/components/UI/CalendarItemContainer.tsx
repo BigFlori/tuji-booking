@@ -1,7 +1,7 @@
+import { useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { SxProps, Theme } from "@mui/material/styles";
-// import useTheme from "@mui/material/styles/useTheme";
 
 type CalendarItemContainerProps = {
   children?: React.ReactNode;
@@ -15,18 +15,28 @@ type CalendarItemContainerProps = {
 const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
   props: CalendarItemContainerProps
 ) => {
-  // const theme = useTheme();
+  const todayRef = useRef<HTMLDivElement>(null);
 
   const isWeekend = props.date.day() === 0 || props.date.day() === 6;
-  const isToday = props.date.isSame(dayjs(), "day");
+  const isToday = props.date.isSame(new Date(), "day");
 
   const bgColor =
     isToday && !props.isDayRow
-      ? "green"
+      ? "#81c784"
       : isWeekend
       ? "grey.300"
       : "transparent";
   const color = isToday ? "green" : "black";
+
+  useEffect(() => {
+    if (isToday) {
+      todayRef.current?.scrollIntoView({
+        // behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  }, [isToday]);
 
   return (
     <Box
@@ -40,7 +50,7 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
         backgroundColor: bgColor,
         ...props.sx,
       }}
-      id={`${isToday ? "today" : ""}`}
+      ref={isToday ? todayRef : null}
     >
       {props.children}
     </Box>

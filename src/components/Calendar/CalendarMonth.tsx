@@ -51,7 +51,7 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
       groups.push(<CalendarGroup key={group.id} monthDate={monthDate} isLastGroup={i === groupCtx.groups.length - 1} />);
     }
     return groups;
-  }, [groupCtx.groups]);
+  }, [groupCtx.groups, props.month, props.year]);
 
   return (
     <Box
