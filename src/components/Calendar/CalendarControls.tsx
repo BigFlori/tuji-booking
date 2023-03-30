@@ -20,7 +20,7 @@ const foldMonthsAt = 1200;
 const CalendarControls: React.FC<CalendarControlsProps> = (
   props: CalendarControlsProps
 ) => {
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > foldMonthsAt);
+  const [isDesktop, setIsDesktop] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
