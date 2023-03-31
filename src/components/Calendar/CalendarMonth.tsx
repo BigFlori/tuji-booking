@@ -4,12 +4,13 @@ import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import CalendarDay from "./CalendarDay";
 import { useMemo, useContext } from "react";
-import { GroupsContext } from "@/store/groups-context";
+import { GroupsContext } from "@/store/group-context";
 import CalendarGroup from "./CalendarGroup";
 
 type CalendarMonthProps = {
   month: number;
   year: number;
+  today: number;
   monthRef: React.RefObject<HTMLDivElement>;
 };
 
@@ -17,6 +18,7 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
   props: CalendarMonthProps
 ) => {
   const groupCtx = useContext(GroupsContext);
+
   const monthDate = useMemo(() => {
     return dayjs().locale("hu-hu").year(props.year).month(props.month);
   }, [props.month, props.year]);
@@ -42,17 +44,17 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
       );
     }
     return days;
-  }, [props.month, props.year]);
+  }, [props.month, props.year, props.today]);
 
   //Csoportok generálása
   const generateGroups = useMemo(() => {
     const groups = [];
     for (let i = 0; i < groupCtx.groups.length; i++) {
       const group = groupCtx.groups[i];
-      groups.push(<CalendarGroup key={group.id} monthDate={monthDate} isLastGroup={i === groupCtx.groups.length - 1} />);
+      groups.push(<CalendarGroup key={group.id} groupId={group.id} monthDate={monthDate} isLastGroup={i === groupCtx.groups.length - 1} />);
     }
     return groups;
-  }, [groupCtx.groups, props.month, props.year]);
+  }, [groupCtx.groups, props.month, props.year, props.today]);
 
   return (
     <Box

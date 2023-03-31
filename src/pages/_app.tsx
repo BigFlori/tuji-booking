@@ -12,11 +12,10 @@ import "../styles/globals.css";
 import { useRouter } from "next/router";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 import "dayjs/locale/hu";
 import PageTransition from "@/components/UI/PageTransition";
-import GroupsContextProvider from "@/store/groups-context";
-import { useEffect } from "react";
+import GroupsContextProvider from "@/store/group-context";
+import ReservationContextProvider from "@/store/reservation-context";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -36,7 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <CssBaseline />
         <PageTransition path={router.route}>
           <GroupsContextProvider>
-            <Component {...pageProps} key={router.route} />
+            <ReservationContextProvider>
+              <Component {...pageProps} key={router.route} />
+            </ReservationContextProvider>
           </GroupsContextProvider>
         </PageTransition>
       </ThemeProvider>

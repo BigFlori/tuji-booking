@@ -3,16 +3,23 @@ import { useContext, useMemo, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import CalendarGroupHeader from "../UI/CalendarGroupHeader";
 import CalendarMonth from "./CalendarMonth";
-import { GroupsContext } from "@/store/groups-context";
+import { GroupsContext } from "@/store/group-context";
 import CalendarControls from "./CalendarControls";
+import dayjs from "dayjs";
 
 const months = Array.from(Array(12).keys());
 
 const Calendar: React.FC<{}> = () => {
   const [year, setYear] = useState(new Date().getFullYear());
+  const today = dayjs().date();
 
-  const increaseYear = () => setYear((prevYear) => prevYear + 1);
-  const decreaseYear = () => setYear((prevYear) => prevYear - 1);
+  //10 évig előre, 2000-ig hátra
+  const increaseYear = () =>
+    setYear((prevYear) =>
+      prevYear < dayjs().add(10, "year").year() ? prevYear + 1 : prevYear
+    );
+  const decreaseYear = () =>
+    setYear((prevYear) => (prevYear > 2000 ? prevYear - 1 : prevYear));
 
   const groupCtx = useContext(GroupsContext);
 
@@ -78,6 +85,7 @@ const Calendar: React.FC<{}> = () => {
               <CalendarMonth
                 key={month}
                 month={month}
+                today={today}
                 year={year}
                 monthRef={monthRefs[index]}
               />
