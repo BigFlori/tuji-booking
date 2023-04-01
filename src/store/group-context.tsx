@@ -9,7 +9,7 @@ type GroupsContextObject = {
   updateGroup: (id: number, group: Group) => void;
 };
 
-export const GroupsContext = React.createContext<GroupsContextObject>({
+export const GroupContext = React.createContext<GroupsContextObject>({
   groups: [],
   setGroups: () => {},
   addGroup: () => {},
@@ -17,7 +17,7 @@ export const GroupsContext = React.createContext<GroupsContextObject>({
   updateGroup: () => {},
 });
 
-const GroupsContextProvider: React.FC<{ children: React.ReactNode }> = (
+const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (
   props
 ) => {
   const [groups, setGroups] = React.useState<Group[]>([
@@ -66,10 +66,10 @@ const GroupsContextProvider: React.FC<{ children: React.ReactNode }> = (
   };
 
   return (
-    <GroupsContext.Provider value={context}>
+    <GroupContext.Provider value={context}>
       {props.children}
-    </GroupsContext.Provider>
+    </GroupContext.Provider>
   );
 };
 
-export default GroupsContextProvider;
+export default GroupContextProvider;

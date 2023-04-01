@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import CalendarDay from "./CalendarDay";
 import { useMemo, useContext } from "react";
-import { GroupsContext } from "@/store/group-context";
+import { GroupContext } from "@/store/group-context";
 import CalendarGroup from "./CalendarGroup";
 
 type CalendarMonthProps = {
@@ -17,7 +17,7 @@ type CalendarMonthProps = {
 const CalendarMonth: React.FC<CalendarMonthProps> = (
   props: CalendarMonthProps
 ) => {
-  const groupCtx = useContext(GroupsContext);
+  const groupCtx = useContext(GroupContext);
 
   const monthDate = useMemo(() => {
     return dayjs().locale("hu-hu").year(props.year).month(props.month);

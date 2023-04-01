@@ -14,7 +14,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/hu";
 import PageTransition from "@/components/UI/PageTransition";
-import GroupsContextProvider from "@/store/group-context";
+import GroupContextProvider from "@/store/group-context";
 import ReservationContextProvider from "@/store/reservation-context";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -34,11 +34,11 @@ export default function App({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <PageTransition path={router.route}>
-          <GroupsContextProvider>
+          <GroupContextProvider>
             <ReservationContextProvider>
               <Component {...pageProps} key={router.route} />
             </ReservationContextProvider>
-          </GroupsContextProvider>
+          </GroupContextProvider>
         </PageTransition>
       </ThemeProvider>
     </LocalizationProvider>

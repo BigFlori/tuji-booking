@@ -3,7 +3,7 @@ import { useContext, useMemo, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import CalendarGroupHeader from "../UI/CalendarGroupHeader";
 import CalendarMonth from "./CalendarMonth";
-import { GroupsContext } from "@/store/group-context";
+import { GroupContext } from "@/store/group-context";
 import CalendarControls from "./CalendarControls";
 import dayjs from "dayjs";
 
@@ -21,7 +21,7 @@ const Calendar: React.FC<{}> = () => {
   const decreaseYear = () =>
     setYear((prevYear) => (prevYear > 2000 ? prevYear - 1 : prevYear));
 
-  const groupCtx = useContext(GroupsContext);
+  const groupCtx = useContext(GroupContext);
 
   const generateGroupHeaders = useMemo(() => {
     const headers = [];
