@@ -6,6 +6,7 @@ import CalendarDay from "./CalendarDay";
 import { useMemo, useContext } from "react";
 import { GroupContext } from "@/store/group-context";
 import CalendarGroup from "./CalendarGroup";
+import "intersection-observer";
 
 type CalendarMonthProps = {
   month: number;
@@ -14,6 +15,7 @@ type CalendarMonthProps = {
   monthRef: React.RefObject<HTMLDivElement>;
 };
 
+//Egy teljes hónapot renderel, a napokat és a csoportokat beleértve a csoportok sorait és celláit
 const CalendarMonth: React.FC<CalendarMonthProps> = (
   props: CalendarMonthProps
 ) => {
@@ -51,7 +53,14 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
     const groups = [];
     for (let i = 0; i < groupCtx.groups.length; i++) {
       const group = groupCtx.groups[i];
-      groups.push(<CalendarGroup key={group.id} groupId={group.id} monthDate={monthDate} isLastGroup={i === groupCtx.groups.length - 1} />);
+      groups.push(
+        <CalendarGroup
+          key={group.id}
+          groupId={group.id}
+          monthDate={monthDate}
+          isLastGroup={i === groupCtx.groups.length - 1}
+        />
+      );
     }
     return groups;
   }, [groupCtx.groups, props.month, props.year, props.today]);

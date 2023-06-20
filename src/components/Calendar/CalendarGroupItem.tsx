@@ -12,6 +12,7 @@ type CalendarGroupProps = {
   groupId: number;
 };
 
+//Minden nap renderelődik és a csoportok sorainak egyes celláit jeleníti meg
 const CalendarGroupItem: React.FC<CalendarGroupProps> = (
   props: CalendarGroupProps
 ) => {

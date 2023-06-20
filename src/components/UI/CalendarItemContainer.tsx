@@ -52,6 +52,7 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
       }}
       ref={isToday ? todayRef : null}
       id={isToday ? "today" : ""}
+      // className={!props.isDayRow ? "calendar-item-container" : ""}
     >
       {props.children}
     </Box>
