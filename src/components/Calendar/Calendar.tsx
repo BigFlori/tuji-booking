@@ -6,6 +6,7 @@ import CalendarMonth from "./CalendarMonth";
 import { GroupContext } from "@/store/group-context";
 import CalendarControls from "./CalendarControls";
 import dayjs from "dayjs";
+import { CALENDAR_MONTH_GAP } from "@/config/config";
 
 const months = Array.from(Array(12).keys());
 
@@ -15,11 +16,8 @@ const Calendar: React.FC<{}> = () => {
 
   //10 évig előre, 2000-ig hátra
   const increaseYear = () =>
-    setYear((prevYear) =>
-      prevYear < dayjs().add(10, "year").year() ? prevYear + 1 : prevYear
-    );
-  const decreaseYear = () =>
-    setYear((prevYear) => (prevYear > 2000 ? prevYear - 1 : prevYear));
+    setYear((prevYear) => (prevYear < dayjs().add(10, "year").year() ? prevYear + 1 : prevYear));
+  const decreaseYear = () => setYear((prevYear) => (prevYear > 2000 ? prevYear - 1 : prevYear));
 
   const groupCtx = useContext(GroupContext);
 
@@ -27,13 +25,7 @@ const Calendar: React.FC<{}> = () => {
     const headers = [];
     for (let i = 0; i < groupCtx.groups.length; i++) {
       const group = groupCtx.groups[i];
-      headers.push(
-        <CalendarGroupHeader
-          key={group.id}
-          group={group}
-          isLast={i === groupCtx.groups.length - 1}
-        />
-      );
+      headers.push(<CalendarGroupHeader key={group.id} group={group} isLast={i === groupCtx.groups.length - 1} />);
     }
     return headers;
   }, [groupCtx.groups]);
@@ -53,10 +45,7 @@ const Calendar: React.FC<{}> = () => {
     const scrollPosition = event.currentTarget.scrollLeft;
     let i = 0;
     let acc = 0;
-    while (
-      i < monthRefs.length &&
-      acc + monthRefs[i].current!.offsetWidth < scrollPosition
-    ) {
+    while (i < monthRefs.length && acc + monthRefs[i].current!.offsetWidth < scrollPosition) {
       acc += monthRefs[i].current!.offsetWidth;
       i++;
     }
@@ -76,20 +65,9 @@ const Calendar: React.FC<{}> = () => {
           <CalendarGroupHeader />
           {generateGroupHeaders}
         </Box>
-        <Box
-          sx={{ display: "flex", gap: 2, overflowX: "scroll" }}
-          onScroll={handleScroll}
-        >
+        <Box sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }} onScroll={handleScroll}>
           {months.map((month, index) => {
-            return (
-              <CalendarMonth
-                key={month}
-                month={month}
-                today={today}
-                year={year}
-                monthRef={monthRefs[index]}
-              />
-            );
+            return <CalendarMonth key={month} month={month} today={today} year={year} monthRef={monthRefs[index]} />;
           })}
         </Box>
       </Box>

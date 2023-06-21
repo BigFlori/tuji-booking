@@ -9,26 +9,19 @@ type ReservationContextObject = {
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: number) => void;
   updateReservation: (id: number, reservation: Reservation) => void;
-  findReservationByDate: (
-    date: dayjs.Dayjs,
-    groupId: number
-  ) => Reservation | null;
+  findReservationByDate: (date: dayjs.Dayjs, groupId: number) => Reservation | null;
 };
 
-export const ReservationContext = React.createContext<ReservationContextObject>(
-  {
-    reservations: [],
-    setReservations: () => {},
-    addReservation: () => {},
-    removeReservation: () => {},
-    updateReservation: () => {},
-    findReservationByDate: () => null,
-  }
-);
+export const ReservationContext = React.createContext<ReservationContextObject>({
+  reservations: [],
+  setReservations: () => {},
+  addReservation: () => {},
+  removeReservation: () => {},
+  updateReservation: () => {},
+  findReservationByDate: () => null,
+});
 
-const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (
-  props
-) => {
+const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [reservations, setReservations] = React.useState<Reservation[]>([
     {
       id: 1,
@@ -60,6 +53,58 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (
       depositPrice: 20000,
       comment: "Teljes összeg fizetve.",
     },
+    {
+      id: 4,
+      groupId: 3,
+      startDate: dayjs(),
+      endDate: dayjs().add(11, "day"),
+      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentDate: dayjs().subtract(5, "day"),
+      fullPrice: 100000,
+      depositPrice: 20000,
+      comment: "Teljes összeg fizetve.",
+      client: {
+        id: 2,
+        name: "Nagy Béla",
+      }
+    },
+    {
+      id: 5,
+      groupId: 4,
+      startDate: dayjs("2023-06-21"),
+      endDate: dayjs("2023-07-01"),
+      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentDate: dayjs().subtract(5, "day"),
+      fullPrice: 100000,
+      depositPrice: 20000,
+      comment: "Teljes összeg fizetve.",
+      client: {
+        id: 1,
+        name: "Kiss József",
+      }
+    },
+    {
+      id: 6,
+      groupId: 4,
+      startDate: dayjs("2023-06-20"),
+      endDate: dayjs("2023-06-21"),
+      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentDate: dayjs().subtract(5, "day"),
+      fullPrice: 100000,
+      depositPrice: 20000,
+      comment: "Teljes összeg fizetve.",
+    },
+    {
+      id: 7,
+      groupId: 4,
+      startDate: dayjs("2023-07-01"),
+      endDate: dayjs("2023-07-05"),
+      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentDate: dayjs().subtract(5, "day"),
+      fullPrice: 100000,
+      depositPrice: 20000,
+      comment: "Teljes összeg fizetve.",
+    },
   ]);
 
   const addReservation = (reservation: Reservation) => {
@@ -85,10 +130,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (
     });
   };
 
-  const findReservationByDate = (
-    date: dayjs.Dayjs,
-    groupId: number
-  ): Reservation | null => {
+  const findReservationByDate = (date: dayjs.Dayjs, groupId: number): Reservation | null => {
     const reservation = reservations.find((reservation) => {
       return (
         (reservation.groupId === groupId &&
@@ -110,11 +152,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (
     findReservationByDate,
   };
 
-  return (
-    <ReservationContext.Provider value={context}>
-      {props.children}
-    </ReservationContext.Provider>
-  );
+  return <ReservationContext.Provider value={context}>{props.children}</ReservationContext.Provider>;
 };
 
 export default ReservationContextProvider;

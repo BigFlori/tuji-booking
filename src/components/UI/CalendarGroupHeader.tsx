@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Group from "@/models/group-model";
+import { CALENDAR_GROUP_WIDTH, CALENDAR_ITEM_HEIGHT } from "@/config/config";
 
 type CalendarGroupHeaderProps = {
   group?: Group;
@@ -18,8 +19,8 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (
         alignItems: 'center',
         border: "1px solid" + theme.palette.grey[300],
         borderBottom: props.isLast ? "1px solid" + theme.palette.grey[300] : "none",
-        height: "60px",
-        minWidth: "100px",
+        height: `${CALENDAR_ITEM_HEIGHT}px`,
+        minWidth: `${CALENDAR_GROUP_WIDTH}px`,
       })}
     >
       <Typography fontWeight={"bold"}>

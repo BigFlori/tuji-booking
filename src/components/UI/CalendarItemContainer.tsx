@@ -2,6 +2,7 @@ import { useRef, useEffect, forwardRef } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { SxProps, Theme } from "@mui/material/styles";
+import { CALENDAR_ITEM_WIDTH, CALENDAR_ITEM_HEIGHT } from "@/config/config";
 
 type CalendarItemContainerProps = {
   children?: React.ReactNode;
@@ -29,22 +30,23 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
   const color = isToday ? "green" : "black";
 
   useEffect(() => {
-    if (isToday) {
+    if (isToday && props.isDayRow) {
       todayRef.current?.scrollIntoView({
         block: "center",
         inline: "center",
       });
     }
-  }, [isToday]);
+  }, []);
 
   return (
     <Box
       sx={{
+        color,
         border: "1px solid #eee",
         borderRight: props.isLast ? "1px solid #eee" : "none",
         borderBottom: props.isLastGroup ? "1px solid #eee" : "none",
-        minWidth: "65px",
-        height: "60px",
+        minWidth: `${CALENDAR_ITEM_WIDTH}px`,
+        height: `${CALENDAR_ITEM_HEIGHT}px`,
         backgroundColor: bgColor,
         ...props.sx,
       }}
