@@ -4,6 +4,10 @@ import Box from "@mui/material/Box";
 import CalendarGroupItem from "./CalendarGroupItem";
 import { GroupContext } from "@/store/group-context";
 import { useIntersectionObserver } from "usehooks-ts";
+import CalendarReservation from "../Reservation/CalendarReservation";
+import { ReservationContext } from "@/store/reservation-context";
+import CalendarItemContainer from "../UI/CalendarItemContainer";
+
 
 type CalendarGroupProps = {
   children?: React.ReactNode;
@@ -16,6 +20,8 @@ type CalendarGroupProps = {
 const CalendarGroup: React.FC<CalendarGroupProps> = (
   props: CalendarGroupProps
 ) => {
+  const reservationCtx = useContext(ReservationContext);
+
   const ref = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserver(ref, {});
   const isVisible = !!entry?.isIntersecting;
@@ -24,9 +30,8 @@ const CalendarGroup: React.FC<CalendarGroupProps> = (
     const items = [];
     for (let i = 1; i <= props.monthDate.daysInMonth(); i++) {
       items.push(
-        <CalendarGroupItem
+        <CalendarItemContainer
           key={i}
-          groupId={props.groupId}
           date={props.monthDate.date(i)}
           isLastGroup={props.isLastGroup}
           isLast={i === props.monthDate.daysInMonth()}
@@ -36,7 +41,14 @@ const CalendarGroup: React.FC<CalendarGroupProps> = (
     return items;
   }, [props.monthDate]);
 
-  return <Box sx={{ display: "flex" }} ref={ref}>{isVisible && groupItems}</Box>;
+  return (
+    <Box sx={{ display: "flex", position: "relative" }} ref={ref}>
+      {isVisible && (reservationCtx.reservations[1].groupId === props.groupId) && (
+        <CalendarReservation reservation={reservationCtx.reservations[1]}/>
+      )}
+      {isVisible && groupItems}
+    </Box>
+  );
 };
 
 export default CalendarGroup;

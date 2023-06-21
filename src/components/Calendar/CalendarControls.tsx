@@ -41,11 +41,11 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const jumpToId = (id: string, smooth?: boolean) => {
+  const jumpToId = (id: string) => {
     const monthElement = document.getElementById(id);
     if (monthElement) {
       monthElement.scrollIntoView({
-        behavior: smooth ? "smooth" : "auto",
+        behavior: "auto",
         block: id === "today" ? "center" : "start",
         inline: id === "today" ? "center" : "start",
       });
@@ -54,12 +54,12 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
 
   const nextYear = () => {
     props.increaseYear();
-    jumpToId("0", false);
+    jumpToId("0");
   };
 
   const prevYear = () => {
     props.decreaseYear();
-    jumpToId("11", false);
+    jumpToId("11");
   };
 
   return (
@@ -76,13 +76,13 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
       {isDesktop ? (
         <Box sx={{ display: "flex", gap: 1 }}>
           <Box>
-            <Button onClick={() => jumpToId("today", true)}>Ma</Button>
+            <Button onClick={() => jumpToId("today")}>Ma</Button>
           </Box>
           {monthNames.map((monthName, index) => {
             return (
               <Button
                 key={monthName}
-                onClick={() => jumpToId(index.toString(), true)}
+                onClick={() => jumpToId(index.toString())}
                 variant={`${
                   props.activeMonth === index ? "contained" : "outlined"
                 }`}
@@ -104,12 +104,12 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
             open={open}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => jumpToId("today", true)}>Ma</MenuItem>
+            <MenuItem onClick={() => jumpToId("today")}>Ma</MenuItem>
             {monthNames.map((monthName, index) => {
               return (
                 <MenuItem
                   key={monthName}
-                  onClick={() => jumpToId(index.toString(), true)}
+                  onClick={() => jumpToId(index.toString())}
                 >
                   {monthName}
                 </MenuItem>

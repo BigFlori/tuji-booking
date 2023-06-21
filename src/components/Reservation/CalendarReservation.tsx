@@ -4,19 +4,16 @@ import dayjs from "dayjs";
 
 type CalendarReserverationProps = {
   reservation: Reservation;
-  renderingDate: dayjs.Dayjs;
 };
 
 const CalendarReservation: React.FC<CalendarReserverationProps> = (
   props: CalendarReserverationProps
 ) => {
-  const isStart = props.reservation.startDate.isSame(
-    props.renderingDate,
-    "day"
-  );
-  const isEnd = props.reservation.endDate.isSame(props.renderingDate, "day");
-  const width = isStart || isEnd ? "50%" : "100%";
-  return <Box sx={{ height: "60%", width: width, background: "red" }}></Box>;
+  
+  const width = props.reservation.endDate.diff(props.reservation.startDate, "day") * 65;
+  const left = props.reservation.startDate.diff(dayjs(props.reservation.startDate).startOf("month"), "day") * 65;
+
+  return <Box sx={{ position: "absolute", height: "60%", left: left, width: width, background: "red" }}>{props.reservation.id}</Box>;
 };
 
 export default CalendarReservation;

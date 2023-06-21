@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, forwardRef } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { SxProps, Theme } from "@mui/material/styles";
@@ -31,7 +31,6 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
   useEffect(() => {
     if (isToday) {
       todayRef.current?.scrollIntoView({
-        // behavior: "smooth",
         block: "center",
         inline: "center",
       });
@@ -41,7 +40,6 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
   return (
     <Box
       sx={{
-        color,
         border: "1px solid #eee",
         borderRight: props.isLast ? "1px solid #eee" : "none",
         borderBottom: props.isLastGroup ? "1px solid #eee" : "none",
@@ -52,7 +50,6 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
       }}
       ref={isToday ? todayRef : null}
       id={isToday ? "today" : ""}
-      // className={!props.isDayRow ? "calendar-item-container" : ""}
     >
       {props.children}
     </Box>
