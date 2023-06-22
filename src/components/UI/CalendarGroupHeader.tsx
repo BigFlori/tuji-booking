@@ -23,7 +23,7 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (
         minWidth: `${CALENDAR_GROUP_WIDTH}px`,
       })}
     >
-      <Typography fontWeight={"bold"}>
+      <Typography fontWeight={"bold"} fontSize={16}>
         {props.group?.title}
       </Typography>
     </Box>
