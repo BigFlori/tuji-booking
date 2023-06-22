@@ -2,7 +2,7 @@
 export const CALENDAR_ITEM_WIDTH = 44;
 export const CALENDAR_ITEM_HEIGHT = 47;
 
-export const CALENDAR_GROUP_WIDTH = 100;
+export const CALENDAR_GROUP_WIDTH = 150;
 
 export const CALENDAR_MONTH_GAP = 10;
 

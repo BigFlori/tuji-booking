@@ -45,8 +45,8 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
         border: "1px solid #eee",
         borderRight: props.isLast ? "1px solid #eee" : "none",
         borderBottom: props.isLastGroup ? "1px solid #eee" : "none",
-        minWidth: `${CALENDAR_ITEM_WIDTH}px`,
-        height: `${CALENDAR_ITEM_HEIGHT}px`,
+        minWidth: CALENDAR_ITEM_WIDTH,
+        height: CALENDAR_ITEM_HEIGHT,
         backgroundColor: bgColor,
         ...props.sx,
       }}

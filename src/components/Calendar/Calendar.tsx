@@ -11,6 +11,11 @@ import { CALENDAR_MONTH_GAP } from "@/config/config";
 const months = Array.from(Array(12).keys());
 
 const Calendar: React.FC<{}> = () => {
+  const [isGroupExpanded, setIsGroupExpanded] = useState(false);
+
+  const toggleGroupExpand = () => setIsGroupExpanded((prev) => !prev);
+
+  //Jelenlegi év
   const [year, setYear] = useState(new Date().getFullYear());
   const today = dayjs().date();
 
@@ -21,15 +26,24 @@ const Calendar: React.FC<{}> = () => {
 
   const groupCtx = useContext(GroupContext);
 
+  //Csoport fejlécek generálása
   const generateGroupHeaders = useMemo(() => {
     const headers = [];
     for (let i = 0; i < groupCtx.groups.length; i++) {
       const group = groupCtx.groups[i];
-      headers.push(<CalendarGroupHeader key={group.id} group={group} isLast={i === groupCtx.groups.length - 1} />);
+      headers.push(
+        <CalendarGroupHeader
+          key={group.id}
+          group={group}
+          isLast={i === groupCtx.groups.length - 1}
+          isExpanded={isGroupExpanded}
+        />
+      );
     }
     return headers;
-  }, [groupCtx.groups]);
+  }, [groupCtx.groups, isGroupExpanded]);
 
+  //Navigáló gombokhoz szükséges dolgok
   const monthRefs = useMemo(() => {
     const refs = [];
     for (let i = 0; i < months.length; i++) {
@@ -62,7 +76,7 @@ const Calendar: React.FC<{}> = () => {
       />
       <Box sx={{ display: "flex", marginTop: 1 }}>
         <Box>
-          <CalendarGroupHeader />
+          <CalendarGroupHeader isExpanded={isGroupExpanded} toggleIsExpanded={toggleGroupExpand} />
           {generateGroupHeaders}
         </Box>
         <Box sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }} onScroll={handleScroll}>

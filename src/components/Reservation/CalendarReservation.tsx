@@ -2,7 +2,7 @@ import Reservation from "@/models/reservation-model";
 import { Paper } from "@mui/material";
 import dayjs from "dayjs";
 import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/config/config";
-import ReservationButton from "../UI/ReservationButton";
+import ReservationButton from "../UI/styled/ReservationButton";
 
 type CalendarReserverationProps = {
   reservation: Reservation;
