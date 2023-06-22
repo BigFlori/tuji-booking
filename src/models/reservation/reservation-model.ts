@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import PaymentState from "./payment-state-model";
-import Client from "./client-model";
+import Client from "../client-model";
 
 interface Reservation {
     id: number;
