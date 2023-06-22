@@ -1,5 +1,7 @@
 import React from "react";
-import Group from "@/models/group-model";
+import Group from "@/models/group/group-model";
+import GroupState from "@/models/group/group-state-model";
+import GroupType from "@/models/group/group-type-model";
 
 type GroupsContextObject = {
   groups: Group[];
@@ -17,21 +19,19 @@ export const GroupContext = React.createContext<GroupsContextObject>({
   updateGroup: () => {},
 });
 
-const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (
-  props
-) => {
+const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [groups, setGroups] = React.useState<Group[]>([
-    { id: 1, title: "Group 1" },
-    { id: 2, title: "Group 2" },
-    { id: 3, title: "Group 3" },
-    { id: 4, title: "Group 4" },
-    { id: 5, title: "Group 5" },
-    // { id: 6, title: "Group 6" },
-    // { id: 7, title: "Group 7" },
-    // { id: 8, title: "Group 8" },
-    // { id: 9, title: "Group 9" },
-    // { id: 10, title: "Group 10" },
-    // { id: 11, title: "Group 11" },
+    {
+      id: 1,
+      title: "Group 1",
+      state: GroupState.ACTIVE,
+      type: GroupType.CAR,
+      description: "Fehér kisbusz",
+    },
+    { id: 2, title: "Group 2", state: GroupState.ACTIVE, type: GroupType.DRIVER },
+    { id: 3, title: "Group 3", state: GroupState.ACTIVE, type: GroupType.HOUSE },
+    { id: 4, title: "Group 4", state: GroupState.SOLD, type: GroupType.CAR },
+    { id: 5, title: "Group 5", state: GroupState.IN_SERVICE, type: GroupType.CAR },
   ]);
 
   const addGroup = (group: Group) => {
@@ -65,11 +65,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (
     updateGroup,
   };
 
-  return (
-    <GroupContext.Provider value={context}>
-      {props.children}
-    </GroupContext.Provider>
-  );
+  return <GroupContext.Provider value={context}>{props.children}</GroupContext.Provider>;
 };
 
 export default GroupContextProvider;

@@ -1,7 +1,7 @@
 import React from "react";
-import Reservation from "../models/reservation-model";
+import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
-import PaymentStatus from "@/models/payment-status-model";
+import PaymentState from "@/models/reservation/payment-state-model";
 
 type ReservationContextObject = {
   reservations: Reservation[];
@@ -28,7 +28,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 1,
       startDate: dayjs().add(1, "day"),
       endDate: dayjs().add(3, "day"),
-      paymentStatus: PaymentStatus.DEPOSIT_PAID,
+      paymentState: PaymentState.DEPOSIT_PAID,
       fullPrice: 65000,
       depositPrice: 10000,
       comment: "Előleg fizetve.",
@@ -38,7 +38,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 2,
       startDate: dayjs().add(3, "day"),
       endDate: dayjs().add(10, "day"),
-      paymentStatus: PaymentStatus.NOT_PAID,
+      paymentState: PaymentState.NOT_PAID,
       fullPrice: 120000,
       depositPrice: 25000,
     },
@@ -47,7 +47,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 2,
       startDate: dayjs().subtract(10, "day"),
       endDate: dayjs().subtract(5, "day"),
-      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentState: PaymentState.FULL_PAID,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
@@ -58,7 +58,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 3,
       startDate: dayjs(),
       endDate: dayjs().add(11, "day"),
-      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentState: PaymentState.FULL_PAID,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
@@ -73,7 +73,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 4,
       startDate: dayjs("2023-06-21"),
       endDate: dayjs("2023-07-01"),
-      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentState: PaymentState.FULL_PAID,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
@@ -88,7 +88,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 4,
       startDate: dayjs("2023-06-20"),
       endDate: dayjs("2023-06-21"),
-      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentState: PaymentState.FULL_PAID,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
@@ -99,7 +99,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: 4,
       startDate: dayjs("2023-07-01"),
       endDate: dayjs("2023-07-05"),
-      paymentStatus: PaymentStatus.FULL_PAID,
+      paymentState: PaymentState.FULL_PAID,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,

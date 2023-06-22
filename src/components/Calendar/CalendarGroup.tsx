@@ -5,7 +5,7 @@ import { GroupContext } from "@/store/group-context";
 import { useIntersectionObserver } from "usehooks-ts";
 import CalendarReservation from "../Reservation/CalendarReservation";
 import { ReservationContext } from "@/store/reservation-context";
-import CalendarItemContainer from "../UI/CalendarItemContainer";
+import CalendarItemContainer from "./CalendarItemContainer";
 import { CALENDAR_ITEM_HEIGHT } from "@/config/config";
 
 type CalendarGroupProps = {

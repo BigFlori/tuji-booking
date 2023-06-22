@@ -63,7 +63,7 @@ const CalendarControls: React.FC<CalendarControlsProps> = (
   };
 
   return (
-    <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <IconButton onClick={prevYear}>
           <ArrowBackIosNew />

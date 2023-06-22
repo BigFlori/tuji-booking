@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import CalendarItemContainer from "../UI/CalendarItemContainer";
+import CalendarItemContainer from "./CalendarItemContainer";
 import { CALENDAR_HEADER_DAY_NAME_FONTSIZE, CALENDAR_HEADER_DAY_NUMBER_FONTSIZE } from "@/config/config";
 
 type CalendarDayProps = {

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import PaymentStatus from "./payment-status-model";
+import PaymentState from "./payment-state-model";
 import Client from "./client-model";
 
 interface Reservation {
@@ -7,7 +7,7 @@ interface Reservation {
     groupId: number;
     startDate: dayjs.Dayjs;
     endDate: dayjs.Dayjs;
-    paymentStatus: PaymentStatus;
+    paymentState: PaymentState;
     paymentDate?: dayjs.Dayjs;
     fullPrice: number;
     depositPrice: number;
