@@ -54,15 +54,11 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
   };
 
   const saveGroupHandler = () => {
-    const groupType: GroupType | undefined = Object.values(GroupType).find(
-      (type) => type === selectedGroupType
-    );
+    const groupType: GroupType | undefined = Object.values(GroupType).find((type) => type === selectedGroupType);
 
-    const groupState: GroupState | undefined = Object.values(GroupState).find(
-      (state) => state === selectedGroupState
-    );
+    const groupState: GroupState | undefined = Object.values(GroupState).find((state) => state === selectedGroupState);
 
-    if(!selectedGroupType || !selectedGroupState) {
+    if (!selectedGroupType || !selectedGroupState) {
       return;
     }
 
@@ -109,61 +105,59 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
         onSave={saveGroupHandler}
         title="Csoport szerkesztése"
       >
-        <Box component="main">
-          <Box sx={{ borderBottom: "1px solid grey", marginBottom: 4 }}>
-            <Typography variant="body1">Alapinformációk</Typography>
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <TextField
-              id="group-title"
-              label="Csoport neve"
-              value={groupTitle}
-              onChange={(event) => setGroupTitle(event.target.value.slice(0, 8))}
-              fullWidth
-              size="small"
-            />
+        <Box sx={{ borderBottom: "1px solid grey", marginBottom: 4 }}>
+          <Typography variant="body1">Alapinformációk</Typography>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            id="group-title"
+            label="Csoport neve"
+            value={groupTitle}
+            onChange={(event) => setGroupTitle(event.target.value.slice(0, 8))}
+            fullWidth
+            size="small"
+          />
 
-            <FormControl fullWidth size="small">
-              <InputLabel id="group-type-select-label">Típus</InputLabel>
-              <Select
-                labelId="group-type-select-label"
-                id="group-type-select"
-                label="Típus"
-                value={selectedGroupType}
-                onChange={(event) => setSelectedGroupType(event.target.value)}
-              >
-                <MenuItem value="CAR">Autó</MenuItem>
-                <MenuItem value="HOUSE">Lakás</MenuItem>
-                <MenuItem value="DRIVER">Sofőr</MenuItem>
-              </Select>
-            </FormControl>
+          <FormControl fullWidth size="small">
+            <InputLabel id="group-type-select-label">Típus</InputLabel>
+            <Select
+              labelId="group-type-select-label"
+              id="group-type-select"
+              label="Típus"
+              value={selectedGroupType}
+              onChange={(event) => setSelectedGroupType(event.target.value)}
+            >
+              <MenuItem value="CAR">Autó</MenuItem>
+              <MenuItem value="HOUSE">Lakás</MenuItem>
+              <MenuItem value="DRIVER">Sofőr</MenuItem>
+            </Select>
+          </FormControl>
 
-            <FormControl fullWidth size="small">
-              <InputLabel id="group-state-select-label">Állapot</InputLabel>
-              <Select
-                labelId="group-state-select-label"
-                id="group-state-select"
-                label="Állapot"
-                value={selectedGroupState}
-                onChange={(event) => setSelectedGroupState(event.target.value)}
-              >
-                <MenuItem value="ACTIVE">Aktív</MenuItem>
-                <MenuItem value="SOLD">Eladva</MenuItem>
-                <MenuItem value="IN_SERVICE">Szervízben</MenuItem>
-              </Select>
-            </FormControl>
+          <FormControl fullWidth size="small">
+            <InputLabel id="group-state-select-label">Állapot</InputLabel>
+            <Select
+              labelId="group-state-select-label"
+              id="group-state-select"
+              label="Állapot"
+              value={selectedGroupState}
+              onChange={(event) => setSelectedGroupState(event.target.value)}
+            >
+              <MenuItem value="ACTIVE">Aktív</MenuItem>
+              <MenuItem value="SOLD">Eladva</MenuItem>
+              <MenuItem value="IN_SERVICE">Szervízben</MenuItem>
+            </Select>
+          </FormControl>
 
-            <TextField
-              id="group-description"
-              label="Leírás"
-              fullWidth
-              multiline
-              rows={4}
-              size="small"
-              value={groupDescription}
-              onChange={(event) => setGroupDescription(event.target.value)}
-            />
-          </Box>
+          <TextField
+            id="group-description"
+            label="Leírás"
+            fullWidth
+            multiline
+            rows={4}
+            size="small"
+            value={groupDescription}
+            onChange={(event) => setGroupDescription(event.target.value)}
+          />
         </Box>
       </EditorModal>
     </>

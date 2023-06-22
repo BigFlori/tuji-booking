@@ -16,21 +16,21 @@ import "dayjs/locale/hu";
 import PageTransition from "@/components/UI/PageTransition";
 import GroupContextProvider from "@/store/group-context";
 import ReservationContextProvider from "@/store/reservation-context";
+import { huHU } from "@mui/x-date-pickers";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
-  const theme = useMemo(
-    () => (prefersDarkMode ? darkTheme : lightTheme),
-    [prefersDarkMode]
-  );
-
-  // dayjs.locale("hu-hu");
+  const theme = useMemo(() => (prefersDarkMode ? darkTheme : lightTheme), [prefersDarkMode]);
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      adapterLocale="hu"
+      localeText={huHU.components.MuiLocalizationProvider.defaultProps.localeText}
+    >
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <PageTransition path={router.route}>

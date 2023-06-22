@@ -9,12 +9,18 @@ const LayoutModal = styled(Modal)<ModalProps>(({ theme }) => ({
   "& .modal-container": {
     backgroundColor: "white",
     borderRadius: 5,
-    width: "90%",
-    maxWidth: theme.breakpoints.values.lg,
+    width: "100%",
+    height: "100%",
+    maxHeight: "100%",
+    overflow: "auto",
+    maxWidth: theme.breakpoints.values.sm,
     paddingInline: theme.spacing(2),
     paddingBlock: theme.spacing(3),
     [theme.breakpoints.up("sm")]: {
       width: "80%",
+      height: "auto",
+      maxHeight: "80%",
+      overflow: "auto",
     },
   },
   "& .modal-header": {

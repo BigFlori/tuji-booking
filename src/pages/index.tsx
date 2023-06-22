@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import Calendar from '@/components/Calendar/Calendar'
 
 const inter = Inter({ subsets: ['latin'] })
