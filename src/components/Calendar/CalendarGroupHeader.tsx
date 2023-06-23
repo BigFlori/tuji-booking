@@ -32,12 +32,20 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
 
   const [modalOpened, setModalOpened] = useState(false);
 
+  const resetStates = () => {
+    setGroupTitle(props.group.title);
+    setSelectedGroupType(props.group.type);
+    setSelectedGroupState(props.group.state);
+    setGroupDescription(props.group.description);
+  };
+
   const handleGroupClick = () => {
     setModalOpened(true);
   };
 
   const closeModalHandler = () => {
     setModalOpened(false);
+    resetStates();
   };
 
   const getIcon = () => {

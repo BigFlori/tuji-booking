@@ -7,9 +7,9 @@ type ReservationContextObject = {
   reservations: Reservation[];
   setReservations: (reservations: Reservation[]) => void;
   addReservation: (reservation: Reservation) => void;
-  removeReservation: (id: number) => void;
-  updateReservation: (id: number, reservation: Reservation) => void;
-  findReservationByDate: (date: dayjs.Dayjs, groupId: number) => Reservation | null;
+  removeReservation: (id: string) => void;
+  updateReservation: (id: string, reservation: Reservation) => void;
+  findReservationByDate: (date: dayjs.Dayjs, groupId: string) => Reservation | null;
 };
 
 export const ReservationContext = React.createContext<ReservationContextObject>({
@@ -24,8 +24,9 @@ export const ReservationContext = React.createContext<ReservationContextObject>(
 const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [reservations, setReservations] = React.useState<Reservation[]>([
     {
-      id: 1,
-      groupId: 1,
+      id: "1",
+      groupId: "1",
+      clientId: "1",
       startDate: dayjs().add(1, "day"),
       endDate: dayjs().add(3, "day"),
       paymentState: PaymentState.DEPOSIT_PAID,
@@ -34,8 +35,9 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       comment: "Előleg fizetve.",
     },
     {
-      id: 2,
-      groupId: 2,
+      id: "2",
+      groupId: "2",
+      clientId: "1",
       startDate: dayjs().add(3, "day"),
       endDate: dayjs().add(10, "day"),
       paymentState: PaymentState.NOT_PAID,
@@ -43,8 +45,9 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       depositPrice: 25000,
     },
     {
-      id: 3,
-      groupId: 2,
+      id: "3",
+      groupId: "2",
+      clientId: "3",
       startDate: dayjs().subtract(10, "day"),
       endDate: dayjs().subtract(5, "day"),
       paymentState: PaymentState.FULL_PAID,
@@ -54,38 +57,33 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       comment: "Teljes összeg fizetve.",
     },
     {
-      id: 4,
-      groupId: 3,
+      id: "4",
+      groupId: "3",
+      clientId: "2",
       startDate: dayjs(),
       endDate: dayjs().add(11, "day"),
-      paymentState: PaymentState.FULL_PAID,
+      paymentState: PaymentState.CANCELLED,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
       comment: "Teljes összeg fizetve.",
-      client: {
-        id: 2,
-        name: "Nagy Béla",
-      }
     },
     {
-      id: 5,
-      groupId: 4,
+      id: "5",
+      groupId: "4",
+      clientId: "2",
       startDate: dayjs("2023-06-21"),
       endDate: dayjs("2023-07-01"),
-      paymentState: PaymentState.FULL_PAID,
+      paymentState: PaymentState.BLOCKED,
       paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
       comment: "Teljes összeg fizetve.",
-      client: {
-        id: 1,
-        name: "Kiss József",
-      }
     },
     {
-      id: 6,
-      groupId: 4,
+      id: "6",
+      groupId: "4",
+      clientId: "2",
       startDate: dayjs("2023-06-20"),
       endDate: dayjs("2023-06-21"),
       paymentState: PaymentState.FULL_PAID,
@@ -95,8 +93,8 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       comment: "Teljes összeg fizetve.",
     },
     {
-      id: 7,
-      groupId: 4,
+      id: "7",
+      groupId: "4",
       startDate: dayjs("2023-07-01"),
       endDate: dayjs("2023-07-05"),
       paymentState: PaymentState.FULL_PAID,
@@ -113,13 +111,13 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
-  const removeReservation = (id: number) => {
+  const removeReservation = (id: string) => {
     setReservations((prevReservations) => {
       return prevReservations.filter((reservation) => reservation.id !== id);
     });
   };
 
-  const updateReservation = (id: number, reservation: Reservation) => {
+  const updateReservation = (id: string, reservation: Reservation) => {
     setReservations((prevReservations) => {
       return prevReservations.map((prevReservation) => {
         if (prevReservation.id === id) {
@@ -130,7 +128,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
-  const findReservationByDate = (date: dayjs.Dayjs, groupId: number): Reservation | null => {
+  const findReservationByDate = (date: dayjs.Dayjs, groupId: string): Reservation | null => {
     const reservation = reservations.find((reservation) => {
       return (
         (reservation.groupId === groupId &&

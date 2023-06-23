@@ -12,7 +12,7 @@ type CalendarGroupProps = {
   children?: React.ReactNode;
   monthDate: dayjs.Dayjs;
   isLastGroup?: boolean;
-  groupId: number;
+  groupId: string;
 };
 
 //Minden hónapban renderelődik és a csoportok sorait fogja össze

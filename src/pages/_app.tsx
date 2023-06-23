@@ -17,6 +17,7 @@ import PageTransition from "@/components/UI/PageTransition";
 import GroupContextProvider from "@/store/group-context";
 import ReservationContextProvider from "@/store/reservation-context";
 import { huHU } from "@mui/x-date-pickers";
+import ClientContextProvider from "@/store/client-context";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -36,7 +37,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <PageTransition path={router.route}>
           <GroupContextProvider>
             <ReservationContextProvider>
-              <Component {...pageProps} key={router.route} />
+              <ClientContextProvider>
+                <Component {...pageProps} key={router.route} />
+              </ClientContextProvider>
             </ReservationContextProvider>
           </GroupContextProvider>
         </PageTransition>
