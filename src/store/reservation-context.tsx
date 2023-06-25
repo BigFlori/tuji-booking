@@ -121,6 +121,8 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     setReservations((prevReservations) => {
       return prevReservations.map((prevReservation) => {
         if (prevReservation.id === id) {
+          console.log(prevReservation);
+          console.log(reservation);
           return reservation;
         }
         return prevReservation;

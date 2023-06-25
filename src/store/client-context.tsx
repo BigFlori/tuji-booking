@@ -50,6 +50,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
 
   const addClient = (client: Client) => {
     setClients((prevClients) => {
+      console.log("addClient", client, "prevClients", prevClients);
       return [...prevClients, client];
     });
   };
@@ -64,6 +65,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
     setClients((prevClients) => {
       return prevClients.map((prevClient) => {
         if (prevClient.id === id) {
+          console.log("updateClient", client, "prevClient", prevClient);
           return client;
         }
         return prevClient;

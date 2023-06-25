@@ -36,6 +36,7 @@ const countMonthsBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
 };
 
 enum ActionType {
+  SET_ID = "SET_ID",
   SET_NAME = "SET_NAME",
   SET_PHONE = "SET_PHONE",
   SET_EMAIL = "SET_EMAIL",
@@ -76,6 +77,11 @@ const clientReducer = (state: ClientState, action: ClientAction) => {
       return {
         ...state,
         address: action.payload,
+      };
+    case ActionType.SET_ID:
+      return {
+        ...state,
+        id: action.payload,
       };
     default:
       return state;
@@ -135,6 +141,16 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
     return [{ label: "Új ügyfél", id: "new" }, ...options];
   }, [clientCtx.clients]);
 
+  // const clientOptions = (): ClientOption[] => {
+  //   const options = clientCtx.clients.map((client) => {
+  //     return {
+  //       label: client.name,
+  //       id: client.id,
+  //     };
+  //   });
+  //   return [{ label: "Új ügyfél", id: "new" }, ...options];
+  // };
+
   const handleFullPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setFullPrice(newValue);
@@ -162,6 +178,7 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
 
     setSelectedClientOption(newClientOption);
     if (newClientOption.id === "new") {
+      dispatchClientState({ type: ActionType.SET_ID, payload: "new" });
       dispatchClientState({ type: ActionType.SET_NAME, payload: "" });
       dispatchClientState({ type: ActionType.SET_PHONE, payload: "" });
       dispatchClientState({ type: ActionType.SET_EMAIL, payload: "" });
@@ -169,6 +186,7 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
     } else {
       const client = clientCtx.getClientById(newClientOption.id);
       if (!client) return;
+      dispatchClientState({ type: ActionType.SET_ID, payload: client.id });
       dispatchClientState({ type: ActionType.SET_NAME, payload: client.name });
       dispatchClientState({ type: ActionType.SET_PHONE, payload: client.phone ? client.phone : "" });
       dispatchClientState({ type: ActionType.SET_EMAIL, payload: client.email ? client.email : "" });
@@ -215,7 +233,7 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
       (state) => state === selectedPaymentState
     );
 
-    if(!paymentState) return;
+    if (!paymentState) return;
 
     const reservation: Reservation = {
       ...props.reservation,
@@ -227,10 +245,12 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
       comment: comment,
       clientId: clientState.id,
     };
+    console.log(`${clientState.id} ${clientState.name}`);
 
-    if (selectedClientOption.id === "new") {
+    if (clientState.id === "new" && clientState.name) {
+      //Új ügyfél létrehozása
       const client: Client = {
-        id: "asd",
+        id: (clientCtx.clients.length + 1).toString(),
         name: clientState.name,
         phone: clientState.phone,
         email: clientState.email,
@@ -238,11 +258,21 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
       };
       clientCtx.addClient(client);
       reservation.clientId = client.id;
+    } else {
+      //Ügyfél adatainak frissítése
+      const client: Client = {
+        id: clientState.id,
+        name: clientState.name,
+        phone: clientState.phone,
+        email: clientState.email,
+        address: clientState.address,
+      };
+      clientCtx.updateClient(client.id, client);
     }
-
+    setSelectedClientOption({ id: clientState.id, label: clientState.name });
     reservationCtx.updateReservation(props.reservation.id, reservation);
 
-    handleModalClose();
+    setModalOpened(false);
   };
 
   return (
