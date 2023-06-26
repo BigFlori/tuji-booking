@@ -107,7 +107,7 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
         )}
       </GroupHeaderButton>
 
-      <EditorModal
+      {/* <EditorModal
         open={modalOpened}
         onClose={closeModalHandler}
         onSave={saveGroupHandler}
@@ -163,7 +163,7 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
             onChange={(event) => setGroupDescription(event.target.value)}
           />
         </Box>
-      </EditorModal>
+      </EditorModal> */}
     </>
   );
 };
