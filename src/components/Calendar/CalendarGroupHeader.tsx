@@ -122,11 +122,9 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
             label="Csoport neve"
             value={groupTitle}
             onChange={(event) => setGroupTitle(event.target.value.slice(0, 8))}
-            fullWidth
-            size="small"
           />
 
-          <FormControl fullWidth size="small">
+          <FormControl>
             <InputLabel id="group-type-select-label">Típus</InputLabel>
             <Select
               labelId="group-type-select-label"
@@ -141,7 +139,7 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
             </Select>
           </FormControl>
 
-          <FormControl fullWidth size="small">
+          <FormControl>
             <InputLabel id="group-state-select-label">Állapot</InputLabel>
             <Select
               labelId="group-state-select-label"
@@ -159,10 +157,8 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
           <TextField
             id="group-description"
             label="Leírás"
-            fullWidth
             multiline
             rows={4}
-            size="small"
             value={groupDescription}
             onChange={(event) => setGroupDescription(event.target.value)}
           />

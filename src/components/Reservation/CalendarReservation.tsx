@@ -3,24 +3,13 @@ import Reservation from "@/models/reservation/reservation-model";
 import dayjs from "dayjs";
 import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/config/config";
 import ReservationButton from "../UI/styled/ReservationButton";
-import {
-  Autocomplete,
-  Box,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  InputAdornment,
-  Radio,
-  RadioGroup,
-  TextField,
-  Typography,
-} from "@mui/material";
 import EditorModal from "../UI/EditorModal";
-import { DatePicker } from "@mui/x-date-pickers";
 import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import Client from "@/models/client-model";
 import PaymentState from "@/models/reservation/payment-state-model";
+import ReservationEditForm, { ReservationEditFormValues } from "../Forms/ReservationEditForm";
+import AnimatedModal from "../UI/Modal/AnimatedModal";
 
 type CalendarReserverationProps = {
   reservation: Reservation;
@@ -97,8 +86,10 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
 
+  //Ha van hozzárendelt ügyfél, akkor azt adja vissza, ha nincs, akkor egy új ügyfelet ami amolyan placeholderként szolgál
   const reservationClient = useMemo(() => {
-    return clientCtx.getClientById(props.reservation.clientId);
+    const client = clientCtx.getClientById(props.reservation.clientId);
+    return client ? client : { id: "new", name: "Új ügyfél" };
   }, [clientCtx.clients, props.reservation.clientId]);
 
   const [modalOpened, setModalOpened] = useState(false);
@@ -275,18 +266,21 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
     setModalOpened(false);
   };
 
+  const submintHandler = (values: ReservationEditFormValues) => {
+    console.log("saveHandler");
+  };
+
   return (
     <>
       <ReservationButton sx={{ left, width }} onClick={() => setModalOpened(true)}>
-        {reservationClient?.name}
+        {reservationClient.name}
       </ReservationButton>
-      <EditorModal
+      <AnimatedModal
         open={modalOpened}
         onClose={handleModalClose}
-        onSave={saveReservationHandler}
-        title="Foglalás szerkesztése"
       >
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <ReservationEditForm reservation={props.reservation} client={reservationClient} onSubmit={submintHandler} onClose={handleModalClose} />
+        {/* <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <DatePicker
             value={selectedStartDate}
             onChange={(newValue) => setSelectedStartDate(newValue)}
@@ -454,21 +448,29 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
             onChange={(event) => dispatchClientState({ type: ActionType.SET_NAME, payload: event.target.value })}
           />
 
-          <TextField
-            id="reservation-client-phone"
-            label="Telefonszám"
-            type="text"
-            value={clientState.phone}
-            onChange={(event) => dispatchClientState({ type: ActionType.SET_PHONE, payload: event.target.value })}
-          />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              sx={{ flexGrow: 1 }}
+              id="reservation-client-phone"
+              label="Telefonszám"
+              type="text"
+              value={clientState.phone}
+              onChange={(event) => dispatchClientState({ type: ActionType.SET_PHONE, payload: event.target.value })}
+            />
+            <ExternalActionButton type="tel" value={clientState.phone} />
+          </Box>
 
-          <TextField
-            id="reservation-client-email"
-            label="E-mail cím"
-            type="email"
-            value={clientState.email}
-            onChange={(event) => dispatchClientState({ type: ActionType.SET_EMAIL, payload: event.target.value })}
-          />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              sx={{ flexGrow: 1 }}
+              id="reservation-client-email"
+              label="E-mail cím"
+              type="email"
+              value={clientState.email}
+              onChange={(event) => dispatchClientState({ type: ActionType.SET_EMAIL, payload: event.target.value })}
+            />
+            <ExternalActionButton type="mailto" value={clientState.email} />
+          </Box>
 
           <TextField
             id="reservation-client-address"
@@ -477,8 +479,8 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
             value={clientState.address}
             onChange={(event) => dispatchClientState({ type: ActionType.SET_ADDRESS, payload: event.target.value })}
           />
-        </Box>
-      </EditorModal>
+        </Box> */}
+      </AnimatedModal>
     </>
   );
 };

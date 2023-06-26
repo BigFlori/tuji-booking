@@ -1,26 +1,22 @@
-import { Box, Button, Fade, IconButton, Slide, Theme, Typography, useMediaQuery } from "@mui/material";
-import LayoutModal from "./styled/LayoutModal";
+import { Box, Button, IconButton, Theme, Typography, useMediaQuery } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 
-type EditorModalProps = {
+interface ModalControlsProps {
   children?: React.ReactNode;
-  open: boolean;
-  onClose: () => void;
-  //onSave: () => void;
   title: string;
-  buttonProps?: {
+  onClose: () => void;
+  saveButtonProps?: {
     type?: "submit" | "button";
     onClick?: () => void;
   };
-};
+}
 
-const EditorModal: React.FC<EditorModalProps> = (props: EditorModalProps) => {
+const ModalControls: React.FC<ModalControlsProps> = (props) => {
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
-
-  const modalContent = (
-    <Box className="modal-container">
+  return (
+    <>
       <Box component="header" className="modal-header">
         <Typography variant="body1" fontWeight="500">
           {props.title}
@@ -30,11 +26,17 @@ const EditorModal: React.FC<EditorModalProps> = (props: EditorModalProps) => {
             <DeleteIcon />
           </IconButton>
           {isMobile ? (
-            <IconButton /*onClick={props.onSave}*/ size="small" color="success" {...props.buttonProps}>
+            <IconButton size="small" color="success" {...props.saveButtonProps}>
               <SaveIcon />
             </IconButton>
           ) : (
-            <Button variant="contained" startIcon={<SaveIcon />} size="small" /*onClick={props.onSave}*/ color="success" {...props.buttonProps}>
+            <Button
+              variant="contained"
+              startIcon={<SaveIcon />}
+              size="small"
+              color="success"
+              {...props.saveButtonProps}
+            >
               Mentés
             </Button>
           )}
@@ -49,31 +51,13 @@ const EditorModal: React.FC<EditorModalProps> = (props: EditorModalProps) => {
           <Button variant="outlined" onClick={props.onClose} color="error" fullWidth>
             Bezár
           </Button>
-          <Button variant="contained" startIcon={<SaveIcon />} /*onClick={props.onSave}*/ color="success" fullWidth {...props.buttonProps}>
+          <Button variant="contained" startIcon={<SaveIcon />} color="success" fullWidth {...props.saveButtonProps}>
             Mentés
           </Button>
         </Box>
       )}
-    </Box>
-  );
-
-  return (
-    <LayoutModal
-      open={props.open}
-      onClose={props.onClose}
-      aria-labelledby="editor-modal-title"
-      aria-describedby="editor-modal-description"
-      closeAfterTransition
-    >
-      {isMobile ? (
-        <Slide in={props.open} direction="left" mountOnEnter unmountOnExit>
-          {modalContent}
-        </Slide>
-      ) : (
-        <Fade in={props.open}>{modalContent}</Fade>
-      )}
-    </LayoutModal>
+    </>
   );
 };
 
-export default EditorModal;
+export default ModalControls;
