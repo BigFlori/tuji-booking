@@ -51,7 +51,7 @@ export interface ReservationEditFormValues {
 
 const dayjsSchema = yup.mixed().test("isDayjs", "Érvénytelen dátum", (value) => dayjs.isDayjs(value));
 
-const clientOptionSchema = yup.object({
+const clientOptionSchema = yup.object<ClientOption>({
   label: yup.string().required(),
   clientId: yup.string().required(),
 });
@@ -64,13 +64,13 @@ const validationSchema = yup
     fullPrice: yup
       .number()
       .transform((value) => (isNaN(value) ? 0 : value))
-      .optional(),
+      .required(),
     depositPrice: yup
       .number()
       .transform((value) => (isNaN(value) ? 0 : value))
-      .optional(),
+      .required(),
     comment: yup.string().optional(),
-    selectedClientOption: clientOptionSchema.optional(),
+    selectedClientOption: clientOptionSchema.required(),
     clientName: yup.string().optional(),
     clientPhone: yup.string().optional(),
     clientEmail: yup.string().email().optional(),
@@ -119,8 +119,8 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
     formState: { errors },
   } = useForm<ReservationEditFormValues>({
     defaultValues: {
-      startDate: props.reservation.startDate,
-      endDate: props.reservation.endDate,
+      startDate: dayjs(props.reservation.startDate),
+      endDate: dayjs(props.reservation.endDate),
       paymentState: props.reservation.paymentState,
       fullPrice: props.reservation.fullPrice,
       depositPrice: props.reservation.depositPrice,
@@ -131,7 +131,7 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
       clientEmail: reservationClient.email ? reservationClient.email : "",
       clientAddress: reservationClient.address ? reservationClient.address : "",
     },
-    resolver: yupResolver(validationSchema),
+    //resolver: yupResolver(validationSchema),
   });
 
   const startDate = watch("startDate");

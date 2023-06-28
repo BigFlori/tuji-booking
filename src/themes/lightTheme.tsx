@@ -36,9 +36,9 @@ declare module "@mui/material/styles" {
     blocked: Palette["primary"];
   }
   interface PaletteOptions {
-    notPaid: PaletteOptions["primary"];
-    depositPaid: PaletteOptions["primary"];
-    fullPaid: PaletteOptions["primary"];
+    notPaid?: PaletteOptions["primary"];
+    depositPaid?: PaletteOptions["primary"];
+    fullPaid?: PaletteOptions["primary"];
     cancelled?: PaletteOptions["primary"];
     blocked?: PaletteOptions["primary"];
   }
