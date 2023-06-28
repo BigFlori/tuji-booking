@@ -3,7 +3,6 @@ import { Button, ButtonProps } from "@mui/material";
 import { red } from "@mui/material/colors";
 
 const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
-  background: red[400],
   position: "absolute",
   height: "60%",
   top: "50%",
@@ -17,14 +16,15 @@ const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
   fontWeight: "bold",
   fontFamily: "Roboto",
   textTransform: "none",
-  color: theme.palette.getContrastText(red[300]),
   outline: "none",
   minWidth: 0,
   fontSize: 15,
   boxShadow: theme.shadows[4],
-  "&:hover": {
-    background: red[500],
-  },
+  //background: red[400],
+  color: theme.palette.getContrastText(red[300]),
+  // "&:hover": {
+  //   background: red[500],
+  // },
 }));
 
 export default ReservationButton;

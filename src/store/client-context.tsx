@@ -7,7 +7,7 @@ type ClientContextObject = {
   addClient: (client: Client) => void;
   removeClient: (id: string) => void;
   updateClient: (id: string, client: Client) => void;
-  getClientById: (id?: string) => Client | null;
+  getClientById: (id?: string) => Client | undefined;
 };
 
 export const ClientContext = React.createContext<ClientContextObject>({
@@ -16,7 +16,7 @@ export const ClientContext = React.createContext<ClientContextObject>({
   addClient: () => {},
   removeClient: () => {},
   updateClient: () => {},
-  getClientById: () => null,
+  getClientById: () => undefined,
 });
 
 const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
@@ -50,7 +50,6 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
 
   const addClient = (client: Client) => {
     setClients((prevClients) => {
-      console.log("addClient", client, "prevClients", prevClients);
       return [...prevClients, client];
     });
   };
@@ -65,7 +64,6 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
     setClients((prevClients) => {
       return prevClients.map((prevClient) => {
         if (prevClient.id === id) {
-          console.log("updateClient", client, "prevClient", prevClient);
           return client;
         }
         return prevClient;
@@ -75,9 +73,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
 
   const getClientById = (id?: string) => {
     if (!id) {
-      return null;
+      return undefined;
     }
-    return clients.find((client) => client.id === id) || null;
+    return clients.find((client) => client.id === id) || undefined;
   };
 
   const context: ClientContextObject = {

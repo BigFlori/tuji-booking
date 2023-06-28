@@ -1,10 +1,28 @@
-import Head from 'next/head'
-import { Inter } from 'next/font/google'
-import Calendar from '@/components/Calendar/Calendar'
+import Head from "next/head";
+import { Inter } from "next/font/google";
+import Calendar from "@/components/Calendar/Calendar";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useContext, useState } from "react";
+import { Button, TextField } from "@mui/material";
+import { ReservationContext } from "@/store/reservation-context";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
+  const [group, setGroup] = useState<string>("");
+  const reservationCtx = useContext(ReservationContext);
+
+  const test: dayjs.Dayjs[] = [
+    dayjs("2023-06-01"),
+    dayjs("2023-06-02"),
+    dayjs("2023-06-03"),
+    dayjs("2023-06-04"),
+    dayjs("2023-06-05"),
+    dayjs("2023-06-06"),
+  ];
+
   return (
     <>
       <Head>
@@ -14,6 +32,27 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Calendar />
+      <DatePicker
+        value={date}
+        onChange={(newDate) => {
+          setDate(newDate);
+        }}
+        shouldDisableDate={(date) => test.find((testDate) => testDate.isSame(date)) !== undefined}
+      />
+
+      <TextField
+        value={group}
+        onChange={(event) => {
+          setGroup(event.target.value);
+        }}
+      />
+
+      <Button variant="contained" onClick={() => {
+        console.log(reservationCtx.getLatestReservation(group));
+        
+      }}>
+        Test
+      </Button>
     </>
-  )
+  );
 }
