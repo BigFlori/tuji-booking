@@ -146,6 +146,7 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
       setValue("clientEmail", client.email ? client.email : "");
       setValue("clientAddress", client.address ? client.address : "");
     } else {
+      setValue("selectedClientOption", notSelectedClientOption);
       setValue("clientName", "");
       setValue("clientPhone", "");
       setValue("clientEmail", "");
@@ -217,10 +218,11 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
                     dayjs(day).isSame(startDate) ||
                     reservationCtx.shouldDateBeDisabled(day, props.reservation, "endDate") ||
                     (day.isAfter(latestReservation?.endDate) &&
-                      !day.isAfter(field.value) &&
+                      // !day.isAfter(field.value) &&
                       !day.isSame(field.value) &&
-                      !day.isBefore(field.value) &&
-                      latestReservation?.id !== props.reservation.id)
+                      // !day.isBefore(field.value) &&
+                      (latestReservation?.id !== props.reservation.id &&
+                      latestReservation?.groupId === props.reservation.groupId))
                   );
                 }}
                 value={field.value}
@@ -375,14 +377,14 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
               <Autocomplete
                 disablePortal
                 id="selectedClientOption"
-                {...field}
                 options={clientOptions}
                 renderInput={(params) => <TextField {...params} label="Ügyfél" error={!!errors.selectedClientOption} />}
+                isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
+                {...field}
                 onChange={(_, data) => {
                   field.onChange(data!);
-                  updateClientData(clientCtx.getClientById(data!.clientId));
+                  updateClientData(clientCtx.getClientById(data?.clientId));
                 }}
-                isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
               />
             )}
           />

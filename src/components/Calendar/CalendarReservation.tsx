@@ -20,6 +20,37 @@ const countMonthsBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
   return endDate.get("month") - startDate.get("month");
 };
 
+//Minnél nagyobb a szám annál kevesebb karakternél formázza le a nevet
+const CUT_THRESHOLD = 9;
+
+const formatName = (name: string, reservedDays: number) => {
+  if(name.length < reservedDays * CALENDAR_ITEM_WIDTH / CUT_THRESHOLD) return name;
+
+  const nameParts = name.split(" ");
+  if (nameParts.length === 1) {
+    return nameParts[0].charAt(0) + ".";
+  }
+
+  if (nameParts.length === 2) {
+    const shortestNamePart = nameParts.reduce((prev, current) => {
+      return prev.length < current.length ? prev : current;
+    });
+    let shortedName = "";
+    nameParts.forEach((namePart) => {
+      shortedName += namePart === shortestNamePart ? shortestNamePart + " " : namePart.charAt(0) + ". ";
+    });
+    return shortedName;
+  }
+
+  if (nameParts.length > 2) {
+    let shortedName = "";
+    nameParts.forEach((namePart) => {
+      shortedName += namePart.charAt(0) + ".";
+    });
+    return shortedName;
+  }
+};
+
 const CalendarReservation: React.FC<CalendarReserverationProps> = (props: CalendarReserverationProps) => {
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
@@ -32,8 +63,10 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
 
   const [modalOpened, setModalOpened] = useState(false);
 
+  const daysReserved = props.reservation.endDate.diff(props.reservation.startDate, "day");
+
   const width =
-    props.reservation.endDate.diff(props.reservation.startDate, "day") * CALENDAR_ITEM_WIDTH +
+    daysReserved * CALENDAR_ITEM_WIDTH +
     countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP -
     5;
 
@@ -164,10 +197,11 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
           "&:hover": {
             background: darken(getBgColor(theme), 0.08),
           },
+          fontSize: daysReserved === 1 ? "0.7em" : "0.85em",
         })}
         onClick={() => setModalOpened(true)}
       >
-        {reservationClient.name}
+        {formatName(reservationClient.name, daysReserved)}
       </ReservationButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
         <ReservationEditForm

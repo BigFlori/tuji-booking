@@ -1,5 +1,5 @@
 import React from "react";
-import { useContext, useMemo, useState, useEffect } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import CalendarGroupHeader from "./CalendarGroupHeader";
 import CalendarMonth from "./CalendarMonth";

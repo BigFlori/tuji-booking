@@ -19,7 +19,7 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
   const todayRef = useRef<HTMLDivElement>(null);
 
   const isWeekend = props.date.day() === 0 || props.date.day() === 6;
-  const isToday = props.date.isSame(new Date(), "day");
+  const isToday = props.date.isSame(dayjs().format('YYYY-MM-DD'), "day");
 
   const bgColor =
     isToday && !props.isDayRow

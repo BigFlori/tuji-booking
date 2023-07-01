@@ -1,27 +1,27 @@
-import { lightGreen, orange, red } from "@mui/material/colors";
+import { deepPurple, grey, lightGreen, orange, red } from "@mui/material/colors";
 import { ThemeOptions, createTheme } from "@mui/material/styles";
 
 export const themeOptions: ThemeOptions = {
   palette: {
     mode: "light",
     notPaid: {
-      main: red[500],
+      main: red[300],
       contrastText: "#fff",
     },
     depositPaid: {
-      main: orange[400],
+      main: orange[300],
       contrastText: "#fff",
     },
     fullPaid: {
-      main: lightGreen[600],
+      main: lightGreen[400],
       contrastText: "#fff",
     },
     cancelled: {
-      main: "#955ae8",
+      main: deepPurple[300],
       contrastText: "#000",
     },
     blocked: {
-      main: '#7d7d7d',
+      main: grey[400],
       contrastText: '#000',
     }
   },

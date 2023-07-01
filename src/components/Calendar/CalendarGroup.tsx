@@ -1,9 +1,8 @@
-import { useMemo, useContext, useRef, useEffect } from "react";
+import { useMemo, useContext, useRef } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
-import { GroupContext } from "@/store/group-context";
 import { useIntersectionObserver } from "usehooks-ts";
-import CalendarReservation from "../Reservation/CalendarReservation";
+import CalendarReservation from "./CalendarReservation";
 import { ReservationContext } from "@/store/reservation-context";
 import CalendarItemContainer from "./CalendarItemContainer";
 import { CALENDAR_ITEM_HEIGHT } from "@/config/config";

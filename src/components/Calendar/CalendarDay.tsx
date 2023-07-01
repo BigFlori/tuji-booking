@@ -21,6 +21,7 @@ const CalendarDay: React.FC<CalendarDayProps> = (props: CalendarDayProps) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        gap: -2,
       }}
       isDayRow
     >

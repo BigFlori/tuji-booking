@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import CalendarDay from "./CalendarDay";
 import { useMemo, useContext } from "react";
