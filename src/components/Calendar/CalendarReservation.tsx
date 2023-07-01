@@ -77,59 +77,10 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
   const handleModalClose = () => {
     setModalOpened(false);
   };
-  /*
-  const saveReservationHandler = () => {
-    if (!selectedStartDate || !selectedEndDate) return;
-
-    const paymentState: PaymentState | undefined = Object.values(PaymentState).find(
-      (state) => state === selectedPaymentState
-    );
-
-    if (!paymentState) return;
-
-    const reservation: Reservation = {
-      ...props.reservation,
-      startDate: selectedStartDate,
-      endDate: selectedEndDate,
-      paymentState: paymentState,
-      fullPrice: Number(fullPrice),
-      depositPrice: Number(depositPrice),
-      comment: comment,
-      clientId: clientState.id,
-    };
-    console.log(`${clientState.id} ${clientState.name}`);
-
-    if (clientState.id === "new" && clientState.name) {
-      //Új ügyfél létrehozása
-      const client: Client = {
-        id: (clientCtx.clients.length + 1).toString(),
-        name: clientState.name,
-        phone: clientState.phone,
-        email: clientState.email,
-        address: clientState.address,
-      };
-      clientCtx.addClient(client);
-      reservation.clientId = client.id;
-    } else {
-      //Ügyfél adatainak frissítése
-      const client: Client = {
-        id: clientState.id,
-        name: clientState.name,
-        phone: clientState.phone,
-        email: clientState.email,
-        address: clientState.address,
-      };
-      clientCtx.updateClient(client.id, client);
-    }
-    setSelectedClientOption({ id: clientState.id, label: clientState.name });
-    reservationCtx.updateReservation(props.reservation.id, reservation);
-
-    setModalOpened(false);
-  };*/
 
   const submintHandler: SubmitHandler<ReservationEditFormValues> = (data) => {
-    console.log("saveHandler");
-    console.log(data);
+    // console.log("saveHandler");
+    // console.log(data);
 
     const paymentState = Object.values(PaymentState).find((state) => state === data.paymentState);
     if (!paymentState) return;
@@ -145,7 +96,7 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
       };
       clientCtx.addClient(client);
       data.selectedClientOption.clientId = client.id;
-    } else if (data.selectedClientOption.clientId !== "not-selected") {
+    } else if (data.selectedClientOption.clientId !== "not-selected" && data.clientName) {
       //Ügyfél adatainak frissítése
       const client: Client = {
         id: data.selectedClientOption.clientId,

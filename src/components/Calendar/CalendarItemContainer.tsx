@@ -32,8 +32,8 @@ const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
   useEffect(() => {
     if (isToday && props.isDayRow) {
       todayRef.current?.scrollIntoView({
-        block: "center",
-        inline: "center",
+        block: "start",
+        inline: "start",
       });
     }
   }, []);

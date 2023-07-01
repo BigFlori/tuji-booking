@@ -21,12 +21,11 @@ const CalendarDay: React.FC<CalendarDayProps> = (props: CalendarDayProps) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        gap: -2,
       }}
       isDayRow
     >
       <Typography fontSize={CALENDAR_HEADER_DAY_NAME_FONTSIZE}>{formattedDateName}</Typography>
-      <Typography variant='h6' fontWeight={"bold"} fontSize={CALENDAR_HEADER_DAY_NUMBER_FONTSIZE}>
+      <Typography variant='h6' fontWeight={500} fontSize={CALENDAR_HEADER_DAY_NUMBER_FONTSIZE}>
         {formattedDateDay}
       </Typography>
     </CalendarItemContainer>

@@ -39,44 +39,44 @@ export interface ReservationEditFormValues {
   startDate: dayjs.Dayjs;
   endDate: dayjs.Dayjs;
   paymentState: string;
-  fullPrice: number;
-  depositPrice: number;
-  comment: string;
+  fullPrice?: number;
+  depositPrice?: number;
+  comment?: string;
   selectedClientOption: ClientOption;
-  clientName: string;
-  clientPhone: string;
-  clientEmail: string;
-  clientAddress: string;
+  clientName?: string;
+  clientPhone?: string;
+  clientEmail?: string;
+  clientAddress?: string;
 }
 
-const dayjsSchema = yup.mixed().test("isDayjs", "Érvénytelen dátum", (value) => dayjs.isDayjs(value));
+const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dátum", (value) => {
+  return dayjs.isDayjs(value);
+});
 
-const clientOptionSchema = yup.object<ClientOption>({
+const clientOptionSchema: yup.ObjectSchema<ClientOption> = yup.object().shape({
   label: yup.string().required(),
   clientId: yup.string().required(),
 });
 
-const validationSchema = yup
-  .object({
-    startDate: dayjsSchema.required(),
-    endDate: dayjsSchema.required(),
-    paymentState: yup.string().required(),
-    fullPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required(),
-    depositPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required(),
-    comment: yup.string().optional(),
-    selectedClientOption: clientOptionSchema.required(),
-    clientName: yup.string().optional(),
-    clientPhone: yup.string().optional(),
-    clientEmail: yup.string().email().optional(),
-    clientAddress: yup.string().optional(),
-  })
-  .required();
+const validationSchema: yup.ObjectSchema<ReservationEditFormValues> = yup.object().shape({
+  startDate: dayjsSchema.required("Kezdő dátum megadása kötelező"),
+  endDate: dayjsSchema.required("Záró dátum megadása kötelező"),
+  paymentState: yup.string().required("Fizetési állapot megadása kötelező"),
+  fullPrice: yup
+    .number()
+    .transform((value) => (isNaN(value) ? 0 : value))
+    .optional(),
+  depositPrice: yup
+    .number()
+    .transform((value) => (isNaN(value) ? 0 : value))
+    .optional(),
+  comment: yup.string().optional(),
+  selectedClientOption: clientOptionSchema.required(),
+  clientName: yup.string().optional(),
+  clientPhone: yup.string().optional(),
+  clientEmail: yup.string().email().optional(),
+  clientAddress: yup.string().optional(),
+});
 
 const notSelectedClientOption: ClientOption = {
   label: "Nincs kiválasztva",
@@ -84,7 +84,7 @@ const notSelectedClientOption: ClientOption = {
 };
 
 const clientToOption = (client?: Client): ClientOption => {
-  if (!client) return notSelectedClientOption;
+  if (!client || client.id === "not-selected") return notSelectedClientOption;
   return {
     label: client.name,
     clientId: client.id,
@@ -131,7 +131,7 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
       clientEmail: reservationClient.email ? reservationClient.email : "",
       clientAddress: reservationClient.address ? reservationClient.address : "",
     },
-    //resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema),
   });
 
   const startDate = watch("startDate");
@@ -140,7 +140,7 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
   const showPayToGo = fullPrice && depositPrice && fullPrice > depositPrice;
 
   const updateClientData = (client?: Client) => {
-    if (client) {
+    if (client && client.id !== "not-selected") {
       setValue("clientName", client.name);
       setValue("clientPhone", client.phone ? client.phone : "");
       setValue("clientEmail", client.email ? client.email : "");
@@ -221,8 +221,8 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
                       // !day.isAfter(field.value) &&
                       !day.isSame(field.value) &&
                       // !day.isBefore(field.value) &&
-                      (latestReservation?.id !== props.reservation.id &&
-                      latestReservation?.groupId === props.reservation.groupId))
+                      latestReservation?.id !== props.reservation.id &&
+                      latestReservation?.groupId === props.reservation.groupId)
                   );
                 }}
                 value={field.value}
@@ -245,9 +245,9 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
                     value="NOT_PAID"
                     control={
                       <Radio
-                        color="error"
+                        color="notPaid"
                         sx={(theme) => ({
-                          color: theme.palette.error.main,
+                          color: theme.palette.notPaid.main,
                         })}
                       />
                     }
@@ -257,9 +257,9 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
                     value="DEPOSIT_PAID"
                     control={
                       <Radio
-                        color="warning"
+                        color="depositPaid"
                         sx={(theme) => ({
-                          color: theme.palette.warning.main,
+                          color: theme.palette.depositPaid.main,
                         })}
                       />
                     }
@@ -269,9 +269,9 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
                     value="FULL_PAID"
                     control={
                       <Radio
-                        color="success"
+                        color="fullPaid"
                         sx={(theme) => ({
-                          color: theme.palette.success.main,
+                          color: theme.palette.fullPaid.main,
                         })}
                       />
                     }
@@ -352,10 +352,12 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
             name="payToGo"
             label="Fizetendő a helyszínen"
             type="number"
-            disabled
             value={showPayToGo ? fullPrice - depositPrice : 0}
             InputProps={{
               endAdornment: <InputAdornment position="end">Ft</InputAdornment>,
+            }}
+            onChange={(e) => {
+              return;
             }}
           />
 
@@ -381,6 +383,7 @@ const ReservationEditForm: React.FC<ReservationEditFormProps> = (props) => {
                 renderInput={(params) => <TextField {...params} label="Ügyfél" error={!!errors.selectedClientOption} />}
                 isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
                 {...field}
+                value={field.value}
                 onChange={(_, data) => {
                   field.onChange(data!);
                   updateClientData(clientCtx.getClientById(data?.clientId));
