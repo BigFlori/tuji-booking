@@ -32,6 +32,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
     { id: "3", title: "Group 3", state: GroupState.ACTIVE, type: GroupType.HOUSE },
     { id: "4", title: "Group 4", state: GroupState.SOLD, type: GroupType.CAR },
     { id: "5", title: "Group 5", state: GroupState.IN_SERVICE, type: GroupType.CAR },
+    { id: "6", title: "Group 6", state: GroupState.IN_SERVICE, type: GroupType.CAR },
   ]);
 
   const addGroup = (group: Group) => {
