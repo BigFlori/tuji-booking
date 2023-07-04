@@ -3,20 +3,22 @@ import Group from "@/models/group/group-model";
 import GroupState from "@/models/group/group-state-model";
 import GroupType from "@/models/group/group-type-model";
 
-type GroupsContextObject = {
+interface IGroupsContextObject {
   groups: Group[];
   setGroups: (groups: Group[]) => void;
   addGroup: (group: Group) => void;
   removeGroup: (id: string) => void;
   updateGroup: (id: string, group: Group) => void;
+  getGroup: (id: string) => Group | undefined;
 };
 
-export const GroupContext = React.createContext<GroupsContextObject>({
+export const GroupContext = React.createContext<IGroupsContextObject>({
   groups: [],
   setGroups: () => {},
   addGroup: () => {},
   removeGroup: () => {},
   updateGroup: () => {},
+  getGroup: () => undefined,
 });
 
 const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
@@ -58,12 +60,17 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
     });
   };
 
-  const context: GroupsContextObject = {
+  const getGroup = (id: string) => {
+    return groups.find((group) => group.id === id);
+  };
+
+  const context: IGroupsContextObject = {
     groups,
     setGroups,
     addGroup,
     removeGroup,
     updateGroup,
+    getGroup,
   };
 
   return <GroupContext.Provider value={context}>{props.children}</GroupContext.Provider>;

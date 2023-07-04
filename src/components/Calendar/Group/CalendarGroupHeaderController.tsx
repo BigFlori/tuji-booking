@@ -1,14 +1,14 @@
 import { CALENDAR_GROUP_WIDTH } from "@/config/config";
-import GroupHeaderButton from "../UI/styled/GroupHeaderButton";
+import GroupHeaderButton from "../../UI/styled/GroupHeaderButton";
 import MenuIcon from "@mui/icons-material/Menu";
 
-type CalendarGroupHeaderControllerProps = {
+interface ICalendarGroupHeaderControllerProps {
   isExpanded: boolean;
   toggleIsExpanded: () => void;
 };
 
-const CalendarGroupHeaderController: React.FC<CalendarGroupHeaderControllerProps> = (
-  props: CalendarGroupHeaderControllerProps
+const CalendarGroupHeaderController: React.FC<ICalendarGroupHeaderControllerProps> = (
+  props: ICalendarGroupHeaderControllerProps
 ) => {
   return (
     <GroupHeaderButton

@@ -1,7 +1,7 @@
 import Client from "@/models/client-model";
 import React from "react";
 
-type ClientContextObject = {
+interface IClientContextObject {
   clients: Client[];
   setClients: (clients: Client[]) => void;
   addClient: (client: Client) => void;
@@ -10,7 +10,7 @@ type ClientContextObject = {
   getClientById: (id?: string) => Client | undefined;
 };
 
-export const ClientContext = React.createContext<ClientContextObject>({
+export const ClientContext = React.createContext<IClientContextObject>({
   clients: [],
   setClients: () => {},
   addClient: () => {},
@@ -78,7 +78,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
     return clients.find((client) => client.id === id) || undefined;
   };
 
-  const context: ClientContextObject = {
+  const context: IClientContextObject = {
     clients,
     setClients,
     addClient,

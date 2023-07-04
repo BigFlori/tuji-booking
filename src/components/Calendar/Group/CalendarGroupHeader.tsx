@@ -3,28 +3,27 @@ import { GroupContext } from "@/store/group-context";
 import Typography from "@mui/material/Typography";
 import Group from "@/models/group/group-model";
 import { CALENDAR_GROUP_WIDTH } from "@/config/config";
-import GroupHeaderButton from "../UI/styled/GroupHeaderButton";
+import GroupHeaderButton from "../../UI/styled/GroupHeaderButton";
 import { Box } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupState from "@/models/group/group-state-model";
 import GroupType from "@/models/group/group-type-model";
-
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import HomeIcon from "@mui/icons-material/Home";
 import TaxiAlert from "@mui/icons-material/Person";
-import AnimatedModal from "../UI/Modal/AnimatedModal";
-import GroupEditForm, { GroupEditFormValues } from "../Forms/GroupEditForm";
+import AnimatedModal from "../../UI/Modal/AnimatedModal";
+import GroupEditForm, { IGroupEditFormValues } from "../../Forms/GroupEditForm";
 import { SubmitHandler } from "react-hook-form";
 
-type CalendarGroupHeaderProps = {
+interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
   toggleIsExpanded?: () => void;
   group: Group;
   isLast?: boolean;
 };
 
-const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: CalendarGroupHeaderProps) => {
+const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHeaderProps) => {
   const groupCtx = useContext(GroupContext);
 
   const [modalOpened, setModalOpened] = useState(false);
@@ -50,7 +49,7 @@ const CalendarGroupHeader: React.FC<CalendarGroupHeaderProps> = (props: Calendar
     }
   };
 
-  const submitHandler: SubmitHandler<GroupEditFormValues> = (data) => {
+  const submitHandler: SubmitHandler<IGroupEditFormValues> = (data) => {
     //console.log(data);
 
     const groupType = Object.values(GroupType).find((type) => type === data.type);

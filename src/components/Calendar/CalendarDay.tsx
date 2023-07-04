@@ -3,12 +3,12 @@ import dayjs from "dayjs";
 import CalendarItemContainer from "./CalendarItemContainer";
 import { CALENDAR_HEADER_DAY_NAME_FONTSIZE, CALENDAR_HEADER_DAY_NUMBER_FONTSIZE } from "@/config/config";
 
-type CalendarDayProps = {
+interface ICalendarDayProps {
   date: dayjs.Dayjs;
   isLast?: boolean;
 };
 
-const CalendarDay: React.FC<CalendarDayProps> = (props: CalendarDayProps) => {
+const CalendarDay: React.FC<ICalendarDayProps> = (props: ICalendarDayProps) => {
   const formattedDateName = props.date.format("ddd");
   const formattedDateDay = props.date.format("DD");
 

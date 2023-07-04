@@ -3,18 +3,25 @@ import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
 import PaymentState from "@/models/reservation/payment-state-model";
 
-type ReservationContextObject = {
+interface IReservationContextObject {
   reservations: Reservation[];
   setReservations: (reservations: Reservation[]) => void;
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
   updateReservation: (id: string, reservation: Reservation) => void;
   findReservationByDate: (date: dayjs.Dayjs, groupId: string) => Reservation[];
-  shouldDateBeDisabled: (date: dayjs.Dayjs, reservation: Reservation, type: "startDate" | "endDate") => boolean;
+  shouldDateBeDisabled: (
+    date: dayjs.Dayjs,
+    type: "startDate" | "endDate",
+    groupId: string,
+    reservationId?: string
+  ) => boolean;
   getLatestReservation: (groupId: string) => Reservation | null;
-};
+  getNextReservation: (startDate: dayjs.Dayjs, groupId: string) => Reservation | null;
+  canReserve: (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs, groupId: string) => boolean;
+}
 
-export const ReservationContext = React.createContext<ReservationContextObject>({
+export const ReservationContext = React.createContext<IReservationContextObject>({
   reservations: [],
   setReservations: () => {},
   addReservation: () => {},
@@ -23,7 +30,19 @@ export const ReservationContext = React.createContext<ReservationContextObject>(
   findReservationByDate: () => [],
   shouldDateBeDisabled: () => false,
   getLatestReservation: () => null,
+  getNextReservation: () => null,
+  canReserve: () => true,
 });
+
+const generateDatesBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
+  const dates = [];
+  let currentDate = startDate;
+  while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
+    dates.push(currentDate);
+    currentDate = currentDate.add(1, "day");
+  }
+  return dates;
+};
 
 const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [reservations, setReservations] = React.useState<Reservation[]>([
@@ -160,25 +179,26 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const shouldDateBeDisabled = (
     date: dayjs.Dayjs,
-    reservation: Reservation,
-    type: "startDate" | "endDate"
+    type: "startDate" | "endDate",
+    groupId: string,
+    reservationId?: string
   ): boolean => {
-    const foundReservations = findReservationByDate(date, reservation.groupId);
+    const foundReservations = findReservationByDate(date, groupId);
 
     if (foundReservations.length === 0) return false;
-    //true ha startdate-t nézzük, false ha enddate-t
+
     if (foundReservations.length === 2) {
       if (type === "startDate") {
         return (
           !(foundReservations[0].endDate.isSame(date) || foundReservations[1].endDate.isSame(date)) ||
-          (foundReservations[0].startDate.isSame(date) && foundReservations[0].id !== reservation.id) ||
-          (foundReservations[1].startDate.isSame(date) && foundReservations[1].id !== reservation.id)
+          (foundReservations[0].startDate.isSame(date) && foundReservations[0].id !== reservationId) ||
+          (foundReservations[1].startDate.isSame(date) && foundReservations[1].id !== reservationId)
         );
       } else {
         return (
           !(foundReservations[0].startDate.isSame(date) || foundReservations[1].startDate.isSame(date)) ||
-          (foundReservations[0].endDate.isSame(date) && foundReservations[0].id !== reservation.id) ||
-          (foundReservations[1].endDate.isSame(date) && foundReservations[1].id !== reservation.id)
+          (foundReservations[0].endDate.isSame(date) && foundReservations[0].id !== reservationId) ||
+          (foundReservations[1].endDate.isSame(date) && foundReservations[1].id !== reservationId)
         );
       }
     }
@@ -186,9 +206,9 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     const foundReservation = foundReservations[0];
 
     if (type === "startDate") {
-      return !foundReservation.endDate.isSame(date) && foundReservation.id !== reservation.id;
+      return !foundReservation.endDate.isSame(date) && foundReservation.id !== reservationId;
     } else {
-      return !foundReservation.startDate.isSame(date) && foundReservation.id !== reservation.id;
+      return !foundReservation.startDate.isSame(date) && foundReservation.id !== reservationId;
     }
   };
 
@@ -202,7 +222,42 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
-  const context: ReservationContextObject = {
+  const getNextReservation = (startDate: dayjs.Dayjs, groupId: string): Reservation | null => {
+    const reservationsFound = reservations.filter(
+      (reservation) =>
+        reservation.groupId === groupId &&
+        (reservation.startDate.isAfter(startDate))
+    );
+
+    if (reservationsFound.length === 0) return null;
+
+    return reservationsFound.reduce((prev, current) => {
+      return prev.startDate.isBefore(current.startDate) ? prev : current;
+    });
+  };
+
+  //1. Megnézi, hogy a két dátum között van-e már foglalás
+  //2. Megnézi, hogy a két dátum között van-e már foglalás, aminek a kezdő vagy záró dátuma megegyezik a kezdő vagy záró dátummal
+  const canReserve = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs, groupId: string): boolean => {
+    const dates = generateDatesBetween(startDate, endDate);
+    //Kivesszük a záró dátumot, mert azt nem kell vizsgálni
+    dates.pop();
+
+    let foundAnyReservation = false;
+    dates.forEach((date) => {
+      const foundReservations = findReservationByDate(date, groupId);
+      console.log(date);
+      console.log(foundReservations);
+
+      if (foundReservations.length > 0) {
+        foundAnyReservation = true;
+        return;
+      }
+    });
+    return !foundAnyReservation;
+  };
+
+  const context: IReservationContextObject = {
     reservations,
     setReservations,
     addReservation,
@@ -211,6 +266,8 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     findReservationByDate,
     shouldDateBeDisabled,
     getLatestReservation,
+    getNextReservation,
+    canReserve,
   };
 
   return <ReservationContext.Provider value={context}>{props.children}</ReservationContext.Provider>;

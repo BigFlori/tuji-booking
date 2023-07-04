@@ -1,13 +1,13 @@
 import React from "react";
 import { useContext, useMemo, useState } from "react";
 import { Box } from "@mui/material";
-import CalendarGroupHeader from "./CalendarGroupHeader";
+import CalendarGroupHeader from "./Group/CalendarGroupHeader";
 import CalendarMonth from "./CalendarMonth";
 import { GroupContext } from "@/store/group-context";
-import CalendarControls from "./CalendarControls";
+import CalendarControls from "./Controls/CalendarControls";
 import dayjs from "dayjs";
 import { CALENDAR_MONTH_GAP } from "@/config/config";
-import CalendarGroupHeaderController from "./CalendarGroupHeaderController";
+import CalendarGroupHeaderController from "./Group/CalendarGroupHeaderController";
 
 const months = Array.from(Array(12).keys());
 
@@ -75,7 +75,7 @@ const Calendar: React.FC<{}> = () => {
         activeMonth={scrolledMonth}
         year={year}
       />
-      <Box sx={{ display: "flex", marginTop: 1 }}>
+      <Box sx={{ display: "flex" }}>
         <Box>
           <CalendarGroupHeaderController isExpanded={isGroupExpanded} toggleIsExpanded={toggleGroupExpand} />
           {generateGroupHeaders}

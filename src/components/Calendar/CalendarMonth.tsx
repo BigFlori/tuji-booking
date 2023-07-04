@@ -4,10 +4,10 @@ import dayjs from "dayjs";
 import CalendarDay from "./CalendarDay";
 import { useMemo, useContext } from "react";
 import { GroupContext } from "@/store/group-context";
-import CalendarGroup from "./CalendarGroup";
+import CalendarGroup from "./Group/CalendarGroup";
 import "intersection-observer";
 
-type CalendarMonthProps = {
+interface ICalendarMonthProps {
   month: number;
   year: number;
   today: number;
@@ -15,9 +15,7 @@ type CalendarMonthProps = {
 };
 
 //Egy teljes hónapot renderel, a napokat és a csoportokat beleértve a csoportok sorait és celláit
-const CalendarMonth: React.FC<CalendarMonthProps> = (
-  props: CalendarMonthProps
-) => {
+const CalendarMonth: React.FC<ICalendarMonthProps> = (props: ICalendarMonthProps) => {
   const groupCtx = useContext(GroupContext);
 
   const monthDate = useMemo(() => {
@@ -36,16 +34,10 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
     const days = [];
     for (let i = 0; i < dates.length; i++) {
       const day = dates[i];
-      days.push(
-        <CalendarDay
-          key={day.toString()}
-          date={day}
-          isLast={i === dates.length - 1}
-        />
-      );
+      days.push(<CalendarDay key={day.toString()} date={day} isLast={i === dates.length - 1} />);
     }
     return days;
-  }, [props.month, props.year, props.today]);
+  }, [monthDate]);
 
   //Csoportok generálása
   const generateGroups = useMemo(() => {
@@ -62,7 +54,7 @@ const CalendarMonth: React.FC<CalendarMonthProps> = (
       );
     }
     return groups;
-  }, [groupCtx.groups, props.month, props.year, props.today]);
+  }, [groupCtx.groups, monthDate]);
 
   return (
     <Box

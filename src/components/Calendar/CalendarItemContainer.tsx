@@ -3,9 +3,8 @@ import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { SxProps, Theme, useTheme } from "@mui/material/styles";
 import { CALENDAR_ITEM_WIDTH, CALENDAR_ITEM_HEIGHT } from "@/config/config";
-import { grey } from "@mui/material/colors";
 
-type CalendarItemContainerProps = {
+interface ICalendarItemContainerProps {
   children?: React.ReactNode;
   date: dayjs.Dayjs;
   isLast?: boolean;
@@ -14,14 +13,12 @@ type CalendarItemContainerProps = {
   sx?: SxProps<Theme>;
 };
 
-const CalendarItemContainer: React.FC<CalendarItemContainerProps> = (
-  props: CalendarItemContainerProps
-) => {
+const CalendarItemContainer: React.FC<ICalendarItemContainerProps> = (props: ICalendarItemContainerProps) => {
   const theme = useTheme();
   const todayRef = useRef<HTMLDivElement>(null);
 
   const isWeekend = props.date.day() === 0 || props.date.day() === 6;
-  const isToday = props.date.isSame(dayjs().format('YYYY-MM-DD'), "day");
+  const isToday = props.date.isSame(dayjs().format("YYYY-MM-DD"), "day");
 
   //Ha a mai nap van kiválasztva, akkor a háttérszín zöld lesz, különben ha hétvége akkor szürke, különben átlátszó
   const bgColor =

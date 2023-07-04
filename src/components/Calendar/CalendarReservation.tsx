@@ -7,12 +7,12 @@ import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import Client from "@/models/client-model";
 import PaymentState from "@/models/reservation/payment-state-model";
-import ReservationEditForm, { ReservationEditFormValues } from "../Forms/ReservationEditForm";
+import ReservationEditForm, { IReservationEditFormValues } from "../Forms/ReservationEditForm";
 import AnimatedModal from "../UI/Modal/AnimatedModal";
 import { SubmitHandler } from "react-hook-form";
 import { Theme, darken } from "@mui/material";
 
-type CalendarReserverationProps = {
+interface ICalendarReserverationProps {
   reservation: Reservation;
 };
 
@@ -51,7 +51,7 @@ const formatName = (name: string, reservedDays: number) => {
   }
 };
 
-const CalendarReservation: React.FC<CalendarReserverationProps> = (props: CalendarReserverationProps) => {
+const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICalendarReserverationProps) => {
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
 
@@ -78,7 +78,7 @@ const CalendarReservation: React.FC<CalendarReserverationProps> = (props: Calend
     setModalOpened(false);
   };
 
-  const submintHandler: SubmitHandler<ReservationEditFormValues> = (data) => {
+  const submintHandler: SubmitHandler<IReservationEditFormValues> = (data) => {
     // console.log("saveHandler");
     // console.log(data);
 

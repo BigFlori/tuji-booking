@@ -2,12 +2,12 @@ import { useMemo, useContext, useRef } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { useIntersectionObserver } from "usehooks-ts";
-import CalendarReservation from "./CalendarReservation";
+import CalendarReservation from "../CalendarReservation";
 import { ReservationContext } from "@/store/reservation-context";
-import CalendarItemContainer from "./CalendarItemContainer";
+import CalendarItemContainer from "../CalendarItemContainer";
 import { CALENDAR_ITEM_HEIGHT } from "@/config/config";
 
-type CalendarGroupProps = {
+interface ICalendarGroupProps {
   children?: React.ReactNode;
   monthDate: dayjs.Dayjs;
   isLastGroup?: boolean;
@@ -15,7 +15,7 @@ type CalendarGroupProps = {
 };
 
 //Minden hónapban renderelődik és a csoportok sorait fogja össze
-const CalendarGroup: React.FC<CalendarGroupProps> = (props: CalendarGroupProps) => {
+const CalendarGroup: React.FC<ICalendarGroupProps> = (props: ICalendarGroupProps) => {
   const reservationCtx = useContext(ReservationContext);
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -36,7 +36,7 @@ const CalendarGroup: React.FC<CalendarGroupProps> = (props: CalendarGroupProps) 
       );
     }
     return items;
-  }, [props.monthDate]);
+  }, [props.monthDate, props.isLastGroup]);
 
   const generateReservations = useMemo(() => {
     const items = [];
@@ -49,10 +49,17 @@ const CalendarGroup: React.FC<CalendarGroupProps> = (props: CalendarGroupProps) 
       }
     }
     return items;
-  }, [reservationCtx.reservations]);
+  }, [reservationCtx.reservations, props.groupId, props.monthDate]);
 
   return (
-    <Box sx={{ display: "flex", position: "relative", height: `${CALENDAR_ITEM_HEIGHT}px` }} ref={ref}>
+    <Box
+      sx={{
+        display: "flex",
+        position: "relative",
+        height: `${CALENDAR_ITEM_HEIGHT}px`,
+      }}
+      ref={ref}
+    >
       {generateReservations}
       {isVisible && generateGroupItems}
     </Box>

@@ -2,13 +2,13 @@ import { Box, Fade, Slide, Theme, useMediaQuery } from "@mui/material";
 import LayoutModal from "../styled/LayoutModal";
 
 
-type AnimatedModalProps = {
+interface IAnimatedModalProps {
   children?: React.ReactNode;
   open: boolean;
   onClose: () => void;
 };
 
-const AnimatedModal: React.FC<AnimatedModalProps> = (props: AnimatedModalProps) => {
+const AnimatedModal: React.FC<IAnimatedModalProps> = (props: IAnimatedModalProps) => {
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
 
   const modalContent = (

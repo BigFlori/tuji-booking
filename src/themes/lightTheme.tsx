@@ -44,6 +44,10 @@ export const themeOptions: ThemeOptions = {
       main: "#fff",
       contrastText: "#000",
     },
+    calendarControls: {
+      main: grey[50],
+      contrastText: "#000",
+    }
   },
 };
 
@@ -59,6 +63,7 @@ declare module "@mui/material/styles" {
     isTodayText: Palette["primary"];
     isWeekend: Palette["primary"];
     isWeekday: Palette["primary"];
+    calendarControls: Palette["primary"];
   }
   interface PaletteOptions {
     notPaid?: PaletteOptions["primary"];
@@ -71,6 +76,7 @@ declare module "@mui/material/styles" {
     isTodayText?: PaletteOptions["primary"];
     isWeekend?: PaletteOptions["primary"];
     isWeekday?: PaletteOptions["primary"];
+    calendarControls?: PaletteOptions["primary"];
   }
 }
 

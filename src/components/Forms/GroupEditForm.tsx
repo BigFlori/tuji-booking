@@ -5,13 +5,13 @@ import ModalControls from "../UI/Modal/ModalControls";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-interface GroupEditFormProps {
+interface IGroupEditFormProps {
   group: Group;
-  onSubmit: (values: GroupEditFormValues) => void;
+  onSubmit: (values: IGroupEditFormValues) => void;
   onClose: () => void;
 }
 
-export interface GroupEditFormValues {
+export interface IGroupEditFormValues {
   title: string;
   description?: string;
   state: string;
@@ -28,19 +28,19 @@ yup.setLocale({
   },
 });
 
-const validationSchema: yup.ObjectSchema<GroupEditFormValues> = yup.object().shape({
+const validationSchema: yup.ObjectSchema<IGroupEditFormValues> = yup.object().shape({
   title: yup.string().max(25).required(),
   description: yup.string().optional(),
   state: yup.string().required("A csoport állapota kötelező"),
   type: yup.string().required("A csoport típusa kötelező"),
 });
 
-const GroupEditForm: React.FC<GroupEditFormProps> = (props: GroupEditFormProps) => {
+const GroupEditForm: React.FC<IGroupEditFormProps> = (props: IGroupEditFormProps) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<GroupEditFormValues>({
+  } = useForm<IGroupEditFormValues>({
     defaultValues: {
       title: props.group.title,
       description: props.group.description,

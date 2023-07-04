@@ -1,10 +1,24 @@
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import Calendar from "@/components/Calendar/Calendar";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useContext, useState } from "react";
+import { Button } from "@mui/material";
+import { ReservationContext } from "@/store/reservation-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const reservationCtx = useContext(ReservationContext);
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
+
+  const test = () => {
+    console.log(reservationCtx.getNextReservation(startDate!, "1"));
+    
+  }
+
   return (
     <>
       <Head>
@@ -14,6 +28,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Calendar />
+
+      {/* <DatePicker value={startDate} onChange={(event) => setStartDate(event)} />
+      <DatePicker value={endDate} onChange={(event) => setEndDate(event)}/>
+      <Button onClick={test}>Test</Button> */}
     </>
   );
 }
