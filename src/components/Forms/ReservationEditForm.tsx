@@ -93,7 +93,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
       }
       startDate = dayjs(startDate);
 
-      return reservationCtx.canReserve(startDate, value, this.parent.groupId);
+      return reservationCtx.canReserve(startDate, value, this.parent.groupId, props.reservation.id);
     });
 
   const canReserveStartDate = yup
@@ -108,7 +108,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
       }
       endDate = dayjs(endDate);
 
-      return reservationCtx.canReserve(value, endDate, this.parent.groupId);
+      return reservationCtx.canReserve(value, endDate, this.parent.groupId, props.reservation.id);
     });
 
   const validationSchema: yup.ObjectSchema<IReservationEditFormValues> = yup.object().shape({
@@ -291,7 +291,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                       selectedGroup.id,
                       props.reservation.id
                     ) ||
-                    (nextReservation && day.isAfter(nextReservation?.startDate)) ||
+                    (nextReservation && nextReservation.id !== props.reservation.id && day.isAfter(nextReservation?.startDate)) ||
                     (day.isAfter(latestReservation?.endDate) && //Ha a vizsgált nap a legutolsó foglalás után van
                       !day.isAfter(field.value) && //Engedélyezi a kiválasztott nap után lévő napokat
                       !day.isSame(field.value) && //Engedélyezi a kiválasztott napot

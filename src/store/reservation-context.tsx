@@ -18,7 +18,7 @@ interface IReservationContextObject {
   ) => boolean;
   getLatestReservation: (groupId: string) => Reservation | null;
   getNextReservation: (startDate: dayjs.Dayjs, groupId: string) => Reservation | null;
-  canReserve: (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs, groupId: string) => boolean;
+  canReserve: (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs, groupId: string, excludedId?: string) => boolean;
 }
 
 export const ReservationContext = React.createContext<IReservationContextObject>({
@@ -236,7 +236,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   //1. Megnézi, hogy a két dátum között van-e már foglalás
   //2. Megnézi, hogy a két dátum között van-e már foglalás, aminek a kezdő vagy záró dátuma megegyezik a kezdő vagy záró dátummal
-  const canReserve = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs, groupId: string): boolean => {
+  const canReserve = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs, groupId: string, excludedId?: string): boolean => {
     const dates = generateDatesBetween(startDate, endDate);
     //Kivesszük a záró dátumot, mert azt nem kell vizsgálni
     dates.pop();
@@ -254,7 +254,8 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       if (
         foundReservations.length === 1 &&
         date.isBefore(foundReservations[0].endDate) &&
-        !date.isSame(foundReservations[0].endDate)
+        !date.isSame(foundReservations[0].endDate) &&
+        foundReservations[0].id !== excludedId
       ) {
         foundAnyReservation = true;
         return;
