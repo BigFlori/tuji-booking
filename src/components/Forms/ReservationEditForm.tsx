@@ -81,31 +81,35 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
     return [NOT_SELECTED_CLIENT_OPTION, ...options];
   }, [clientCtx.clients]);
 
-  const canReserveEndDate = yup.mixed<dayjs.Dayjs>().test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
-    if(!value || !dayjsSchema.isValidSync(value)) {
-      return false;
-    }
-    let startDate = this.parent.startDate;
-    if(!startDate || !dayjsSchema.isValidSync(startDate)) {
-      return false;
-    }
-    startDate = dayjs(startDate);
-  
-    return reservationCtx.canReserve(startDate, value, this.parent.groupId);
-  });
+  const canReserveEndDate = yup
+    .mixed<dayjs.Dayjs>()
+    .test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
+      if (!value || !dayjsSchema.isValidSync(value)) {
+        return false;
+      }
+      let startDate = this.parent.startDate;
+      if (!startDate || !dayjsSchema.isValidSync(startDate)) {
+        return false;
+      }
+      startDate = dayjs(startDate);
 
-  const canReserveStartDate = yup.mixed<dayjs.Dayjs>().test("canReserveStartDate", "Ebben az időszakban van foglalás", function test(value) {
-    if(!value || !dayjsSchema.isValidSync(value)) {
-      return false;
-    }
-    let endDate = this.parent.endDate;
-    if(!endDate || !dayjsSchema.isValidSync(endDate)) {
-      return false;
-    }
-    endDate = dayjs(endDate);
-  
-    return reservationCtx.canReserve(value, endDate, this.parent.groupId);
-  });
+      return reservationCtx.canReserve(startDate, value, this.parent.groupId);
+    });
+
+  const canReserveStartDate = yup
+    .mixed<dayjs.Dayjs>()
+    .test("canReserveStartDate", "Ebben az időszakban van foglalás", function test(value) {
+      if (!value || !dayjsSchema.isValidSync(value)) {
+        return false;
+      }
+      let endDate = this.parent.endDate;
+      if (!endDate || !dayjsSchema.isValidSync(endDate)) {
+        return false;
+      }
+      endDate = dayjs(endDate);
+
+      return reservationCtx.canReserve(value, endDate, this.parent.groupId);
+    });
 
   const validationSchema: yup.ObjectSchema<IReservationEditFormValues> = yup.object().shape({
     groupId: yup.string().required("Csoport megadása kötelező"),
@@ -244,7 +248,8 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                   },
                 }}
                 shouldDisableDate={(day) =>
-                  reservationCtx.shouldDateBeDisabled(day, "startDate", props.reservation.groupId, props.reservation.id)
+                  !selectedGroup ||
+                  reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, props.reservation.id)
                 }
                 value={field.value}
                 inputRef={field.ref}
@@ -275,7 +280,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                 }}
                 shouldDisableDate={(day) => {
                   if (!selectedGroup) return true;
-                  const latestReservation = reservationCtx.getLatestReservation(props.reservation.groupId);
+                  const latestReservation = reservationCtx.getLatestReservation(selectedGroup.id);
                   const nextReservation = reservationCtx.getNextReservation(startDate, selectedGroup.id);
                   return (
                     dayjs(day).isBefore(startDate) ||
@@ -283,7 +288,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                     reservationCtx.shouldDateBeDisabled(
                       day,
                       "endDate",
-                      props.reservation.groupId,
+                      selectedGroup.id,
                       props.reservation.id
                     ) ||
                     (nextReservation && day.isAfter(nextReservation?.startDate)) ||
@@ -292,7 +297,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                       !day.isSame(field.value) && //Engedélyezi a kiválasztott napot
                       !day.isBefore(field.value) && //Engedélyezi a kiválasztott nap előtti napokat
                       latestReservation?.id !== props.reservation.id && //Kizárja a jelenlegi foglalást
-                      latestReservation?.groupId === props.reservation.groupId)
+                      latestReservation?.groupId === selectedGroup.id)
                   );
                 }}
                 value={field.value}
