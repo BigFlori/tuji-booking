@@ -56,9 +56,18 @@ const NewReservation: React.FC<INewReservationProps> = (props: INewReservationPr
     //Új foglalás létrehozása
     const newReservation: Reservation = {
       id: (reservationCtx.reservations.length + 1).toString(),
-      ...data,
+      groupId: data.groupId,
       clientId: data.selectedClientOption.clientId,
+      startDate: data.startDate,
+      startTime: data.startTime,
+      endDate: data.endDate,
+      endTime: data.endTime,
       paymentState: paymentState,
+      fullPrice: data.fullPrice,
+      depositPrice: data.depositPrice,
+      cautionPrice: data.cautionPrice,
+      cautionReturned: data.cautionReturned,
+      comment: data.comment,
     };
 
     reservationCtx.addReservation(newReservation);

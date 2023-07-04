@@ -1,6 +1,7 @@
 import {
   Autocomplete,
   Box,
+  Checkbox,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -26,7 +27,7 @@ import {
 } from "./ClientOption/clientOptionHelper";
 import { useContext, useMemo, useState } from "react";
 import { ClientContext } from "@/store/client-context";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { ReservationContext } from "@/store/reservation-context";
 import Group from "@/models/group/group-model";
 import { GroupContext } from "@/store/group-context";
@@ -43,10 +44,14 @@ interface INewReservationFormProps {
 export interface INewReservationFormValues {
   groupId: string;
   startDate: dayjs.Dayjs;
+  startTime?: dayjs.Dayjs;
   endDate: dayjs.Dayjs;
+  endTime?: dayjs.Dayjs;
   paymentState: string;
   fullPrice: number;
   depositPrice: number;
+  cautionPrice: number;
+  cautionReturned: boolean;
   comment?: string;
   selectedClientOption: IClientOption;
   clientName?: string;
@@ -56,6 +61,7 @@ export interface INewReservationFormValues {
 }
 
 const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dátum", (value) => {
+  if(!value) return true;
   return dayjs.isDayjs(value);
 });
 
@@ -64,36 +70,42 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
   const clientCtx = useContext(ClientContext);
   const groupCtx = useContext(GroupContext);
 
-  const canReserveEndDate = yup.mixed<dayjs.Dayjs>().test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
-    if(!value || !dayjsSchema.isValidSync(value)) {
-      return false;
-    }
-    let startDate = this.parent.startDate;
-    if(!startDate || !dayjsSchema.isValidSync(startDate)) {
-      return false;
-    }
-    startDate = dayjs(startDate);
-  
-    return reservationCtx.canReserve(startDate, value, this.parent.groupId);
-  });
+  const canReserveEndDate = yup
+    .mixed<dayjs.Dayjs>()
+    .test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
+      if (!value || !dayjsSchema.isValidSync(value)) {
+        return false;
+      }
+      let startDate = this.parent.startDate;
+      if (!startDate || !dayjsSchema.isValidSync(startDate)) {
+        return false;
+      }
+      startDate = dayjs(startDate);
 
-  const canReserveStartDate = yup.mixed<dayjs.Dayjs>().test("canReserveStartDate", "Ebben az időszakban van foglalás", function test(value) {
-    if(!value || !dayjsSchema.isValidSync(value)) {
-      return false;
-    }
-    let endDate = this.parent.endDate;
-    if(!endDate || !dayjsSchema.isValidSync(endDate)) {
-      return false;
-    }
-    endDate = dayjs(endDate);
-  
-    return reservationCtx.canReserve(value, endDate, this.parent.groupId);
-  });
-  
+      return reservationCtx.canReserve(startDate, value, this.parent.groupId);
+    });
+
+  const canReserveStartDate = yup
+    .mixed<dayjs.Dayjs>()
+    .test("canReserveStartDate", "Ebben az időszakban van foglalás", function test(value) {
+      if (!value || !dayjsSchema.isValidSync(value)) {
+        return false;
+      }
+      let endDate = this.parent.endDate;
+      if (!endDate || !dayjsSchema.isValidSync(endDate)) {
+        return false;
+      }
+      endDate = dayjs(endDate);
+
+      return reservationCtx.canReserve(value, endDate, this.parent.groupId);
+    });
+
   const validationSchema: yup.ObjectSchema<INewReservationFormValues> = yup.object().shape({
     groupId: yup.string().required("Csoport megadása kötelező"),
     startDate: canReserveStartDate.required("Kezdő dátum megadása kötelező"),
+    startTime: dayjsSchema.optional(),
     endDate: canReserveEndDate.required("Záró dátum megadása kötelező"),
+    endTime: dayjsSchema.optional(),
     paymentState: yup.string().required("Fizetési állapot megadása kötelező"),
     fullPrice: yup
       .number()
@@ -105,6 +117,12 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
       .transform((value) => (isNaN(value) ? 0 : value))
       .required("Előleg megadása kötelező")
       .min(0, "Előleg nem lehet negatív"),
+    cautionPrice: yup
+      .number()
+      .transform((value) => (isNaN(value) ? 0 : value))
+      .required("Kaució megadása kötelező")
+      .min(0, "Kaució nem lehet negatív"),
+    cautionReturned: yup.boolean().required(),
     comment: yup.string().optional(),
     selectedClientOption: CLIENT_OPTION_SCHEMA.required("Ügyfél megadása kötelező"),
     clientName: yup.string().optional(),
@@ -130,10 +148,14 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
     defaultValues: {
       groupId: "",
       startDate: "",
+      startTime: "",
       endDate: "",
+      endTime: "",
       paymentState: PaymentState.NOT_PAID,
       fullPrice: 0,
       depositPrice: 0,
+      cautionPrice: 0,
+      cautionReturned: false,
       comment: "",
       selectedClientOption: NOT_SELECTED_CLIENT_OPTION,
       clientName: "",
@@ -143,12 +165,25 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
     },
     resolver: yupResolver(validationSchema),
   });
-  const calculatePayToGo = (changedFullPrice?: number, changedDepositPrice?: number) => {
-    const fullPrice = changedFullPrice ? changedFullPrice : getValues("fullPrice");
-    const depositPrice = changedDepositPrice ? changedDepositPrice : getValues("depositPrice");
-    return fullPrice > depositPrice ? fullPrice - depositPrice : 0;
+
+  const calculatePayToGo = (
+    changedFullPrice?: number,
+    changedCautionPrice?: number,
+    changedDepositPrice?: number,
+    changedCautionState?: boolean
+  ) => {
+    const fullPrice = changedFullPrice ? changedFullPrice : Number(getValues("fullPrice"));
+    const depositPrice = changedDepositPrice ? changedDepositPrice : Number(getValues("depositPrice"));
+    const cautionPrice = changedCautionPrice ? changedCautionPrice : Number(getValues("cautionPrice"));
+    const cautionReturned = changedCautionState ? changedCautionState : Boolean(getValues("cautionReturned"));
+
+    if (cautionReturned) {
+      return fullPrice > depositPrice ? fullPrice - depositPrice : 0;
+    } else {
+      return fullPrice + cautionPrice > depositPrice ? fullPrice + cautionPrice - depositPrice : 0;
+    }
   };
-  
+
   const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(undefined);
   const [payToGo, setPayToGo] = useState<number>(calculatePayToGo());
 
@@ -166,16 +201,16 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
       setValue("clientAddress", "");
     }
   };
-  
+
   const startDate = watch("startDate");
 
   return (
     <Box
-    component="form"
+      component="form"
       noValidate
       autoComplete="off"
       onSubmit={handleSubmit(props.onSubmit, (error) => console.log("error", error))}
-      >
+    >
       <ModalControls title="Új foglalás" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="body1">Alapinformációk</Typography>
@@ -211,76 +246,108 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
             <FormHelperText error={!!errors.groupId}>{errors.groupId?.message}</FormHelperText>
           </FormControl>
 
-          <Controller
-            name="startDate"
-            control={control}
-            render={({ field }) => (
-              <DatePicker
-                label="Kezdő dátum"
-                orientation="portrait"
-                slotProps={{
-                  toolbar: {
-                    toolbarFormat: "MMMM DD",
-                  },
-                  textField: {
-                    helperText: errors.startDate && errors.startDate.message,
-                    error: !!errors.startDate,
-                    required: true,
-                  },
-                }}
-                shouldDisableDate={(day) => {
-                  if (!selectedGroup) return true;
-                  return reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id);
-                }}
-                value={field.value}
-                inputRef={field.ref}
-                onChange={(date) => {
-                  setValue("endDate", date!.add(1, "day"));
-                  field.onChange(date!);
-                }}
-              />
-            )}
-          />
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  label="Kezdő dátum"
+                  orientation="portrait"
+                  sx={{ flexGrow: 1 }}
+                  slotProps={{
+                    toolbar: {
+                      toolbarFormat: "MMMM DD",
+                    },
+                    textField: {
+                      helperText: errors.startDate && errors.startDate.message,
+                      error: !!errors.startDate,
+                      required: true,
+                    },
+                  }}
+                  shouldDisableDate={(day) => {
+                    if (!selectedGroup) return true;
+                    return reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id);
+                  }}
+                  value={field.value}
+                  inputRef={field.ref}
+                  onChange={(date) => {
+                    setValue("endDate", date!.add(1, "day"));
+                    field.onChange(date!);
+                  }}
+                />
+              )}
+            />
+            <Controller
+              name="startTime"
+              control={control}
+              render={({ field }) => (
+                <TimePicker
+                  label="Kezdő időpont"
+                  orientation="portrait"
+                  value={field.value}
+                  inputRef={field.ref}
+                  onChange={(date) => field.onChange(date!)}
+                />
+              )}
+            />
+          </Box>
 
-          <Controller
-            name="endDate"
-            control={control}
-            render={({ field }) => (
-              <DatePicker
-                label="Záró dátum"
-                orientation="portrait"
-                slotProps={{
-                  toolbar: {
-                    toolbarFormat: "MMMM DD",
-                  },
-                  textField: {
-                    helperText: errors.endDate && errors.endDate.message,
-                    error: !!errors.endDate,
-                    required: true,
-                  },
-                }}
-                shouldDisableDate={(day) => {
-                  if (!selectedGroup) return true;
-                  const latestReservation = reservationCtx.getLatestReservation(selectedGroup.id);
-                  const nextReservation = reservationCtx.getNextReservation(startDate, selectedGroup.id);
-                  return (
-                    dayjs(day).isBefore(startDate) ||
-                    dayjs(day).isSame(startDate) ||
-                    reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id) ||
-                    (nextReservation && day.isAfter(nextReservation?.startDate)) ||
-                    (day.isAfter(latestReservation?.endDate) && //Ha a vizsgált nap a legutolsó foglalás után van
-                      !day.isAfter(field.value) && //Engedélyezi a kiválasztott nap után lévő napokat
-                      !day.isSame(field.value) && //Engedélyezi a kiválasztott napot
-                      !day.isBefore(field.value) && //Engedélyezi a kiválasztott nap előtti napokat
-                      latestReservation?.groupId === selectedGroup.id)
-                  );
-                }}
-                value={field.value}
-                inputRef={field.ref}
-                onChange={(date) => field.onChange(date!)}
-              />
-            )}
-          />
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  label="Záró dátum"
+                  orientation="portrait"
+                  sx={{ flexGrow: 1 }}
+                  slotProps={{
+                    toolbar: {
+                      toolbarFormat: "MMMM DD",
+                    },
+                    textField: {
+                      helperText: errors.endDate && errors.endDate.message,
+                      error: !!errors.endDate,
+                      required: true,
+                    },
+                  }}
+                  shouldDisableDate={(day) => {
+                    if (!selectedGroup) return true;
+                    const latestReservation = reservationCtx.getLatestReservation(selectedGroup.id);
+                    const nextReservation = reservationCtx.getNextReservation(startDate, selectedGroup.id);
+                    return (
+                      dayjs(day).isBefore(startDate) ||
+                      dayjs(day).isSame(startDate) ||
+                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id) ||
+                      (nextReservation && day.isAfter(nextReservation?.startDate)) ||
+                      (day.isAfter(latestReservation?.endDate) && //Ha a vizsgált nap a legutolsó foglalás után van
+                        !day.isAfter(field.value) && //Engedélyezi a kiválasztott nap után lévő napokat
+                        !day.isSame(field.value) && //Engedélyezi a kiválasztott napot
+                        !day.isBefore(field.value) && //Engedélyezi a kiválasztott nap előtti napokat
+                        latestReservation?.groupId === selectedGroup.id)
+                    );
+                  }}
+                  value={field.value}
+                  inputRef={field.ref}
+                  onChange={(date) => field.onChange(date!)}
+                />
+              )}
+            />
+            <Controller
+              name="endTime"
+              control={control}
+              render={({ field }) => (
+                <TimePicker
+                  label="Záró időpont"
+                  orientation="portrait"
+                  value={field.value}
+                  inputRef={field.ref}
+                  onChange={(date) => field.onChange(date!)}
+                />
+              )}
+            />
+          </Box>
 
           <FormControl sx={{ width: "fit-content" }}>
             <FormLabel id="paymentState" required error={!!errors.paymentState}>
@@ -376,11 +443,58 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
                 {...field}
                 onChange={(event) => {
                   field.onChange(event);
-                  setPayToGo(calculatePayToGo(Number(event.target.value), undefined));
+                  setPayToGo(calculatePayToGo(Number(event.target.value)));
                 }}
               />
             )}
           />
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Controller
+              name="cautionPrice"
+              control={control}
+              rules={{ pattern: /^[0-9]*$/ }}
+              render={({ field }) => (
+                <TextField
+                  id="cautionPrice"
+                  label="Kaució"
+                  type="number"
+                  error={!!errors.cautionPrice}
+                  helperText={errors.cautionPrice && errors.cautionPrice.message}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">Ft</InputAdornment>,
+                  }}
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(event);
+                    setPayToGo(calculatePayToGo(undefined, Number(event.target.value)));
+                  }}
+                />
+              )}
+            />
+            <Controller
+              name="cautionReturned"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      color="primary"
+                      checked={field.value}
+                      onChange={(event) => {
+                        field.onChange(event.target.checked);
+                        setPayToGo(calculatePayToGo(undefined, undefined, undefined, event.target.checked));
+                      }}
+                      ref={field.ref}
+                    />
+                  }
+                  label="Kaució vissza fizetve"
+                  labelPlacement="end"
+                  sx={{ paddingLeft: 2 }}
+                />
+              )}
+            />
+          </Box>
 
           <Controller
             name="depositPrice"
@@ -399,7 +513,7 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
                 {...field}
                 onChange={(event) => {
                   field.onChange(event);
-                  setPayToGo(calculatePayToGo(undefined, Number(event.target.value)));
+                  setPayToGo(calculatePayToGo(undefined, undefined, Number(event.target.value)));
                 }}
               />
             )}

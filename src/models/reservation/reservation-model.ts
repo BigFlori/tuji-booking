@@ -6,11 +6,14 @@ interface Reservation {
     groupId: string;
     clientId?: string;
     startDate: dayjs.Dayjs;
+    startTime?: dayjs.Dayjs;
     endDate: dayjs.Dayjs;
+    endTime?: dayjs.Dayjs;
     paymentState: PaymentState;
-    paymentDate?: dayjs.Dayjs;
     fullPrice: number;
     depositPrice: number;
+    cautionPrice: number;
+    cautionReturned: boolean;
     comment?: string;
 }
 

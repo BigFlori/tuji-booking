@@ -51,10 +51,14 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       groupId: "1",
       clientId: "1",
       startDate: dayjs(dayjs().add(1, "day").format("YYYY-MM-DD")),
+      startTime: dayjs(dayjs().add(1, "day").format("YYYY-MM-DD")).add(12, "hour"),
       endDate: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")),
+      endTime: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")).add(18, "hour"),
       paymentState: PaymentState.DEPOSIT_PAID,
       fullPrice: 65000,
       depositPrice: 10000,
+      cautionPrice: 10000,
+      cautionReturned: false,
       comment: "Előleg fizetve.",
     },
     {
@@ -66,6 +70,8 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       paymentState: PaymentState.NOT_PAID,
       fullPrice: 120000,
       depositPrice: 25000,
+      cautionPrice: 25000,
+      cautionReturned: false,
     },
     {
       id: "3",
@@ -74,10 +80,11 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       startDate: dayjs(dayjs().subtract(10, "day").format("YYYY-MM-DD")),
       endDate: dayjs(dayjs().subtract(5, "day").format("YYYY-MM-DD")),
       paymentState: PaymentState.FULL_PAID,
-      paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
+      cautionPrice: 20000,
       comment: "Teljes összeg fizetve.",
+      cautionReturned: true,
     },
     {
       id: "4",
@@ -86,10 +93,11 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       startDate: dayjs(dayjs().format("YYYY-MM-DD")),
       endDate: dayjs(dayjs().add(11, "day").format("YYYY-MM-DD")),
       paymentState: PaymentState.CANCELLED,
-      paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
+      cautionPrice: 50000,
       comment: "Teljes összeg fizetve.",
+      cautionReturned: true,
     },
     {
       id: "5",
@@ -98,9 +106,10 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       startDate: dayjs("2023-06-30"),
       endDate: dayjs("2023-07-08"),
       paymentState: PaymentState.BLOCKED,
-      paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
+      cautionPrice: 100000,
+      cautionReturned: false,
     },
     {
       id: "6",
@@ -109,9 +118,10 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       startDate: dayjs("2023-06-20"),
       endDate: dayjs("2023-06-29"),
       paymentState: PaymentState.FULL_PAID,
-      paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
+      cautionPrice: 75000,
+      cautionReturned: true,
     },
     {
       id: "7",
@@ -119,9 +129,10 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       startDate: dayjs("2023-07-08"),
       endDate: dayjs("2023-07-13"),
       paymentState: PaymentState.FULL_PAID,
-      paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
+      cautionPrice: 80000,
+      cautionReturned: true,
       comment: "Teljes összeg fizetve.",
     },
     {
@@ -131,9 +142,10 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       startDate: dayjs("2023-07-02"),
       endDate: dayjs("2023-07-03"),
       paymentState: PaymentState.FULL_PAID,
-      paymentDate: dayjs().subtract(5, "day"),
       fullPrice: 100000,
       depositPrice: 20000,
+      cautionPrice: 90000,
+      cautionReturned: true,
       comment: "Teljes összeg fizetve.",
     },
   ]);
@@ -244,8 +256,6 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     let foundAnyReservation = false;
     dates.forEach((date) => {
       const foundReservations = findReservationByDate(date, groupId);
-      console.log(date);
-      console.log(foundReservations);
 
       if (foundReservations.length >= 2) {
         foundAnyReservation = true;

@@ -3,6 +3,7 @@ import YearSelector from "./YearSelector";
 import MonthSelector from "./MonthSelector";
 import NewReservation from "./NewReservation";
 import { Theme, useMediaQuery } from "@mui/material";
+import NewGroup from "./NewGroup";
 
 interface ICalendarControlsProps {
   year: number;
@@ -50,13 +51,20 @@ const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarCont
         sx={{
           display: "flex",
           gap: 1,
-          justifyContent: isSmallMobile ? "center" : "flex-start",
         }}
       >
         <YearSelector year={props.year} onNextYear={nextYear} onPreviousYear={prevYear} />
         <MonthSelector activeMonth={props.activeMonth} jumpToId={jumpToId} />
       </Box>
-      <Box>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          justifyContent: "space-between",
+          paddingInline: 2,
+        }}
+      >
+        <NewGroup />
         <NewReservation />
       </Box>
     </Box>

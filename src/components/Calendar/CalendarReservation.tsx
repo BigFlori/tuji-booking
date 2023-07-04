@@ -111,9 +111,17 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     //Módosított foglalás létrehozása
     const modifiedReservation = {
       ...props.reservation,
-      ...data,
       clientId: data.selectedClientOption.clientId,
+      groupId: data.groupId,
+      startDate: data.startDate,
+      startTime: data.startTime,
+      endDate: data.endDate,
+      endTime: data.endTime,
       paymentState: paymentState,
+      fullPrice: data.fullPrice,
+      depositPrice: data.depositPrice,
+      cautionPrice: data.cautionPrice,
+      comment: data.comment,
     };
 
     reservationCtx.updateReservation(props.reservation.id, modifiedReservation);
