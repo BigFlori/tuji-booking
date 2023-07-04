@@ -15,7 +15,7 @@ export default function Home() {
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
 
   const test = () => {
-    console.log(reservationCtx.getNextReservation(startDate!, "1"));
+    console.log(reservationCtx.canReserve(startDate!, endDate!, "1"));
     
   }
 

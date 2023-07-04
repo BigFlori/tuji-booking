@@ -224,9 +224,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const getNextReservation = (startDate: dayjs.Dayjs, groupId: string): Reservation | null => {
     const reservationsFound = reservations.filter(
-      (reservation) =>
-        reservation.groupId === groupId &&
-        (reservation.startDate.isAfter(startDate))
+      (reservation) => reservation.groupId === groupId && reservation.startDate.isAfter(startDate)
     );
 
     if (reservationsFound.length === 0) return null;
@@ -249,11 +247,20 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       console.log(date);
       console.log(foundReservations);
 
-      if (foundReservations.length > 0) {
+      if (foundReservations.length >= 2) {
+        foundAnyReservation = true;
+        return;
+      }
+      if (
+        foundReservations.length === 1 &&
+        date.isBefore(foundReservations[0].endDate) &&
+        !date.isSame(foundReservations[0].endDate)
+      ) {
         foundAnyReservation = true;
         return;
       }
     });
+
     return !foundAnyReservation;
   };
 
