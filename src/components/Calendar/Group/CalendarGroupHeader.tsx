@@ -62,11 +62,16 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
     const updatedGroup: Group = {
       ...props.group,
       title: data.title,
-      type: groupType!,
-      state: groupState!,
+      type: groupType,
+      state: groupState,
       description: data.description,
     };
     groupCtx.updateGroup(props.group.id, updatedGroup);
+    setModalOpened(false);
+  };
+
+  const deleteHandler = () => {
+    groupCtx.removeGroup(props.group.id);
     setModalOpened(false);
   };
 
@@ -100,6 +105,7 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
           group={props.group}
           onClose={handleModalClose}
           onSubmit={submitHandler}
+          onDelete={deleteHandler}
          />
       </AnimatedModal>
     </>

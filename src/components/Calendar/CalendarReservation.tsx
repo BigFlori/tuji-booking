@@ -14,7 +14,7 @@ import { Theme, darken } from "@mui/material";
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
-};
+}
 
 const countMonthsBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
   return endDate.get("month") - startDate.get("month");
@@ -24,7 +24,7 @@ const countMonthsBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
 const CUT_THRESHOLD = 9;
 
 const formatName = (name: string, reservedDays: number) => {
-  if(name.length < reservedDays * CALENDAR_ITEM_WIDTH / CUT_THRESHOLD) return name;
+  if (name.length < (reservedDays * CALENDAR_ITEM_WIDTH) / CUT_THRESHOLD) return name;
 
   const nameParts = name.split(" ");
   if (nameParts.length === 1) {
@@ -129,6 +129,11 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     setModalOpened(false);
   };
 
+  const deleteHandler = () => {
+    reservationCtx.removeReservation(props.reservation.id);
+    setModalOpened(false);
+  };
+
   const getBgColor = (theme: Theme) => {
     switch (props.reservation.paymentState) {
       case PaymentState.NOT_PAID:
@@ -168,6 +173,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
           client={reservationClient}
           onSubmit={submintHandler}
           onClose={handleModalClose}
+          onDelete={deleteHandler}
         />
       </AnimatedModal>
     </>

@@ -43,7 +43,7 @@ const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarCont
         justifyContent: "center",
         alignItems: "space-between",
         background: theme.palette.calendarControls.main,
-        paddingBlock: 1,
+        padding: 1,
         width: "100%",
       })}
     >

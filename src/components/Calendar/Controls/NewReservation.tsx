@@ -9,9 +9,7 @@ import Client from "@/models/client-model";
 import { ReservationContext } from "@/store/reservation-context";
 import Reservation from "@/models/reservation/reservation-model";
 
-interface INewReservationProps {}
-
-const NewReservation: React.FC<INewReservationProps> = (props: INewReservationProps) => {
+const NewReservation: React.FC = () => {
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
   const [modalOpened, setModalOpened] = useState(false);

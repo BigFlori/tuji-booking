@@ -7,6 +7,8 @@ interface ModalControlsProps {
   children?: React.ReactNode;
   title: string;
   onClose: () => void;
+  isEdit?: boolean;
+  onDelete?: () => void;
   saveButtonProps?: {
     type?: "submit" | "button";
     onClick?: () => void;
@@ -22,9 +24,11 @@ const ModalControls: React.FC<ModalControlsProps> = (props) => {
           {props.title}
         </Typography>
         <Box sx={{ display: "flex", gap: { xs: 1, sm: 2 } }}>
-          <IconButton color="error" size="small">
-            <DeleteIcon />
-          </IconButton>
+          {props.isEdit && (
+            <IconButton color="error" size="small" onClick={props.onDelete}>
+              <DeleteIcon />
+            </IconButton>
+          )}
           {isMobile ? (
             <IconButton size="small" color="success" {...props.saveButtonProps}>
               <SaveIcon />

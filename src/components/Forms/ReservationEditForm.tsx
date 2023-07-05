@@ -41,6 +41,7 @@ interface IReservationEditFormProps {
   client: Client;
   onClose: () => void;
   onSubmit: (values: IReservationEditFormValues) => void;
+  onDelete: () => void;
 }
 
 export interface IReservationEditFormValues {
@@ -223,7 +224,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
       noValidate
       onSubmit={handleSubmit(props.onSubmit, (error) => console.log("error", error))}
     >
-      <ModalControls title="Foglalás szerkesztése" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
+      <ModalControls title="Foglalás szerkesztése" onClose={props.onClose} onDelete={props.onDelete} isEdit saveButtonProps={{ type: "submit" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="body1" sx={{ fontWeight: "500" }}>
             Alapinformációk

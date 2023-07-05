@@ -1,43 +1,42 @@
 import Group from "@/models/group/group-model";
+import GroupState from "@/models/group/group-state-model";
+import GroupType from "@/models/group/group-type-model";
 import { Box, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
 import ModalControls from "../UI/Modal/ModalControls";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { group } from "console";
 
-interface IGroupEditFormProps {
-  group: Group;
-  onSubmit: (values: IGroupEditFormValues) => void;
+interface INewGroupFormProps {
   onClose: () => void;
-  onDelete: () => void;
+  onSubmit: (values: INewGroupFormState) => void;
 }
 
-export interface IGroupEditFormValues {
+export interface INewGroupFormState {
   title: string;
   description?: string;
   state: string;
   type: string;
 }
 
-const validationSchema: yup.ObjectSchema<IGroupEditFormValues> = yup.object().shape({
+const validationSchema: yup.ObjectSchema<INewGroupFormState> = yup.object().shape({
   title: yup.string().max(25, "A csoport neve maximum 25 karakter lehet").required("A csoport neve kötelező"),
   description: yup.string().optional(),
   state: yup.string().required("A csoport állapota kötelező"),
   type: yup.string().required("A csoport típusa kötelező"),
 });
 
-const GroupEditForm: React.FC<IGroupEditFormProps> = (props: IGroupEditFormProps) => {
+const NewGroupForm: React.FC<INewGroupFormProps> = (props: INewGroupFormProps) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IGroupEditFormValues>({
+  } = useForm<INewGroupFormState>({
     defaultValues: {
-      title: props.group.title,
-      description: props.group.description,
-      state: props.group.state,
-      type: props.group.type,
+      title: "",
+      description: "",
+      state: GroupState.ACTIVE,
+      type: GroupType.CAR,
     },
     resolver: yupResolver(validationSchema),
   });
@@ -45,19 +44,13 @@ const GroupEditForm: React.FC<IGroupEditFormProps> = (props: IGroupEditFormProps
   return (
     <Box
       component="form"
-      autoComplete="off"
       noValidate
+      autoComplete="off"
       onSubmit={handleSubmit(props.onSubmit, (error) => console.log(error))}
     >
-      <ModalControls
-        title="Csoport szerkesztése"
-        onClose={props.onClose}
-        onDelete={props.onDelete}
-        isEdit
-        saveButtonProps={{ type: "submit" }}
-      >
+      <ModalControls title="Új csoport" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Typography variant="body1" sx={{ fontWeight: 500 }}>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
             Alapinformációk
           </Typography>
           <Controller
@@ -139,4 +132,4 @@ const GroupEditForm: React.FC<IGroupEditFormProps> = (props: IGroupEditFormProps
   );
 };
 
-export default GroupEditForm;
+export default NewGroupForm;
