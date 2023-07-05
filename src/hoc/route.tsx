@@ -5,7 +5,7 @@ import React, { ReactElement } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export function withPublic<T>(Component: React.ComponentType<T>) {
-  return (props: T) => {
+  return function WithPublic(props: T) {
     const [user, loading, error] = useAuthState(auth);
     const router = useRouter();
 
@@ -29,7 +29,7 @@ export function withPublic<T>(Component: React.ComponentType<T>) {
 }
 
 export function withProtected<T>(Component: React.ComponentType<T>) {
-  return (props: T) => {
+  return function WithProtected(props: T) {
     const [user, loading, error] = useAuthState(auth);
     const router = useRouter();
 
