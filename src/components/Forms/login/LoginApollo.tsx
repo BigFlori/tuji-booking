@@ -8,7 +8,6 @@ const LoginApollo: React.FC = () => {
   const [signInWithEmailAndPassword, epUser, epLoading, epError] = useSignInWithEmailAndPassword(auth);
 
   const submitHandler: SubmitHandler<ILoginFormModel> = (data) => {
-    console.log(data);
     signInWithEmailAndPassword(data.email, data.password);
   };
 
