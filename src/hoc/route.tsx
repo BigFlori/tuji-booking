@@ -1,7 +1,7 @@
 import { auth } from "@/firebase/firebase.config";
 import { Box } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { ReactElement } from "react";
+import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export function withPublic<T>(Component: React.ComponentType<T>) {
@@ -13,9 +13,7 @@ export function withPublic<T>(Component: React.ComponentType<T>) {
       return <Box>Loading...</Box>;
     }
 
-    if (user && !error) {
-      console.log("redirect to /");
-      
+    if (user && !error) {      
       router.replace("/");
       return <Box>Redirecting...</Box>;
     }
@@ -38,7 +36,7 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
     }
 
     if (!user || error) {      
-      router.replace("/auth");
+      router.replace("/login");
       return <Box>Redirecting...</Box>;
     }
 
