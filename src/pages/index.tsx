@@ -10,6 +10,7 @@ import { auth } from "@/firebase/firebase.config";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { withProtected } from "@/hoc/route";
 import { NextPage } from "next";
+import PageHead from "@/components/UI/PageHead";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +19,7 @@ const Home: NextPage = () => {
   const [user] = useAuthState(auth);
   return (
     <>
-      <Head>
-        <title>Tuji-Booking</title>
-        <meta name="description" content="Tuji-booking foglalási felülete" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <PageHead />
       <Typography variant="body1">Hello {user?.displayName}</Typography>
       <Button onClick={() => signOut()}>Kijelentkezés</Button>
       <Calendar />
