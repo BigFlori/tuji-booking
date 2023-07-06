@@ -20,7 +20,7 @@ const Home: NextPage = () => {
   return (
     <>
       <PageHead />
-      <Typography variant="body1">Hello {user?.displayName}</Typography>
+      <Typography variant="body1">Hello {user?.displayName} ({user?.uid})</Typography>
       <Button onClick={() => signOut()}>Kijelentkezés</Button>
       <Calendar />
     </>

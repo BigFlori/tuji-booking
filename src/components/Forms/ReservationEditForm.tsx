@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import ExternalActionButton from "../UI/ExternalActionButton";
+import ExternalActionButton from "../UI/Button/ExternalActionButton";
 import Client from "@/models/client-model";
 import dayjs from "dayjs";
 import ModalControls from "../UI/Modal/ModalControls";

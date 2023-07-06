@@ -31,7 +31,7 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { ReservationContext } from "@/store/reservation-context";
 import Group from "@/models/group/group-model";
 import { GroupContext } from "@/store/group-context";
-import ExternalActionButton from "../UI/ExternalActionButton";
+import ExternalActionButton from "../UI/Button/ExternalActionButton";
 import Client from "@/models/client-model";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";

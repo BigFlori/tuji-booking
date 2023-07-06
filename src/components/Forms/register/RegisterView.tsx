@@ -1,27 +1,23 @@
-import { UseFormReturn, SubmitHandler, Controller } from "react-hook-form";
-import { ILoginFormModel } from "./LoginLogic";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import ElevatedFormBox from "@/components/UI/styled/ElevatedFormBox";
+import { IRegisterFormModel } from "./RegisterLogic";
+import { UseFormReturn, SubmitHandler, Controller } from "react-hook-form";
 import { grey } from "@mui/material/colors";
-import Image from "next/image";
-import GoogleIcon from "../../../assets/google-icon.png";
+import ElevatedFormBox from "@/components/UI/styled/ElevatedFormBox";
 import SpacerLine from "@/components/UI/SpacerLine";
 import ToggleIconButton from "@/components/UI/Button/ToggleIconButton";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-interface ILoginViewProps {
-  form: UseFormReturn<ILoginFormModel>;
-  onSubmit: SubmitHandler<ILoginFormModel>;
-  onGoogleLogin: () => void;
+interface IRegisterViewProps {
+  form: UseFormReturn<IRegisterFormModel>;
+  onSubmit: SubmitHandler<IRegisterFormModel>;
   onRedirect: (to: string) => void;
   showPassword: boolean;
   toggleShowPassword: () => void;
 }
 
-const LoginView: React.FC<ILoginViewProps> = ({
+const RegisterView: React.FC<IRegisterViewProps> = ({
   form,
   onSubmit,
-  onGoogleLogin,
   onRedirect,
   showPassword,
   toggleShowPassword,
@@ -31,6 +27,7 @@ const LoginView: React.FC<ILoginViewProps> = ({
     control,
     formState: { errors, isSubmitting },
   } = form;
+
   return (
     <Box
       sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh", background: grey[50] }}
@@ -49,7 +46,7 @@ const LoginView: React.FC<ILoginViewProps> = ({
         }}
       >
         <Typography variant="body1" sx={{ fontWeight: 500 }}>
-          Tuji Booking
+          Tuji Booking - Regisztráció
         </Typography>
         <SpacerLine sx={{ marginBlock: 1 }} />
         <Controller
@@ -92,43 +89,73 @@ const LoginView: React.FC<ILoginViewProps> = ({
             />
           )}
         />
-        <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }}>
-          Bejelentkezés
-        </Button>
 
-        <SpacerLine>
-          <Typography variant="body1" sx={{ color: grey[500], marginInline: 3 }}>
-            Vagy
-          </Typography>
-        </SpacerLine>
-        <Button
-          onClick={onGoogleLogin}
-          fullWidth
-          sx={{
-            padding: 1,
-            color: grey[800],
-            textTransform: "initial",
-            border: `${grey[300]} 1px solid`,
-            display: "flex",
-            gap: 2,
-          }}
-        >
-          <Image src={GoogleIcon} alt="Google" width={20} height={20} />
-          Jelentkezzen be Google fiókjával
+        <Controller
+          name="passwordConfirm"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Jelszó megerősítése"
+              variant="outlined"
+              type={showPassword ? "text" : "password"}
+              error={!!errors.passwordConfirm}
+              helperText={errors.passwordConfirm?.message}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <ToggleIconButton
+                    onIcon={<Visibility />}
+                    offIcon={<VisibilityOff />}
+                    onToggle={toggleShowPassword}
+                    state={showPassword}
+                  />
+                ),
+              }}
+            />
+          )}
+        />
+        <Controller
+          name="firstName"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Keresztnév"
+              variant="outlined"
+              type="text"
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+              fullWidth
+            />
+          )}
+        />
+        <Controller
+          name="lastName"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Vezetéknév"
+              variant="outlined"
+              type="text"
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+              fullWidth
+            />
+          )}
+        />
+        {/*TODO: Elfogadom a felhasználási feltételek stb...*/}
+        <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }}>
+          Regisztrálok
         </Button>
-        {/*TODO: ÁSZF és Adatvédelmi szabályzat*/}
         <SpacerLine sx={{ marginBlock: 1 }} />
-        <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <Button sx={{ textTransform: "initial", color: grey[800] }} onClick={() => onRedirect("forgetPassword")}>
-            Elfelejtettem a jelszavam
+        <Button sx={{ textTransform: "initial", color: grey[800] }} onClick={() => onRedirect("login")}>
+            Van már fiókom, bejelentkezek
           </Button>
-          <Button sx={{ textTransform: "initial" }} color="success" onClick={() => onRedirect("register")}>
-            Regisztráció
-          </Button>
-        </Box>
       </ElevatedFormBox>
     </Box>
   );
 };
 
-export default LoginView;
+export default RegisterView;

@@ -7,16 +7,16 @@ interface ExternalActionButtonProps {
   value?: string;
 }
 
-const ExternalActionButton: React.FC<ExternalActionButtonProps> = (props) => {
+const ExternalActionButton: React.FC<ExternalActionButtonProps> = ({type, value}) => {
   const handleOnClick = () => {
-    if (props.value) {
-      window.open(`${props.type}:${props.value}`);
+    if (value) {
+      window.open(`${type}:${value}`);
     }
   };
 
   return (
-    <IconButton onClick={handleOnClick} aria-label="call-client-button">
-      {props.type === "tel" ? <CallIcon /> : <EmailIcon />}
+    <IconButton onClick={handleOnClick} aria-label={`${type}-client-button`}>
+      {type === "tel" ? <CallIcon /> : <EmailIcon />}
     </IconButton>
   );
 };
