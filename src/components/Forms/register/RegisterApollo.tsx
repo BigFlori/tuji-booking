@@ -7,8 +7,8 @@ const RegisterApollo: React.FC = () => {
     const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
 
   const submitHandler: SubmitHandler<IRegisterFormModel> = (data) => {
-    // console.log(data);
-    // createUserWithEmailAndPassword(data.email, data.password);
+    console.log(data);
+    createUserWithEmailAndPassword(data.email, data.password);
   };
 
   const defaultValues: IRegisterFormModel = {

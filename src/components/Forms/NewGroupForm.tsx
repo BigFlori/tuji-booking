@@ -81,6 +81,8 @@ const NewGroupForm: React.FC<INewGroupFormProps> = (props: INewGroupFormProps) =
                   <MenuItem value="CAR">Autó</MenuItem>
                   <MenuItem value="HOUSE">Lakás</MenuItem>
                   <MenuItem value="DRIVER">Sofőr</MenuItem>
+                  <MenuItem value="CAR_WASH">Autókozmetika</MenuItem>
+                  <MenuItem value="OTHER">Egyéb</MenuItem>
                 </Select>
               )}
             />
@@ -106,6 +108,7 @@ const NewGroupForm: React.FC<INewGroupFormProps> = (props: INewGroupFormProps) =
                   <MenuItem value="ACTIVE">Aktív</MenuItem>
                   <MenuItem value="SOLD">Eladva</MenuItem>
                   <MenuItem value="IN_SERVICE">Szervízben</MenuItem>
+                  <MenuItem value="INACTIVE">Inaktív</MenuItem>
                 </Select>
               )}
             />

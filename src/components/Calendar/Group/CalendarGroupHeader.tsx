@@ -9,12 +9,14 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupState from "@/models/group/group-state-model";
 import GroupType from "@/models/group/group-type-model";
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import HomeIcon from "@mui/icons-material/Home";
 import TaxiAlert from "@mui/icons-material/Person";
 import AnimatedModal from "../../UI/Modal/AnimatedModal";
 import GroupEditForm, { IGroupEditFormValues } from "../../Forms/GroupEditForm";
 import { SubmitHandler } from "react-hook-form";
+import LocalCarWashIcon from '@mui/icons-material/LocalCarWash';
+import OtherIcon from '@mui/icons-material/Pending';
+import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 
 interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
@@ -39,13 +41,17 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
   const getIcon = () => {
     switch (props.group.type) {
       case GroupType.CAR:
-        return <DirectionsCarIcon />;
+        return <AirportShuttleIcon />;
       case GroupType.HOUSE:
         return <HomeIcon />;
       case GroupType.DRIVER:
         return <TaxiAlert />;
+      case GroupType.CAR_WASH:
+        return <LocalCarWashIcon />;
+      case GroupType.OTHER:
+        return <OtherIcon />;
       default:
-        return <DirectionsCarIcon />;
+        return <OtherIcon />;
     }
   };
 

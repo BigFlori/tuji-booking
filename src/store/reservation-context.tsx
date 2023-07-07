@@ -252,14 +252,20 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     const dates = generateDatesBetween(startDate, endDate);
     //Kivesszük a záró dátumot, mert azt nem kell vizsgálni
     dates.pop();
+    console.log(excludedId);
 
     let foundAnyReservation = false;
     dates.forEach((date) => {
       const foundReservations = findReservationByDate(date, groupId);
+      console.log(date);
+      console.log(foundReservations);
 
       if (foundReservations.length >= 2) {
-        foundAnyReservation = true;
-        return;
+        const otherReservation = foundReservations.find((reservation) => reservation.id !== excludedId);
+        if (otherReservation && date.isBefore(otherReservation.endDate) && !date.isSame(otherReservation.endDate)) {
+          foundAnyReservation = true;
+          return;
+        }
       }
       if (
         foundReservations.length === 1 &&
