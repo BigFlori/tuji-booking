@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Group from "@/models/group/group-model";
 import GroupState from "@/models/group/group-state-model";
 import GroupType from "@/models/group/group-type-model";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "@/firebase/firebase.config";
+import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { deleteGroupDb, readGroups, saveGroupDb } from "@/firebase/firestore-helpers/utils";
 
 interface IGroupsContextObject {
   groups: Group[];
@@ -10,7 +14,7 @@ interface IGroupsContextObject {
   removeGroup: (id: string) => void;
   updateGroup: (id: string, group: Group) => void;
   getGroup: (id: string) => Group | undefined;
-};
+}
 
 export const GroupContext = React.createContext<IGroupsContextObject>({
   groups: [],
@@ -21,32 +25,50 @@ export const GroupContext = React.createContext<IGroupsContextObject>({
   getGroup: () => undefined,
 });
 
-const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
-  const [groups, setGroups] = React.useState<Group[]>([
-    {
-      id: "1",
-      title: "Group 1",
-      state: GroupState.ACTIVE,
-      type: GroupType.CAR,
-      description: "Fehér kisbusz",
-    },
-    { id: "2", title: "Group 2", state: GroupState.ACTIVE, type: GroupType.DRIVER },
-    { id: "3", title: "Group 3", state: GroupState.ACTIVE, type: GroupType.HOUSE },
-    { id: "4", title: "Group 4", state: GroupState.SOLD, type: GroupType.CAR },
-    { id: "5", title: "Group 5", state: GroupState.IN_SERVICE, type: GroupType.CAR },
-    { id: "6", title: "Group 6", state: GroupState.IN_SERVICE, type: GroupType.CAR },
-  ]);
+const GroupContextProvider: React.FC<{ children: React.ReactNode; groups: Group[] }> = (props) => {
+  const [groups, setGroups] = React.useState<Group[]>([]);
+
+  const [user] = useAuthState(auth);
+
+  //Loading groups
+  useEffect(() => {
+    if (!user) {
+      setGroups([]);
+      return;
+    }
+    readGroups(user).then((groups) => {
+      setGroups(groups);
+    });
+  }, [user]);
+
+  //Elmenti a változtatásokat, és létrehozza a csoportot ha még nem létezik
+  const saveGroup = async (group: Group) => {
+    if (!user) {
+      return;
+    }
+    saveGroupDb(user, group);
+  };
+
+  //A csoportot törölt állapotba helyezi ezzel elrejtve a felhasználó elől
+  const deleteGroup = async (id: string) => {
+    if (!user) {
+      return;
+    }
+    deleteGroupDb(user, id);
+  };
 
   const addGroup = (group: Group) => {
     setGroups((prevGroups) => {
       return [...prevGroups, group];
     });
+    saveGroup(group);
   };
 
   const removeGroup = (id: string) => {
     setGroups((prevGroups) => {
       return prevGroups.filter((group) => group.id !== id);
     });
+    deleteGroup(id);
   };
 
   const updateGroup = (id: string, group: Group) => {
@@ -58,6 +80,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
         return prevGroup;
       });
     });
+    saveGroup(group);
   };
 
   const getGroup = (id: string) => {

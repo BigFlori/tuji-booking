@@ -24,7 +24,7 @@ import {
   NOT_SELECTED_CLIENT_OPTION,
   clientToOption,
   CLIENT_OPTION_SCHEMA,
-} from "./ClientOption/clientOptionHelper";
+} from "./client-option/clientOptionHelper";
 import { useContext, useMemo, useState } from "react";
 import { ClientContext } from "@/store/client-context";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";

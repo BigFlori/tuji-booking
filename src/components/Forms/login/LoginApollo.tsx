@@ -1,7 +1,9 @@
-import { auth } from "@/firebase/firebase.config";
+import { auth, db } from "@/firebase/firebase.config";
 import { useSignInWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
 import LoginLogic, { ILoginFormModel } from "./LoginLogic";
 import { SubmitHandler } from "react-hook-form";
+import { translate } from "@/firebase/auth-error/auth-error-translator";
+import { createInitialUser } from "@/firebase/firestore-helpers/utils";
 
 const LoginApollo: React.FC = () => {
   const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
@@ -12,7 +14,12 @@ const LoginApollo: React.FC = () => {
   };
 
   const googleLoginHandler = () => {
-    signInWithGoogle();
+    signInWithGoogle().then((userCredential) => {
+      const user = userCredential?.user;
+      if (!user) return;
+
+      createInitialUser(user);
+    });
   };
 
   const defaultValues: ILoginFormModel = {
@@ -20,7 +27,16 @@ const LoginApollo: React.FC = () => {
     password: "",
   };
 
-  return <LoginLogic defaultValues={defaultValues} onSubmit={submitHandler} onGoogleLogin={googleLoginHandler} />;
+  return (
+    <LoginLogic
+      defaultValues={defaultValues}
+      onSubmit={submitHandler}
+      onGoogleLogin={googleLoginHandler}
+      epError={translate(epError?.code)}
+      googleError={googleError}
+      isLoading={epLoading || googleLoading}
+    />
+  );
 };
 
 export default LoginApollo;

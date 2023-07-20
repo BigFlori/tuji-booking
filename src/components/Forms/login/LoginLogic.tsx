@@ -4,11 +4,17 @@ import * as yup from "yup";
 import LoginView from "./LoginView";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { AuthError } from "firebase/auth";
+import TranslatedAuthError from "@/firebase/auth-error/auth-error-model";
+import AuthErrorType from "@/firebase/auth-error/auth-error-type-model";
 
 interface ILoginLogicProps {
   defaultValues: ILoginFormModel;
   onSubmit: SubmitHandler<ILoginFormModel>;
+  epError?: TranslatedAuthError;
   onGoogleLogin: () => void;
+  googleError?: AuthError;
+  isLoading: boolean;
 }
 
 export interface ILoginFormModel {
@@ -21,7 +27,7 @@ const validationSchema: yup.ObjectSchema<ILoginFormModel> = yup.object().shape({
   password: yup.string().required("Jelszó megadása kötelező"),
 });
 
-const LoginLogic: React.FC<ILoginLogicProps> = ({ defaultValues, onSubmit, onGoogleLogin }) => {
+const LoginLogic: React.FC<ILoginLogicProps> = ({ isLoading, defaultValues, onSubmit, onGoogleLogin, epError, googleError }) => {
   const router = useRouter();
 
   const form = useForm<ILoginFormModel>({
@@ -47,6 +53,9 @@ const LoginLogic: React.FC<ILoginLogicProps> = ({ defaultValues, onSubmit, onGoo
       onRedirect={handleRedirect}
       showPassword={showPassword}
       toggleShowPassword={toggleShowPassword}
+      epError={epError}
+      googleError={googleError}
+      isLoading={isLoading}
     />
   );
 };

@@ -8,6 +8,10 @@ import GoogleIcon from "../../../assets/google-icon.png";
 import SpacerLine from "@/components/UI/SpacerLine";
 import ToggleIconButton from "@/components/UI/Button/ToggleIconButton";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { AuthError } from "firebase/auth";
+import { translate } from "@/firebase/auth-error/auth-error-translator";
+import TranslatedAuthError from "@/firebase/auth-error/auth-error-model";
+import AuthErrorType from "@/firebase/auth-error/auth-error-type-model";
 
 interface ILoginViewProps {
   form: UseFormReturn<ILoginFormModel>;
@@ -16,6 +20,9 @@ interface ILoginViewProps {
   onRedirect: (to: string) => void;
   showPassword: boolean;
   toggleShowPassword: () => void;
+  epError?: TranslatedAuthError;
+  googleError?: AuthError;
+  isLoading: boolean;
 }
 
 const LoginView: React.FC<ILoginViewProps> = ({
@@ -25,12 +32,16 @@ const LoginView: React.FC<ILoginViewProps> = ({
   onRedirect,
   showPassword,
   toggleShowPassword,
+  epError,
+  googleError,
+  isLoading,
 }) => {
   const {
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
   } = form;
+
   return (
     <Box
       sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh", background: grey[50] }}
@@ -39,7 +50,7 @@ const LoginView: React.FC<ILoginViewProps> = ({
         component="form"
         autoComplete="off"
         noValidate
-        onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
+        onSubmit={handleSubmit(onSubmit)}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -61,8 +72,12 @@ const LoginView: React.FC<ILoginViewProps> = ({
               label="Email"
               variant="outlined"
               type="email"
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              error={!!errors.email || !!epError?.code}
+              disabled={isLoading || isSubmitting}
+              helperText={
+                errors.email?.message ||
+                ((epError?.type === AuthErrorType.EMAIL || epError?.type === AuthErrorType.ACCOUNT) && epError.message)
+              }
               fullWidth
             />
           )}
@@ -76,9 +91,10 @@ const LoginView: React.FC<ILoginViewProps> = ({
               label="Jelszó"
               variant="outlined"
               type={showPassword ? "text" : "password"}
-              error={!!errors.password}
-              helperText={errors.password?.message}
+              error={!!errors.password || !!epError?.code}
+              helperText={errors.password?.message || (epError?.type === AuthErrorType.PASSWORD && epError.message)}
               fullWidth
+              disabled={isLoading || isSubmitting}
               InputProps={{
                 endAdornment: (
                   <ToggleIconButton
@@ -92,7 +108,7 @@ const LoginView: React.FC<ILoginViewProps> = ({
             />
           )}
         />
-        <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }}>
+        <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }} disabled={isLoading || isSubmitting}>
           Bejelentkezés
         </Button>
 
@@ -104,6 +120,7 @@ const LoginView: React.FC<ILoginViewProps> = ({
         <Button
           onClick={onGoogleLogin}
           fullWidth
+          disabled={isLoading || isSubmitting}
           sx={{
             padding: 1,
             color: grey[800],
@@ -119,10 +136,19 @@ const LoginView: React.FC<ILoginViewProps> = ({
         {/*TODO: ÁSZF és Adatvédelmi szabályzat*/}
         <SpacerLine sx={{ marginBlock: 1 }} />
         <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <Button sx={{ textTransform: "initial", color: grey[800] }} onClick={() => onRedirect("forgetPassword")}>
+          <Button
+            sx={{ textTransform: "initial", color: grey[800] }}
+            onClick={() => onRedirect("forgetPassword")}
+            disabled={isLoading || isSubmitting}
+          >
             Elfelejtettem a jelszavam
           </Button>
-          <Button sx={{ textTransform: "initial" }} color="success" onClick={() => onRedirect("register")}>
+          <Button
+            sx={{ textTransform: "initial" }}
+            color="success"
+            onClick={() => onRedirect("register")}
+            disabled={isLoading || isSubmitting}
+          >
             Regisztráció
           </Button>
         </Box>

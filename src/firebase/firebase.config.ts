@@ -1,6 +1,7 @@
 import { getApps, initializeApp, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,4 +24,5 @@ if (!getApps().length) {
 }
 
 export const auth = getAuth(getApp());
-auth.languageCode = "hu";
+export const db = getFirestore(getApp());
+//auth.languageCode = "hu";

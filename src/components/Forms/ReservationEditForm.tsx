@@ -32,7 +32,7 @@ import {
   NOT_SELECTED_CLIENT_OPTION,
   clientToOption,
   CLIENT_OPTION_SCHEMA,
-} from "./ClientOption/clientOptionHelper";
+} from "./client-option/clientOptionHelper";
 import Group from "@/models/group/group-model";
 import { GroupContext } from "@/store/group-context";
 

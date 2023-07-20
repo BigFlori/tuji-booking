@@ -8,6 +8,7 @@ import { ClientContext } from "@/store/client-context";
 import Client from "@/models/client-model";
 import { ReservationContext } from "@/store/reservation-context";
 import Reservation from "@/models/reservation/reservation-model";
+import { v4 as uuidv4 } from "uuid";
 
 const NewReservation: React.FC = () => {
   const clientCtx = useContext(ClientContext);
@@ -53,7 +54,7 @@ const NewReservation: React.FC = () => {
 
     //Új foglalás létrehozása
     const newReservation: Reservation = {
-      id: (reservationCtx.reservations.length + 1).toString(),
+      id: uuidv4(),
       groupId: data.groupId,
       clientId: data.selectedClientOption.clientId,
       startDate: data.startDate,

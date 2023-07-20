@@ -7,6 +7,7 @@ import { GroupContext } from "@/store/group-context";
 import { SubmitHandler } from "react-hook-form";
 import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
+import { v4 as uuidv4 } from "uuid";
 
 const NewGroup: React.FC = () => {
   const groupCtx = useContext(GroupContext);
@@ -31,7 +32,7 @@ const NewGroup: React.FC = () => {
     }
 
     const newGroup = {
-      id: (groupCtx.groups.length + 1).toString(),
+      id: uuidv4(),
       title: data.title,
       type: groupType,
       state: groupState,

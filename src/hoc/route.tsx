@@ -1,3 +1,4 @@
+import LoginSkeleton from "@/components/Forms/login/LoginSkeleton";
 import { auth } from "@/firebase/firebase.config";
 import { Box } from "@mui/material";
 import { useRouter } from "next/router";
@@ -13,7 +14,7 @@ export function withPublic<T>(Component: React.ComponentType<T>) {
       return <Box>Loading...</Box>;
     }
 
-    if (user && !error) {      
+    if (user && !error) {
       router.replace("/");
       return <Box>Redirecting...</Box>;
     }
@@ -32,12 +33,12 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
     const router = useRouter();
 
     if (loading) {
-      return <Box>Loading...</Box>;
+      return <LoginSkeleton />;
     }
 
-    if (!user || error) {      
+    if (!user || error) {
       router.replace("/login");
-      return <Box>Redirecting...</Box>;
+      return <LoginSkeleton />;
     }
 
     return (
