@@ -25,7 +25,7 @@ export const GroupContext = React.createContext<IGroupsContextObject>({
   getGroup: () => undefined,
 });
 
-const GroupContextProvider: React.FC<{ children: React.ReactNode; groups: Group[] }> = (props) => {
+const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [groups, setGroups] = React.useState<Group[]>([]);
 
   const [user] = useAuthState(auth);
