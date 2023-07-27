@@ -586,6 +586,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                     helperText={errors.selectedClientOption && errors.selectedClientOption.message}
                   />
                 )}
+                getOptionLabel={(option) => option.label}
                 isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
                 {...field}
                 value={field.value}

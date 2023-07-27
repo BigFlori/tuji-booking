@@ -1,3 +1,5 @@
+import { Controller, SubmitHandler, UseFormReturn } from "react-hook-form";
+import { ICreateReservationFormModel } from "./CreateReservationLogic";
 import {
   Autocomplete,
   Box,
@@ -15,156 +17,38 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ModalControls from "../UI/Modal/ModalControls";
-import { useForm, Controller } from "react-hook-form";
-import dayjs from "dayjs";
-import PaymentState from "@/models/reservation/payment-state-model";
-import {
-  IClientOption,
-  NOT_SELECTED_CLIENT_OPTION,
-  clientToOption,
-  CLIENT_OPTION_SCHEMA,
-} from "./client-option/clientOptionHelper";
-import { useContext, useMemo, useState } from "react";
-import { ClientContext } from "@/store/client-context";
+import ModalControls from "@/components/UI/Modal/ModalControls";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import { ReservationContext } from "@/store/reservation-context";
+import ExternalActionButton from "@/components/UI/Button/ExternalActionButton";
 import Group from "@/models/group/group-model";
-import { GroupContext } from "@/store/group-context";
-import ExternalActionButton from "../UI/Button/ExternalActionButton";
+import { useContext, useState } from "react";
+import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import Client from "@/models/client-model";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import dayjs from "dayjs";
+import { ClientContext } from "@/store/client-context";
+import { GroupContext } from "@/store/group-context";
+import { ReservationContext } from "@/store/reservation-context";
 
-interface INewReservationFormProps {
+interface ICreateReservationViewProps {
+  form: UseFormReturn<ICreateReservationFormModel>;
+  onSubmit: SubmitHandler<ICreateReservationFormModel>;
   onClose: () => void;
-  onSubmit: (values: INewReservationFormValues) => void;
+  clientOptions: IClientOption[];
 }
 
-export interface INewReservationFormValues {
-  groupId: string;
-  startDate: dayjs.Dayjs;
-  startTime?: dayjs.Dayjs;
-  endDate: dayjs.Dayjs;
-  endTime?: dayjs.Dayjs;
-  paymentState: string;
-  fullPrice: number;
-  depositPrice: number;
-  cautionPrice: number;
-  cautionReturned: boolean;
-  comment?: string;
-  selectedClientOption: IClientOption;
-  clientName?: string;
-  clientPhone?: string;
-  clientEmail?: string;
-  clientAddress?: string;
-}
-
-const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dátum", (value) => {
-  if(!value) return true;
-  return dayjs.isDayjs(value);
-});
-
-const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReservationFormProps) => {
-  const reservationCtx = useContext(ReservationContext);
+const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => {
   const clientCtx = useContext(ClientContext);
   const groupCtx = useContext(GroupContext);
-
-  const canReserveEndDate = yup
-    .mixed<dayjs.Dayjs>()
-    .test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
-      if (!value || !dayjsSchema.isValidSync(value)) {
-        return false;
-      }
-      let startDate = this.parent.startDate;
-      if (!startDate || !dayjsSchema.isValidSync(startDate)) {
-        return false;
-      }
-      startDate = dayjs(startDate);
-
-      return reservationCtx.canReserve(startDate, value, this.parent.groupId);
-    });
-
-  const canReserveStartDate = yup
-    .mixed<dayjs.Dayjs>()
-    .test("canReserveStartDate", "Ebben az időszakban van foglalás", function test(value) {
-      if (!value || !dayjsSchema.isValidSync(value)) {
-        return false;
-      }
-      let endDate = this.parent.endDate;
-      if (!endDate || !dayjsSchema.isValidSync(endDate)) {
-        return false;
-      }
-      endDate = dayjs(endDate);
-
-      return reservationCtx.canReserve(value, endDate, this.parent.groupId);
-    });
-
-  const validationSchema: yup.ObjectSchema<INewReservationFormValues> = yup.object().shape({
-    groupId: yup.string().required("Csoport megadása kötelező"),
-    startDate: canReserveStartDate.required("Kezdő dátum megadása kötelező"),
-    startTime: dayjsSchema.optional(),
-    endDate: canReserveEndDate.required("Záró dátum megadása kötelező"),
-    endTime: dayjsSchema.optional(),
-    paymentState: yup.string().required("Fizetési állapot megadása kötelező"),
-    fullPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required("Teljes ár megadása kötelező")
-      .min(0, "Teljes ár nem lehet negatív"),
-    depositPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required("Előleg megadása kötelező")
-      .min(0, "Előleg nem lehet negatív"),
-    cautionPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required("Kaució megadása kötelező")
-      .min(0, "Kaució nem lehet negatív"),
-    cautionReturned: yup.boolean().required(),
-    comment: yup.string().optional(),
-    selectedClientOption: CLIENT_OPTION_SCHEMA.required("Ügyfél megadása kötelező"),
-    clientName: yup.string().optional(),
-    clientPhone: yup.string().optional(),
-    clientEmail: yup.string().email().optional(),
-    clientAddress: yup.string().optional(),
-  });
-
-  const clientOptions = useMemo<IClientOption[]>(() => {
-    const options = clientCtx.clients.map((client) => clientToOption(client));
-    return [NOT_SELECTED_CLIENT_OPTION, ...options];
-  }, [clientCtx.clients]);
+  const reservationCtx = useContext(ReservationContext);
 
   const {
     handleSubmit,
     control,
-    reset,
     watch,
     setValue,
     getValues,
     formState: { errors },
-  } = useForm<INewReservationFormValues>({
-    defaultValues: {
-      groupId: "",
-      startDate: "",
-      startTime: "",
-      endDate: "",
-      endTime: "",
-      paymentState: PaymentState.NOT_PAID,
-      fullPrice: 0,
-      depositPrice: 0,
-      cautionPrice: 0,
-      cautionReturned: false,
-      comment: "",
-      selectedClientOption: NOT_SELECTED_CLIENT_OPTION,
-      clientName: "",
-      clientPhone: "",
-      clientEmail: "",
-      clientAddress: "",
-    },
-    resolver: yupResolver(validationSchema),
-  });
+  } = props.form;
 
   const calculatePayToGo = (
     changedFullPrice?: number,
@@ -203,7 +87,7 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
   };
 
   const startDate = watch("startDate");
-
+  
   return (
     <Box
       component="form"
@@ -560,7 +444,7 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
               <Autocomplete
                 disablePortal
                 id="selectedClientOption"
-                options={clientOptions}
+                options={props.clientOptions}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -569,6 +453,7 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
                     helperText={errors.selectedClientOption && errors.selectedClientOption.message}
                   />
                 )}
+                getOptionLabel={(option) => option.label}
                 isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
                 {...field}
                 value={field.value}
@@ -656,4 +541,4 @@ const NewReservationForm: React.FC<INewReservationFormProps> = (props: INewReser
   );
 };
 
-export default NewReservationForm;
+export default CreateReservationView;

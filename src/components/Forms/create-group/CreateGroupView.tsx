@@ -1,45 +1,20 @@
-import Group from "@/models/group/group-model";
-import GroupState from "@/models/group/group-state-model";
-import GroupType from "@/models/group/group-type-model";
+import ModalControls from "@/components/UI/Modal/ModalControls";
 import { Box, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import ModalControls from "../UI/Modal/ModalControls";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { Controller, SubmitHandler, UseFormReturn } from "react-hook-form";
+import { ICreateGroupFormModel } from "./CreateGroupLogic";
 
-interface INewGroupFormProps {
+interface ICreateGroupViewProps {
+  form: UseFormReturn<ICreateGroupFormModel>;
+  onSubmit: SubmitHandler<ICreateGroupFormModel>;
   onClose: () => void;
-  onSubmit: (values: INewGroupFormState) => void;
 }
 
-export interface INewGroupFormState {
-  title: string;
-  description?: string;
-  state: string;
-  type: string;
-}
-
-const validationSchema: yup.ObjectSchema<INewGroupFormState> = yup.object().shape({
-  title: yup.string().max(25, "A csoport neve maximum 25 karakter lehet").required("A csoport neve kötelező"),
-  description: yup.string().optional(),
-  state: yup.string().required("A csoport állapota kötelező"),
-  type: yup.string().required("A csoport típusa kötelező"),
-});
-
-const NewGroupForm: React.FC<INewGroupFormProps> = (props: INewGroupFormProps) => {
+const CreateGroupView: React.FC<ICreateGroupViewProps> = (props) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<INewGroupFormState>({
-    defaultValues: {
-      title: "",
-      description: "",
-      state: GroupState.ACTIVE,
-      type: GroupType.CAR,
-    },
-    resolver: yupResolver(validationSchema),
-  });
+  } = props.form;
 
   return (
     <Box
@@ -135,4 +110,4 @@ const NewGroupForm: React.FC<INewGroupFormProps> = (props: INewGroupFormProps) =
   );
 };
 
-export default NewGroupForm;
+export default CreateGroupView;

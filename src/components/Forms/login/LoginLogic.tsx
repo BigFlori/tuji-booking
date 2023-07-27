@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { AuthError } from "firebase/auth";
 import TranslatedAuthError from "@/firebase/auth-error/auth-error-model";
-import AuthErrorType from "@/firebase/auth-error/auth-error-type-model";
 
 interface ILoginLogicProps {
   defaultValues: ILoginFormModel;

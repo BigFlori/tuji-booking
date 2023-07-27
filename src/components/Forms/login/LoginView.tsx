@@ -9,7 +9,6 @@ import SpacerLine from "@/components/UI/SpacerLine";
 import ToggleIconButton from "@/components/UI/Button/ToggleIconButton";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { AuthError } from "firebase/auth";
-import { translate } from "@/firebase/auth-error/auth-error-translator";
 import TranslatedAuthError from "@/firebase/auth-error/auth-error-model";
 import AuthErrorType from "@/firebase/auth-error/auth-error-type-model";
 

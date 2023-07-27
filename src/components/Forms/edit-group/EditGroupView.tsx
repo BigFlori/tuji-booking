@@ -1,45 +1,21 @@
-import Group from "@/models/group/group-model";
+import { Controller, SubmitHandler, UseFormReturn } from "react-hook-form";
+import { IEditGroupFormModel } from "./EditGroupLogic";
 import { Box, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import ModalControls from "../UI/Modal/ModalControls";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import ModalControls from "@/components/UI/Modal/ModalControls";
 
-interface IGroupEditFormProps {
-  group: Group;
-  onSubmit: (values: IGroupEditFormValues) => void;
+interface IEditGroupViewProps {
+  form: UseFormReturn<IEditGroupFormModel>;
+  onSubmit: SubmitHandler<IEditGroupFormModel>;
   onClose: () => void;
   onDelete: () => void;
 }
 
-export interface IGroupEditFormValues {
-  title: string;
-  description?: string;
-  state: string;
-  type: string;
-}
-
-const validationSchema: yup.ObjectSchema<IGroupEditFormValues> = yup.object().shape({
-  title: yup.string().max(25, "A csoport neve maximum 25 karakter lehet").required("A csoport neve kötelező"),
-  description: yup.string().optional(),
-  state: yup.string().required("A csoport állapota kötelező"),
-  type: yup.string().required("A csoport típusa kötelező"),
-});
-
-const GroupEditForm: React.FC<IGroupEditFormProps> = (props: IGroupEditFormProps) => {
+const EditGroupView: React.FC<IEditGroupViewProps> = (props) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IGroupEditFormValues>({
-    defaultValues: {
-      title: props.group.title,
-      description: props.group.description,
-      state: props.group.state,
-      type: props.group.type,
-    },
-    resolver: yupResolver(validationSchema),
-  });
+  } = props.form;
 
   return (
     <Box
@@ -141,4 +117,4 @@ const GroupEditForm: React.FC<IGroupEditFormProps> = (props: IGroupEditFormProps
   );
 };
 
-export default GroupEditForm;
+export default EditGroupView;
