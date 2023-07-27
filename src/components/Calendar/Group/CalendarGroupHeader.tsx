@@ -89,6 +89,7 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
           width: props.isExpanded ? CALENDAR_GROUP_WIDTH : CALENDAR_GROUP_WIDTH * 0.4,
           justifyContent: props.isExpanded ? "space-between" : "center",
           paddingInline: props.isExpanded ? theme.spacing(1) : 0,
+          textAlign: props.isExpanded ? "left" : "center",
         })}
         onClick={handleGroupClick}
       >

@@ -24,33 +24,6 @@ export const ClientContext = React.createContext<IClientContextObject>({
 
 const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [clients, setClients] = React.useState<Client[]>([]);
-  //   {
-  //     id: "1",
-  //     name: "Ügyfél 1",
-  //     email: "client1@gmail.com",
-  //     phone: "06301234567",
-  //     address: "Budapest, 1111, Fő utca 1.",
-  //   },
-  //   {
-  //     id: "2",
-  //     name: "Ügyfél 2",
-  //     phone: "06301234567",
-  //     address: "Budapest, 1111, Fő utca 100.",
-  //   },
-  //   {
-  //     id: "3",
-  //     name: "Ügyfél 3",
-  //     email: "client3@gmail.com",
-  //   },
-  //   {
-  //     id: "4",
-  //     name: "Molnár Flórián",
-  //     email: "florian00m14@gmail.com",
-  //     phone: "+36302508322",
-  //     address: "Kőszeg, Kossuth Lajos u. 17",
-  //   },
-  // ]);
-
   const [user] = useAuthState(auth);
 
   //Loading clients

@@ -69,7 +69,7 @@ const Calendar: React.FC<{}> = () => {
   };
 
   return (
-    <Box sx={{ marginTop: 1 }}>
+    <>
       <CalendarControls
         increaseYear={increaseYear}
         decreaseYear={decreaseYear}
@@ -87,7 +87,7 @@ const Calendar: React.FC<{}> = () => {
           })}
         </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
