@@ -12,7 +12,8 @@ const RegisterApollo: React.FC = () => {
       const user = userCredential?.user;
       if (!user) return;
 
-      createInitialUser(user, data);
+      const displayName = `${data.firstName} ${data.lastName}`;
+      createInitialUser(user, displayName);
     });
   };
 

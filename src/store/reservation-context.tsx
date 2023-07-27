@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
 import PaymentState from "@/models/reservation/payment-state-model";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/firebase.config";
+import { deleteReservationDb, readReservations, saveReservationDb } from "@/firebase/firestore-helpers/utils";
 
 interface IReservationContextObject {
   reservations: Reservation[];
@@ -45,121 +48,152 @@ const generateDatesBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
 };
 
 const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
-  const [reservations, setReservations] = React.useState<Reservation[]>([
-    {
-      id: "1",
-      groupId: "1",
-      clientId: "1",
-      startDate: dayjs(dayjs().add(1, "day").format("YYYY-MM-DD")),
-      startTime: dayjs(dayjs().add(1, "day").format("YYYY-MM-DD")).add(12, "hour"),
-      endDate: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")),
-      endTime: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")).add(18, "hour"),
-      paymentState: PaymentState.DEPOSIT_PAID,
-      fullPrice: 65000,
-      depositPrice: 10000,
-      cautionPrice: 10000,
-      cautionReturned: false,
-      comment: "Előleg fizetve.",
-    },
-    {
-      id: "2",
-      groupId: "2",
-      clientId: "1",
-      startDate: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")),
-      endDate: dayjs(dayjs().add(10, "day").format("YYYY-MM-DD")),
-      paymentState: PaymentState.NOT_PAID,
-      fullPrice: 120000,
-      depositPrice: 25000,
-      cautionPrice: 25000,
-      cautionReturned: false,
-    },
-    {
-      id: "3",
-      groupId: "2",
-      clientId: "3",
-      startDate: dayjs(dayjs().subtract(10, "day").format("YYYY-MM-DD")),
-      endDate: dayjs(dayjs().subtract(5, "day").format("YYYY-MM-DD")),
-      paymentState: PaymentState.FULL_PAID,
-      fullPrice: 100000,
-      depositPrice: 20000,
-      cautionPrice: 20000,
-      comment: "Teljes összeg fizetve.",
-      cautionReturned: true,
-    },
-    {
-      id: "4",
-      groupId: "3",
-      clientId: "2",
-      startDate: dayjs(dayjs().format("YYYY-MM-DD")),
-      endDate: dayjs(dayjs().add(11, "day").format("YYYY-MM-DD")),
-      paymentState: PaymentState.CANCELLED,
-      fullPrice: 100000,
-      depositPrice: 20000,
-      cautionPrice: 50000,
-      comment: "Teljes összeg fizetve.",
-      cautionReturned: true,
-    },
-    {
-      id: "5",
-      groupId: "4",
-      clientId: "2",
-      startDate: dayjs("2023-06-30"),
-      endDate: dayjs("2023-07-08"),
-      paymentState: PaymentState.BLOCKED,
-      fullPrice: 100000,
-      depositPrice: 20000,
-      cautionPrice: 100000,
-      cautionReturned: false,
-    },
-    {
-      id: "6",
-      groupId: "4",
-      clientId: "2",
-      startDate: dayjs("2023-06-20"),
-      endDate: dayjs("2023-06-29"),
-      paymentState: PaymentState.FULL_PAID,
-      fullPrice: 100000,
-      depositPrice: 20000,
-      cautionPrice: 75000,
-      cautionReturned: true,
-    },
-    {
-      id: "7",
-      groupId: "4",
-      startDate: dayjs("2023-07-08"),
-      endDate: dayjs("2023-07-13"),
-      paymentState: PaymentState.FULL_PAID,
-      fullPrice: 100000,
-      depositPrice: 20000,
-      cautionPrice: 80000,
-      cautionReturned: true,
-      comment: "Teljes összeg fizetve.",
-    },
-    {
-      id: "8",
-      groupId: "5",
-      clientId: "4",
-      startDate: dayjs("2023-07-02"),
-      endDate: dayjs("2023-07-03"),
-      paymentState: PaymentState.FULL_PAID,
-      fullPrice: 100000,
-      depositPrice: 20000,
-      cautionPrice: 90000,
-      cautionReturned: true,
-      comment: "Teljes összeg fizetve.",
-    },
-  ]);
+  const [reservations, setReservations] = React.useState<Reservation[]>([]);
+  // {
+  //   id: "1",
+  //   groupId: "1",
+  //   clientId: "1",
+  //   startDate: dayjs(dayjs().add(1, "day").format("YYYY-MM-DD")),
+  //   startTime: dayjs(dayjs().add(1, "day").format("YYYY-MM-DD")).add(12, "hour"),
+  //   endDate: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")),
+  //   endTime: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")).add(18, "hour"),
+  //   paymentState: PaymentState.DEPOSIT_PAID,
+  //   fullPrice: 65000,
+  //   depositPrice: 10000,
+  //   cautionPrice: 10000,
+  //   cautionReturned: false,
+  //   comment: "Előleg fizetve.",
+  // },
+  // {
+  //   id: "2",
+  //   groupId: "2",
+  //   clientId: "1",
+  //   startDate: dayjs(dayjs().add(3, "day").format("YYYY-MM-DD")),
+  //   endDate: dayjs(dayjs().add(10, "day").format("YYYY-MM-DD")),
+  //   paymentState: PaymentState.NOT_PAID,
+  //   fullPrice: 120000,
+  //   depositPrice: 25000,
+  //   cautionPrice: 25000,
+  //   cautionReturned: false,
+  // },
+  // {
+  //   id: "3",
+  //   groupId: "2",
+  //   clientId: "3",
+  //   startDate: dayjs(dayjs().subtract(10, "day").format("YYYY-MM-DD")),
+  //   endDate: dayjs(dayjs().subtract(5, "day").format("YYYY-MM-DD")),
+  //   paymentState: PaymentState.FULL_PAID,
+  //   fullPrice: 100000,
+  //   depositPrice: 20000,
+  //   cautionPrice: 20000,
+  //   comment: "Teljes összeg fizetve.",
+  //   cautionReturned: true,
+  // },
+  // {
+  //   id: "4",
+  //   groupId: "3",
+  //   clientId: "2",
+  //   startDate: dayjs(dayjs().format("YYYY-MM-DD")),
+  //   endDate: dayjs(dayjs().add(11, "day").format("YYYY-MM-DD")),
+  //   paymentState: PaymentState.CANCELLED,
+  //   fullPrice: 100000,
+  //   depositPrice: 20000,
+  //   cautionPrice: 50000,
+  //   comment: "Teljes összeg fizetve.",
+  //   cautionReturned: true,
+  // },
+  // {
+  //   id: "5",
+  //   groupId: "4",
+  //   clientId: "2",
+  //   startDate: dayjs("2023-06-30"),
+  //   endDate: dayjs("2023-07-08"),
+  //   paymentState: PaymentState.BLOCKED,
+  //   fullPrice: 100000,
+  //   depositPrice: 20000,
+  //   cautionPrice: 100000,
+  //   cautionReturned: false,
+  // },
+  // {
+  //   id: "6",
+  //   groupId: "4",
+  //   clientId: "2",
+  //   startDate: dayjs("2023-06-20"),
+  //   endDate: dayjs("2023-06-29"),
+  //   paymentState: PaymentState.FULL_PAID,
+  //   fullPrice: 100000,
+  //   depositPrice: 20000,
+  //   cautionPrice: 75000,
+  //   cautionReturned: true,
+  // },
+  // {
+  //   id: "7",
+  //   groupId: "4",
+  //   startDate: dayjs("2023-07-08"),
+  //   endDate: dayjs("2023-07-13"),
+  //   paymentState: PaymentState.FULL_PAID,
+  //   fullPrice: 100000,
+  //   depositPrice: 20000,
+  //   cautionPrice: 80000,
+  //   cautionReturned: true,
+  //   comment: "Teljes összeg fizetve.",
+  // },
+  // {
+  //   id: "8",
+  //   groupId: "5",
+  //   clientId: "4",
+  //   startDate: dayjs("2023-07-02"),
+  //   endDate: dayjs("2023-07-03"),
+  //   paymentState: PaymentState.FULL_PAID,
+  //   fullPrice: 100000,
+  //   depositPrice: 20000,
+  //   cautionPrice: 90000,
+  //   cautionReturned: true,
+  //   comment: "Teljes összeg fizetve.",
+  // },
+  //]);
+
+  const [user] = useAuthState(auth);
+
+  //Loading reservations
+  useEffect(() => {
+    if (!user) {
+      setReservations([]);
+      return;
+    }
+    readReservations(user).then((reservations) => {
+      setReservations(reservations);
+    });
+  }, [user]);
+
+  //Elmenti a változatásokat, és létrehozza a foglalást ha még nem létezik
+  const saveReservation = async (reservation: Reservation) => {
+    if (!user) {
+      return;
+    }
+    saveReservationDb(user, reservation);
+  };
+
+  //A foglalást teljesen kitörli az adatbázisból
+  const deleteReservation = async (id: string) => {
+    if (!user) {
+      return;
+    }
+    deleteReservationDb(user, id);
+  };
 
   const addReservation = (reservation: Reservation) => {
     setReservations((prevReservations) => {
       return [...prevReservations, reservation];
     });
+    saveReservation(reservation);
   };
 
   const removeReservation = (id: string) => {
     setReservations((prevReservations) => {
       return prevReservations.filter((reservation) => reservation.id !== id);
     });
+    deleteReservation(id);
   };
 
   const updateReservation = (id: string, reservation: Reservation) => {
@@ -173,6 +207,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
         return prevReservation;
       });
     });
+    saveReservation(reservation);
   };
 
   //Elméletileg csak akkor adhat vissza többet, ha a két különböző foglalásnak ugyanarra a napra esik a kezdő és záró dátuma

@@ -1,11 +1,14 @@
 import { User } from "firebase/auth";
-import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
 import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
 import { v4 as uuidv4 } from "uuid";
 import Group from "@/models/group/group-model";
 import { IRegisterFormModel } from "@/components/Forms/register/RegisterLogic";
+import Reservation from "@/models/reservation/reservation-model";
+import dayjs from "dayjs";
+import Client from "@/models/client-model";
 
 const initialGroup: Group = {
   id: uuidv4(),
@@ -15,12 +18,9 @@ const initialGroup: Group = {
   state: GroupState.INACTIVE,
 };
 
-export const createInitialUser = async (user: User, data?: IRegisterFormModel) => {
+export const createInitialUser = async (user: User, displayName?: string | null) => {
   //Create user document
-  setDoc(doc(db, "users", user.uid), {
-    firstName: data!.firstName,
-    lastName: data!.lastName,
-  });
+  setDoc(doc(db, "users", user.uid), { displayName: displayName ? displayName : "Nincs megjeleníthető név" });
 
   addDoc(collection(db, "users", user.uid, "clients"), {});
   setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
@@ -49,4 +49,62 @@ export const saveGroupDb = async (user: User, group: Group) => {
 export const deleteGroupDb = async (user: User, groupId: string) => {
   const groupRef = doc(db, "users", user.uid, "groups", groupId);
   await setDoc(groupRef, { state: GroupState.DELETED }, { merge: true });
+};
+
+export const readReservations = async (user: User) => {
+  const reservationsRef = collection(db, "users", user.uid, "reservations");
+  const reservations: Reservation[] = [];
+  await getDocs(reservationsRef).then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const reservation = doc.data() as Reservation;
+      const modifiedReservation = {
+        ...reservation,
+        startDate: dayjs(reservation.startDate),
+        startTime: reservation.startTime ? dayjs(reservation.startTime) : undefined,
+        endDate: dayjs(reservation.endDate),
+        endTime: reservation.endTime ? dayjs(reservation.endTime) : undefined,
+      };
+      reservations.push(modifiedReservation);
+    });
+  });
+  return reservations;
+};
+
+export const saveReservationDb = async (user: User, reservation: Reservation) => {
+  const modifiedReservation = {
+    ...reservation,
+    startDate: reservation.startDate.toISOString(),
+    startTime: reservation.startTime && reservation.startTime?.toISOString(),
+    endDate: reservation.endDate.toISOString(),
+    endTime: reservation.endTime && reservation.endTime?.toISOString(),
+  };
+  const reservationRef = doc(db, "users", user.uid, "reservations", reservation.id);
+  await setDoc(reservationRef, modifiedReservation);
+};
+
+export const deleteReservationDb = async (user: User, reservationId: string) => {
+  const reservationRef = doc(db, "users", user.uid, "reservations", reservationId);
+  await deleteDoc(reservationRef);
+};
+
+export const readClients = async (user: User) => {
+  const clientsRef = collection(db, "users", user.uid, "clients");
+  const clients: Client[] = [];
+  await getDocs(clientsRef).then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const client = doc.data() as Client;
+      clients.push(client);
+    });
+  });
+  return clients;
+};
+
+export const saveClientDb = async (user: User, client: Client) => {
+  const clientRef = doc(db, "users", user.uid, "clients", client.id);
+  await setDoc(clientRef, client);
+};
+
+export const deleteClientDb = async (user: User, clientId: string) => {
+  const clientRef = doc(db, "users", user.uid, "clients", clientId);
+  await deleteDoc(clientRef);
 };

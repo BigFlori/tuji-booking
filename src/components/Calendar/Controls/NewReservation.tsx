@@ -32,7 +32,7 @@ const NewReservation: React.FC = () => {
     if (data.selectedClientOption.clientId === "not-selected" && data.clientName) {
       //Új ügyfél létrehozása ha szükséges
       const client: Client = {
-        id: (clientCtx.clients.length + 1).toString(),
+        id: uuidv4(),
         name: data.clientName,
         phone: data.clientPhone,
         email: data.clientEmail,

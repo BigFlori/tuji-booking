@@ -4,7 +4,6 @@ import { useForm, Controller } from "react-hook-form";
 import ModalControls from "../UI/Modal/ModalControls";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { group } from "console";
 
 interface IGroupEditFormProps {
   group: Group;

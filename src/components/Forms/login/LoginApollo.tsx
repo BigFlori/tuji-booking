@@ -18,7 +18,7 @@ const LoginApollo: React.FC = () => {
       const user = userCredential?.user;
       if (!user) return;
 
-      createInitialUser(user);
+      createInitialUser(user, user.displayName);
     });
   };
 

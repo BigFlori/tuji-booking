@@ -11,6 +11,7 @@ import ReservationEditForm, { IReservationEditFormValues } from "../Forms/Reserv
 import AnimatedModal from "../UI/Modal/AnimatedModal";
 import { SubmitHandler } from "react-hook-form";
 import { Theme, darken } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
@@ -88,7 +89,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     if (data.selectedClientOption.clientId === "not-selected" && data.clientName) {
       //Új ügyfél létrehozása ha szükséges
       const client: Client = {
-        id: (clientCtx.clients.length + 1).toString(),
+        id: uuidv4(),
         name: data.clientName,
         phone: data.clientPhone,
         email: data.clientEmail,
