@@ -34,7 +34,7 @@ export const createInitialUser = async (user: User, displayName?: string | null)
 
   addDoc(collection(db, "users", user.uid, "clients"), {});
   setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
-  addDoc(collection(db, "users", user.uid, "reservations"), {});
+  await addDoc(collection(db, "users", user.uid, "reservations"), {});
 };
 
 export const readGroups = async (user: User) => {

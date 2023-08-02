@@ -2,7 +2,6 @@ import { auth } from "@/firebase/firebase.config";
 import RegisterLogic, { IRegisterFormModel } from "./RegisterLogic";
 import { SubmitHandler } from "react-hook-form";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { createInitialUser } from "@/firebase/firestore-helpers/utils";
 import { updateProfile } from "firebase/auth";
 
 const RegisterApollo: React.FC = () => {
@@ -16,7 +15,6 @@ const RegisterApollo: React.FC = () => {
       const displayName = `${data.firstName} ${data.lastName}`;
 
       updateProfile(user, { displayName: displayName });
-      createInitialUser(user, displayName);
     });
   };
 

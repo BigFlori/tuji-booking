@@ -21,7 +21,7 @@ const CreateGroupView: React.FC<ICreateGroupViewProps> = (props) => {
       component="form"
       noValidate
       autoComplete="off"
-      onSubmit={handleSubmit(props.onSubmit, (error) => console.log(error))}
+      onSubmit={handleSubmit(props.onSubmit)}
     >
       <ModalControls title="Új csoport" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

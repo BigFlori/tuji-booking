@@ -96,7 +96,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
       component="form"
       autoComplete="off"
       noValidate
-      onSubmit={handleSubmit(props.onSubmit, (error) => console.log("error", error))}
+      onSubmit={handleSubmit(props.onSubmit)}
     >
       <ModalControls
         title="Foglalás szerkesztése"

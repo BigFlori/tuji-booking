@@ -15,11 +15,7 @@ const LoginApollo: React.FC = () => {
   };
 
   const googleLoginHandler = () => {
-    signInWithGoogle().then((userCredential) => {
-      const user = userCredential?.user;
-      if (!user) return;
-      //createInitialUser(user, user.displayName);
-    });
+    signInWithGoogle();
   };
 
   const defaultValues: ILoginFormModel = {

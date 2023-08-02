@@ -1,4 +1,6 @@
 import LoginSkeleton from "@/components/Forms/login/LoginSkeleton";
+import NavBar from "@/components/UI/NavBar";
+import PageTransition from "@/components/UI/PageTransition";
 import { auth } from "@/firebase/firebase.config";
 import { createInitialUser } from "@/firebase/firestore-helpers/utils";
 import { Box } from "@mui/material";
@@ -17,18 +19,19 @@ export function withPublic<T>(Component: React.ComponentType<T>) {
     }
 
     if (user && !error) {
-      router.replace("/");      
+      router.replace("/");
       return <Box>Redirecting...</Box>;
     }
 
     return (
       <>
-        <Component {...props!} />
+        <PageTransition path={router.route}>
+          <Component {...props!} />
+        </PageTransition>
       </>
     );
   };
 }
-
 
 export function withProtected<T>(Component: React.ComponentType<T>) {
   return function WithProtected(props: T) {
@@ -37,22 +40,16 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
     const onUserChange = async (user: User | null) => {
       if (!user) return;
       setIsLoading(true);
-      console.log("Create initial user");
       await createInitialUser(user, user.displayName).finally(() => {
-        console.log("Initial user created");
         setIsLoading(false);
       });
-    }
+    };
 
     const [user, loading, error] = useAuthState(auth, { onUserChanged: onUserChange });
 
     const router = useRouter();
 
-    if(isLoading) {
-      return <div>Töltés......!!!!!</div>;
-    }
-
-    if (loading) {
+    if ((loading || isLoading) && !user) {
       return <LoginSkeleton />;
     }
 
@@ -63,7 +60,10 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
 
     return (
       <>
-        <Component {...props!} />
+        <NavBar />
+        <PageTransition path={router.route}>
+          <Component {...props!} />
+        </PageTransition>
       </>
     );
   };

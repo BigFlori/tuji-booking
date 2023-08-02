@@ -36,7 +36,7 @@ const RegisterView: React.FC<IRegisterViewProps> = ({
         component="form"
         autoComplete="off"
         noValidate
-        onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
+        onSubmit={handleSubmit(onSubmit)}
         sx={{
           display: "flex",
           flexDirection: "column",

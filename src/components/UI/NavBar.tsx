@@ -1,10 +1,12 @@
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firebase.config";
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const NavBar: React.FC = () => {
+  const router = useRouter();
   const [signOut] = useSignOut(auth);
   const [user] = useAuthState(auth);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -22,7 +24,9 @@ const NavBar: React.FC = () => {
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>
-            <Typography variant="body1">Tuji-Booking</Typography>
+            <Link href="/" className="disable-default-link">
+              <Typography variant="body1">Tuji-Booking</Typography>
+            </Link>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             {user?.displayName && <Typography variant="body1">Üdv, {user?.displayName}</Typography>}
@@ -43,6 +47,7 @@ const NavBar: React.FC = () => {
                 horizontal: "right",
               }}
             >
+              <MenuItem onClick={() => router.push("/settings")}>Beállítások</MenuItem>
               <MenuItem onClick={() => signOut()}>Kijelentkezés</MenuItem>
             </Menu>
           </Box>

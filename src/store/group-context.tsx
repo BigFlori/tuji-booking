@@ -36,16 +36,13 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
     if (!user) {
       setGroups([]);
       return;
-    }
-    console.log("Loading groups");
-    
+    }    
     readGroups(user)
       .then((groups) => {
         setGroups(groups);
       })
       .finally(() => {
         setIsLoading(false);
-        console.log("Groups loaded");
       });
   }, [user]);
 

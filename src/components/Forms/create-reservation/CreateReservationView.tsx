@@ -93,7 +93,7 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
       component="form"
       noValidate
       autoComplete="off"
-      onSubmit={handleSubmit(props.onSubmit, (error) => console.log("error", error))}
+      onSubmit={handleSubmit(props.onSubmit)}
     >
       <ModalControls title="Új foglalás" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

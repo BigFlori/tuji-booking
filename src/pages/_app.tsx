@@ -34,9 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        <PageTransition path={router.route}>
-          <Component {...pageProps} key={router.route} />
-        </PageTransition>
+        <Component {...pageProps} key={router.route} />
       </ThemeProvider>
     </LocalizationProvider>
   );

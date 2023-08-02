@@ -22,7 +22,7 @@ const EditGroupView: React.FC<IEditGroupViewProps> = (props) => {
       component="form"
       autoComplete="off"
       noValidate
-      onSubmit={handleSubmit(props.onSubmit, (error) => console.log(error))}
+      onSubmit={handleSubmit(props.onSubmit)}
     >
       <ModalControls
         title="Csoport szerkesztése"
