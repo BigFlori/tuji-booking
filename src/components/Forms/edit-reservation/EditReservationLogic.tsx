@@ -1,26 +1,24 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  CLIENT_OPTION_SCHEMA,
-  IClientOption,
-  NOT_SELECTED_CLIENT_OPTION,
-  clientToOption,
-} from "../client-option/clientOptionHelper";
 import dayjs from "dayjs";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { CLIENT_OPTION_SCHEMA, IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
+import EditReservationView from "./EditReservationView";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useContext, useMemo } from "react";
-import { ReservationContext } from "@/store/reservation-context";
 import { ClientContext } from "@/store/client-context";
-import { yupResolver } from "@hookform/resolvers/yup";
-import CreateReservationView from "./CreateReservationView";
-import { ICreateReservationFormModelWithEmptyDate } from "./CreateReservationApollo";
+import { ReservationContext } from "@/store/reservation-context";
+import { IEditReservationFormModelWithEmptyDate } from "./EditReservationApollo";
 
-interface ICreateReservationLogicProps {
-  defaultValues: ICreateReservationFormModelWithEmptyDate;
-  onSubmit: SubmitHandler<ICreateReservationFormModel>;
+interface IEditReservationLogicProps {
+  defaultValues: IEditReservationFormModelWithEmptyDate;
+  onSubmit: SubmitHandler<IEditReservationFormModel>;
   onClose: () => void;
+  onDelete: () => void;
+  reservationId: string;
+  reservationGroupId: string;
 }
 
-export interface ICreateReservationFormModel {
+export interface IEditReservationFormModel {
   groupId: string;
   startDate: dayjs.Dayjs;
   startTime?: dayjs.Dayjs;
@@ -44,7 +42,7 @@ const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dát
   return dayjs.isDayjs(value);
 });
 
-const CreateReservationLogic: React.FC<ICreateReservationLogicProps> = (props) => {
+const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
   const reservationCtx = useContext(ReservationContext);
   const clientCtx = useContext(ClientContext);
 
@@ -60,7 +58,7 @@ const CreateReservationLogic: React.FC<ICreateReservationLogicProps> = (props) =
       }
       startDate = dayjs(startDate);
 
-      return reservationCtx.canReserve(startDate, value, this.parent.groupId);
+      return reservationCtx.canReserve(startDate, value, this.parent.groupId, props.reservationId);
     });
 
   const canReserveStartDate = yup
@@ -75,10 +73,10 @@ const CreateReservationLogic: React.FC<ICreateReservationLogicProps> = (props) =
       }
       endDate = dayjs(endDate);
 
-      return reservationCtx.canReserve(value, endDate, this.parent.groupId);
+      return reservationCtx.canReserve(value, endDate, this.parent.groupId, props.reservationId);
     });
 
-  const validationSchema: yup.ObjectSchema<ICreateReservationFormModel> = yup.object().shape({
+  const validationSchema: yup.ObjectSchema<IEditReservationFormModel> = yup.object().shape({
     groupId: yup.string().required("Csoport megadása kötelező"),
     startDate: canReserveStartDate.required("Kezdő dátum megadása kötelező"),
     startTime: dayjsSchema.optional(),
@@ -102,7 +100,7 @@ const CreateReservationLogic: React.FC<ICreateReservationLogicProps> = (props) =
       .min(0, "Kaució nem lehet negatív"),
     cautionReturned: yup.boolean().required(),
     comment: yup.string().optional(),
-    selectedClientOption: CLIENT_OPTION_SCHEMA.required("Ügyfél megadása kötelező"),
+    selectedClientOption: CLIENT_OPTION_SCHEMA.required(),
     clientName: yup.string().optional(),
     clientPhone: yup.string().optional(),
     clientEmail: yup.string().email().optional(),
@@ -110,23 +108,31 @@ const CreateReservationLogic: React.FC<ICreateReservationLogicProps> = (props) =
   });
 
   const clientOptions = useMemo<IClientOption[]>(() => {
-    const options = clientCtx.clients.map((client) => clientToOption(client));
+    const options = clientCtx.clients.map((client) => {
+      return {
+        label: client.name,
+        clientId: client.id,
+      };
+    });
     return [NOT_SELECTED_CLIENT_OPTION, ...options];
   }, [clientCtx.clients]);
 
-  const form = useForm<ICreateReservationFormModel>({
+  const form = useForm<IEditReservationFormModel>({
     defaultValues: props.defaultValues,
     resolver: yupResolver(validationSchema),
   });
 
   return (
-    <CreateReservationView
+    <EditReservationView
       form={form}
       onSubmit={props.onSubmit}
       onClose={props.onClose}
+      onDelete={props.onDelete}
       clientOptions={clientOptions}
+      reservationId={props.reservationId}
+      reservationGroupId={props.reservationGroupId}
     />
   );
 };
 
-export default CreateReservationLogic;
+export default EditReservationLogic;

@@ -4,6 +4,7 @@ import LoginLogic, { ILoginFormModel } from "./LoginLogic";
 import { SubmitHandler } from "react-hook-form";
 import { translate } from "@/firebase/auth-error/auth-error-translator";
 import { createInitialUser } from "@/firebase/firestore-helpers/utils";
+import { useState } from "react";
 
 const LoginApollo: React.FC = () => {
   const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
@@ -17,8 +18,7 @@ const LoginApollo: React.FC = () => {
     signInWithGoogle().then((userCredential) => {
       const user = userCredential?.user;
       if (!user) return;
-
-      createInitialUser(user, user.displayName);
+      //createInitialUser(user, user.displayName);
     });
   };
 

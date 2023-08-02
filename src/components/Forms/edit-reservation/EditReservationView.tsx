@@ -1,4 +1,9 @@
-import Reservation from "@/models/reservation/reservation-model";
+import { useContext, useState } from "react";
+import { IEditReservationFormModel } from "./EditReservationLogic";
+import { SubmitHandler, UseFormReturn, Controller } from "react-hook-form";
+import Client from "@/models/client-model";
+import Group from "@/models/group/group-model";
+import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import {
   Autocomplete,
   Box,
@@ -16,168 +21,37 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import ModalControls from "@/components/UI/Modal/ModalControls";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import ExternalActionButton from "../UI/Button/ExternalActionButton";
-import Client from "@/models/client-model";
 import dayjs from "dayjs";
-import ModalControls from "../UI/Modal/ModalControls";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useContext, useMemo, useState } from "react";
-import { ReservationContext } from "@/store/reservation-context";
+import ExternalActionButton from "@/components/UI/Button/ExternalActionButton";
 import { ClientContext } from "@/store/client-context";
-import {
-  IClientOption,
-  NOT_SELECTED_CLIENT_OPTION,
-  clientToOption,
-  CLIENT_OPTION_SCHEMA,
-} from "./client-option/clientOptionHelper";
-import Group from "@/models/group/group-model";
+import { ReservationContext } from "@/store/reservation-context";
 import { GroupContext } from "@/store/group-context";
 
-interface IReservationEditFormProps {
-  reservation: Reservation;
-  client: Client;
+interface IEditReservationViewProps {
+  form: UseFormReturn<IEditReservationFormModel>;
+  onSubmit: SubmitHandler<IEditReservationFormModel>;
   onClose: () => void;
-  onSubmit: (values: IReservationEditFormValues) => void;
   onDelete: () => void;
+  clientOptions: IClientOption[];
+  reservationId: string;
+  reservationGroupId: string;
 }
 
-export interface IReservationEditFormValues {
-  groupId: string;
-  startDate: dayjs.Dayjs;
-  startTime?: dayjs.Dayjs;
-  endDate: dayjs.Dayjs;
-  endTime?: dayjs.Dayjs;
-  paymentState: string;
-  fullPrice: number;
-  depositPrice: number;
-  cautionPrice: number;
-  cautionReturned: boolean;
-  comment?: string;
-  selectedClientOption: IClientOption;
-  clientName?: string;
-  clientPhone?: string;
-  clientEmail?: string;
-  clientAddress?: string;
-}
-
-const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dátum", (value) => {
-  if(!value) return true;
-  return dayjs.isDayjs(value);
-});
-
-const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
-  const reservationCtx = useContext(ReservationContext);
+const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
   const clientCtx = useContext(ClientContext);
+  const reservationCtx = useContext(ReservationContext);
   const groupCtx = useContext(GroupContext);
-
-  const reservationClient = useMemo(() => {
-    const client = clientCtx.getClientById(props.reservation.clientId);
-    return client ? client : { id: "not-selected", name: "" };
-  }, [clientCtx.clients, props.reservation.clientId]);
-
-  const clientOptions = useMemo<IClientOption[]>(() => {
-    const options = clientCtx.clients.map((client) => {
-      return {
-        label: client.name,
-        clientId: client.id,
-      };
-    });
-    return [NOT_SELECTED_CLIENT_OPTION, ...options];
-  }, [clientCtx.clients]);
-
-  const canReserveEndDate = yup
-    .mixed<dayjs.Dayjs>()
-    .test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
-      if (!value || !dayjsSchema.isValidSync(value)) {
-        return false;
-      }
-      let startDate = this.parent.startDate;
-      if (!startDate || !dayjsSchema.isValidSync(startDate)) {
-        return false;
-      }
-      startDate = dayjs(startDate);
-
-      return reservationCtx.canReserve(startDate, value, this.parent.groupId, props.reservation.id);
-    });
-
-  const canReserveStartDate = yup
-    .mixed<dayjs.Dayjs>()
-    .test("canReserveStartDate", "Ebben az időszakban van foglalás", function test(value) {
-      if (!value || !dayjsSchema.isValidSync(value)) {
-        return false;
-      }
-      let endDate = this.parent.endDate;
-      if (!endDate || !dayjsSchema.isValidSync(endDate)) {
-        return false;
-      }
-      endDate = dayjs(endDate);
-
-      return reservationCtx.canReserve(value, endDate, this.parent.groupId, props.reservation.id);
-    });
-
-  const validationSchema: yup.ObjectSchema<IReservationEditFormValues> = yup.object().shape({
-    groupId: yup.string().required("Csoport megadása kötelező"),
-    startDate: canReserveStartDate.required("Kezdő dátum megadása kötelező"),
-    startTime: dayjsSchema.optional(),
-    endDate: canReserveEndDate.required("Záró dátum megadása kötelező"),
-    endTime: dayjsSchema.optional(),
-    paymentState: yup.string().required("Fizetési állapot megadása kötelező"),
-    fullPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required("Teljes ár megadása kötelező")
-      .min(0, "Teljes ár nem lehet negatív"),
-    depositPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required("Előleg megadása kötelező")
-      .min(0, "Előleg nem lehet negatív"),
-    cautionPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
-      .required("Kaució megadása kötelező")
-      .min(0, "Kaució nem lehet negatív"),
-    cautionReturned: yup.boolean().required(),
-    comment: yup.string().optional(),
-    selectedClientOption: CLIENT_OPTION_SCHEMA.required(),
-    clientName: yup.string().optional(),
-    clientPhone: yup.string().optional(),
-    clientEmail: yup.string().email().optional(),
-    clientAddress: yup.string().optional(),
-  });
 
   const {
     handleSubmit,
     control,
-    reset,
     watch,
     setValue,
     getValues,
     formState: { errors },
-  } = useForm<IReservationEditFormValues>({
-    defaultValues: {
-      groupId: props.reservation.groupId,
-      startDate: dayjs(props.reservation.startDate),
-      startTime: props.reservation.startTime ? dayjs(props.reservation.startTime) : "",
-      endDate: dayjs(props.reservation.endDate),
-      endTime: props.reservation.endTime ? dayjs(props.reservation.endTime) : "",
-      paymentState: props.reservation.paymentState,
-      fullPrice: props.reservation.fullPrice,
-      depositPrice: props.reservation.depositPrice,
-      cautionPrice: props.reservation.cautionPrice,
-      cautionReturned: props.reservation.cautionReturned,
-      comment: props.reservation.comment,
-      selectedClientOption: clientToOption(reservationClient),
-      clientName: reservationClient.name,
-      clientPhone: reservationClient.phone ? reservationClient.phone : "",
-      clientEmail: reservationClient.email ? reservationClient.email : "",
-      clientAddress: reservationClient.address ? reservationClient.address : "",
-    },
-    resolver: yupResolver(validationSchema),
-  });
+  } = props.form;
 
   const calculatePayToGo = (
     changedFullPrice?: number,
@@ -198,7 +72,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
   };
 
   const [payToGo, setPayToGo] = useState<number>(calculatePayToGo());
-  const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(groupCtx.getGroup(props.reservation.groupId));
+  const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(groupCtx.getGroup(props.reservationGroupId));
 
   const updateClientData = (client?: Client) => {
     if (client && client.id !== "not-selected") {
@@ -224,7 +98,13 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
       noValidate
       onSubmit={handleSubmit(props.onSubmit, (error) => console.log("error", error))}
     >
-      <ModalControls title="Foglalás szerkesztése" onClose={props.onClose} onDelete={props.onDelete} isEdit saveButtonProps={{ type: "submit" }}>
+      <ModalControls
+        title="Foglalás szerkesztése"
+        onClose={props.onClose}
+        onDelete={props.onDelete}
+        isEdit
+        saveButtonProps={{ type: "submit" }}
+      >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="body1" sx={{ fontWeight: "500" }}>
             Alapinformációk
@@ -282,7 +162,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                   }}
                   shouldDisableDate={(day) =>
                     !selectedGroup ||
-                    reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, props.reservation.id)
+                    reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, props.reservationId)
                   }
                   value={field.value}
                   inputRef={field.ref}
@@ -334,15 +214,15 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
                     return (
                       dayjs(day).isBefore(startDate) ||
                       dayjs(day).isSame(startDate) ||
-                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id, props.reservation.id) ||
+                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id, props.reservationId) ||
                       (nextReservation &&
-                        nextReservation.id !== props.reservation.id &&
+                        nextReservation.id !== props.reservationId &&
                         day.isAfter(nextReservation?.startDate)) ||
                       (day.isAfter(latestReservation?.endDate) && //Ha a vizsgált nap a legutolsó foglalás után van
                         !day.isAfter(field.value) && //Engedélyezi a kiválasztott nap után lévő napokat
                         !day.isSame(field.value) && //Engedélyezi a kiválasztott napot
                         !day.isBefore(field.value) && //Engedélyezi a kiválasztott nap előtti napokat
-                        latestReservation?.id !== props.reservation.id && //Kizárja a jelenlegi foglalást
+                        latestReservation?.id !== props.reservationId && //Kizárja a jelenlegi foglalást
                         latestReservation?.groupId === selectedGroup.id)
                     );
                   }}
@@ -577,7 +457,7 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
               <Autocomplete
                 disablePortal
                 id="selectedClientOption"
-                options={clientOptions}
+                options={props.clientOptions}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -674,4 +554,4 @@ const ReservationEditForm: React.FC<IReservationEditFormProps> = (props) => {
   );
 };
 
-export default ReservationEditForm;
+export default EditReservationView;

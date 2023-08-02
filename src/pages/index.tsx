@@ -3,15 +3,22 @@ import { withProtected } from "@/hoc/route";
 import { NextPage } from "next";
 import PageHead from "@/components/UI/PageHead";
 import NavBar from "@/components/UI/NavBar";
+import GroupContextProvider from "@/store/group-context";
+import ReservationContextProvider from "@/store/reservation-context";
+import ClientContextProvider from "@/store/client-context";
 
-const Home: NextPage = () => {
+const BookingApp: NextPage = () => {
   return (
-    <>
-      <PageHead />
-      <NavBar />
-      <Calendar />
-    </>
+    <GroupContextProvider>
+      <ReservationContextProvider>
+        <ClientContextProvider>
+          <PageHead />
+          <NavBar />
+          <Calendar />
+        </ClientContextProvider>
+      </ReservationContextProvider>
+    </GroupContextProvider>
   );
 };
 
-export default withProtected(Home);
+export default withProtected(BookingApp);

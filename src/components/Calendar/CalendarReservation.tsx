@@ -5,13 +5,10 @@ import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/config/config";
 import ReservationButton from "../UI/styled/ReservationButton";
 import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
-import Client from "@/models/client-model";
 import PaymentState from "@/models/reservation/payment-state-model";
-import ReservationEditForm, { IReservationEditFormValues } from "../Forms/ReservationEditForm";
 import AnimatedModal from "../UI/Modal/AnimatedModal";
-import { SubmitHandler } from "react-hook-form";
 import { Theme, darken } from "@mui/material";
-import { v4 as uuidv4 } from "uuid";
+import EditReservationApollo from "../Forms/edit-reservation/EditReservationApollo";
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
@@ -79,62 +76,6 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     setModalOpened(false);
   };
 
-  const submintHandler: SubmitHandler<IReservationEditFormValues> = (data) => {
-    // console.log("saveHandler");
-    // console.log(data);
-
-    const paymentState = Object.values(PaymentState).find((state) => state === data.paymentState);
-    if (!paymentState) return;
-
-    if (data.selectedClientOption.clientId === "not-selected" && data.clientName) {
-      //Új ügyfél létrehozása ha szükséges
-      const client: Client = {
-        id: uuidv4(),
-        name: data.clientName,
-        phone: data.clientPhone,
-        email: data.clientEmail,
-        address: data.clientAddress,
-      };
-      clientCtx.addClient(client);
-      data.selectedClientOption.clientId = client.id;
-    } else if (data.selectedClientOption.clientId !== "not-selected" && data.clientName) {
-      //Ügyfél adatainak frissítése
-      const client: Client = {
-        id: data.selectedClientOption.clientId,
-        name: data.clientName,
-        phone: data.clientPhone,
-        email: data.clientEmail,
-        address: data.clientAddress,
-      };
-      clientCtx.updateClient(client.id, client);
-    }
-
-    //Módosított foglalás létrehozása
-    const modifiedReservation = {
-      ...props.reservation,
-      clientId: data.selectedClientOption.clientId,
-      groupId: data.groupId,
-      startDate: data.startDate,
-      startTime: data.startTime,
-      endDate: data.endDate,
-      endTime: data.endTime,
-      paymentState: paymentState,
-      fullPrice: data.fullPrice,
-      depositPrice: data.depositPrice,
-      cautionPrice: data.cautionPrice,
-      comment: data.comment,
-    };
-
-    reservationCtx.updateReservation(props.reservation.id, modifiedReservation);
-
-    setModalOpened(false);
-  };
-
-  const deleteHandler = () => {
-    reservationCtx.removeReservation(props.reservation.id);
-    setModalOpened(false);
-  };
-
   const getBgColor = (theme: Theme) => {
     switch (props.reservation.paymentState) {
       case PaymentState.NOT_PAID:
@@ -169,13 +110,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
         {formatName(reservationClient.name, daysReserved)}
       </ReservationButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <ReservationEditForm
-          reservation={props.reservation}
-          client={reservationClient}
-          onSubmit={submintHandler}
-          onClose={handleModalClose}
-          onDelete={deleteHandler}
-        />
+        <EditReservationApollo onClose={handleModalClose} reservation={props.reservation} />
       </AnimatedModal>
     </>
   );

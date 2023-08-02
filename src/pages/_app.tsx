@@ -35,13 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <PageTransition path={router.route}>
-          <GroupContextProvider>
-            <ReservationContextProvider>
-              <ClientContextProvider>
-                <Component {...pageProps} key={router.route} />
-              </ClientContextProvider>
-            </ReservationContextProvider>
-          </GroupContextProvider>
+          <Component {...pageProps} key={router.route} />
         </PageTransition>
       </ThemeProvider>
     </LocalizationProvider>

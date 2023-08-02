@@ -54,7 +54,7 @@ const CalendarMonth: React.FC<ICalendarMonthProps> = (props: ICalendarMonthProps
       );
     }
     return groups;
-  }, [groupCtx.groups, monthDate]);
+  }, [groupCtx.groups, monthDate, groupCtx.isLoading]);
 
   return (
     <Box

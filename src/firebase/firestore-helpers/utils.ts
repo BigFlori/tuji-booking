@@ -5,7 +5,6 @@ import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
 import { v4 as uuidv4 } from "uuid";
 import Group from "@/models/group/group-model";
-import { IRegisterFormModel } from "@/components/Forms/register/RegisterLogic";
 import Reservation from "@/models/reservation/reservation-model";
 import dayjs from "dayjs";
 import Client from "@/models/client-model";
@@ -19,8 +18,19 @@ const initialGroup: Group = {
 };
 
 export const createInitialUser = async (user: User, displayName?: string | null) => {
+  const docRef = doc(db, "users", user.uid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) return;
+
   //Create user document
-  setDoc(doc(db, "users", user.uid), { displayName: displayName ? displayName : "Nincs megjeleníthető név" });
+  setDoc(
+    doc(db, "users", user.uid),
+    {
+      displayName: displayName ? displayName : "Nincs megjeleníthető név",
+      createdAt: dayjs().toISOString(),
+    },
+    { merge: true }
+  );
 
   addDoc(collection(db, "users", user.uid, "clients"), {});
   setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
@@ -33,6 +43,7 @@ export const readGroups = async (user: User) => {
   const groups: Group[] = [];
   await getDocs(groupsRef).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
+      if(!doc.data().hasOwnProperty("id")) return;
       const group = doc.data() as Group;
       if (group.state === GroupState.DELETED) return;
       groups.push(group);
@@ -56,6 +67,7 @@ export const readReservations = async (user: User) => {
   const reservations: Reservation[] = [];
   await getDocs(reservationsRef).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
+      if(!doc.data().hasOwnProperty("id")) return;
       const reservation = doc.data() as Reservation;
       const modifiedReservation = {
         ...reservation,
@@ -92,6 +104,7 @@ export const readClients = async (user: User) => {
   const clients: Client[] = [];
   await getDocs(clientsRef).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
+      if(!doc.data().hasOwnProperty("id")) return;
       const client = doc.data() as Client;
       clients.push(client);
     });
