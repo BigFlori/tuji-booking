@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
 import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
-import PaymentState from "@/models/reservation/payment-state-model";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/firebase.config";
 import { deleteReservationDb, readReservations, saveReservationDb } from "@/firebase/firestore-helpers/utils";
+import { useAuthContext, useUser } from "./user-context";
 
 interface IReservationContextObject {
   reservations: Reservation[];
@@ -49,18 +47,19 @@ const generateDatesBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
 
 const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [reservations, setReservations] = React.useState<Reservation[]>([]);
-  const [user] = useAuthState(auth);
+  const user = useUser();
+  const authCtx = useAuthContext();
 
   //Loading reservations
   useEffect(() => {
-    if (!user) {
+    if (!user || !authCtx.initialUserDataChecked) {
       setReservations([]);
       return;
     }
     readReservations(user).then((reservations) => {
       setReservations(reservations);
     });
-  }, [user]);
+  }, [authCtx.initialUserDataChecked]);
 
   //Elmenti a változatásokat, és létrehozza a foglalást ha még nem létezik
   const saveReservation = async (reservation: Reservation) => {
@@ -96,8 +95,6 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     setReservations((prevReservations) => {
       return prevReservations.map((prevReservation) => {
         if (prevReservation.id === id) {
-          console.log(prevReservation);
-          console.log(reservation);
           return reservation;
         }
         return prevReservation;
@@ -120,6 +117,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     return reservationsFound;
   };
 
+  //Ellenőrzi, hogy az adott dátumra lehetséges-e foglalni
   const shouldDateBeDisabled = (
     date: dayjs.Dayjs,
     type: "startDate" | "endDate",
@@ -155,6 +153,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     }
   };
 
+  //A legkésőbbi foglalást adja vissza az adott csoportban
   const getLatestReservation = (groupId: string): Reservation | null => {
     const reservationsFound = reservations.filter((reservation) => reservation.groupId === groupId);
 
@@ -165,6 +164,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
+  //A megadott dátumtól fogva a legközelebbi foglalást adja vissza az adott csoportban
   const getNextReservation = (startDate: dayjs.Dayjs, groupId: string): Reservation | null => {
     const reservationsFound = reservations.filter(
       (reservation) => reservation.groupId === groupId && reservation.startDate.isAfter(startDate)

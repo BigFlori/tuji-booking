@@ -13,11 +13,11 @@ import { useRouter } from "next/router";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/hu";
-import PageTransition from "@/components/UI/PageTransition";
 import GroupContextProvider from "@/store/group-context";
 import ReservationContextProvider from "@/store/reservation-context";
 import { huHU } from "@mui/x-date-pickers";
 import ClientContextProvider from "@/store/client-context";
+import { UserContextProvider } from "@/store/user-context";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -34,7 +34,15 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
-        <Component {...pageProps} key={router.route} />
+        <UserContextProvider>
+          <GroupContextProvider>
+            <ReservationContextProvider>
+              <ClientContextProvider>
+                <Component {...pageProps} key={router.route} />
+              </ClientContextProvider>
+            </ReservationContextProvider>
+          </GroupContextProvider>
+        </UserContextProvider>
       </ThemeProvider>
     </LocalizationProvider>
   );

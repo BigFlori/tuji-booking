@@ -1,21 +1,13 @@
-import { auth } from "@/firebase/firebase.config";
 import RegisterLogic, { IRegisterFormModel } from "./RegisterLogic";
 import { SubmitHandler } from "react-hook-form";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { updateProfile } from "firebase/auth";
+import { useAuthContext } from "@/store/user-context";
 
 const RegisterApollo: React.FC = () => {
-  const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
+  const { error, loading } = useAuthContext().createUserState;
+  const authCtx = useAuthContext();
 
   const submitHandler: SubmitHandler<IRegisterFormModel> = (data) => {
-    createUserWithEmailAndPassword(data.email, data.password).then((userCredential) => {
-      const user = userCredential?.user;
-      if (!user) return;
-
-      const displayName = `${data.firstName} ${data.lastName}`;
-
-      updateProfile(user, { displayName: displayName });
-    });
+    authCtx.createUserState.createUserWithEmailAndPassword(data);
   };
 
   const defaultValues: IRegisterFormModel = {

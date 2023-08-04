@@ -1,14 +1,12 @@
-import { auth, db } from "@/firebase/firebase.config";
-import { useSignInWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
 import LoginLogic, { ILoginFormModel } from "./LoginLogic";
 import { SubmitHandler } from "react-hook-form";
 import { translate } from "@/firebase/auth-error/auth-error-translator";
-import { createInitialUser } from "@/firebase/firestore-helpers/utils";
-import { useState } from "react";
+import { useAuthContext } from "@/store/user-context";
 
 const LoginApollo: React.FC = () => {
-  const [signInWithGoogle, googleUser, googleLoading, googleError] = useSignInWithGoogle(auth);
-  const [signInWithEmailAndPassword, epUser, epLoading, epError] = useSignInWithEmailAndPassword(auth);
+  const authCtx = useAuthContext();
+  const {signInWithEmailAndPassword, loading: epLoading, error: epError} = authCtx.signInWithEmailAndPasswordState;
+  const {signInWithGoogle, loading: googleLoading, error: googleError} = authCtx.signInWithGoogleState;
 
   const submitHandler: SubmitHandler<ILoginFormModel> = (data) => {
     signInWithEmailAndPassword(data.email, data.password);

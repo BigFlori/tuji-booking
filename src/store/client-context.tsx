@@ -1,8 +1,7 @@
-import { auth } from "@/firebase/firebase.config";
 import { deleteClientDb, readClients, saveClientDb } from "@/firebase/firestore-helpers/utils";
 import Client from "@/models/client-model";
 import React, { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { useAuthContext, useUser } from "./user-context";
 
 interface IClientContextObject {
   clients: Client[];
@@ -24,18 +23,20 @@ export const ClientContext = React.createContext<IClientContextObject>({
 
 const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [clients, setClients] = React.useState<Client[]>([]);
-  const [user] = useAuthState(auth);
+  const user = useUser();
+  const authCtx = useAuthContext();
 
   //Loading clients
   useEffect(() => {
-    if (!user) {
+    if (!user || !authCtx.initialUserDataChecked) {
       setClients([]);
       return;
     }
+
     readClients(user).then((clients) => {
       setClients(clients);
     });
-  }, [user]);
+  }, [authCtx.initialUserDataChecked]);
 
   //Elmenti a váltztatásokat, és létrehozza az ügyfelet ha még nem létezik
   const saveClient = async (client: Client) => {

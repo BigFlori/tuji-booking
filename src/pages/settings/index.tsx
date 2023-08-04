@@ -1,4 +1,3 @@
-import NavBar from "@/components/UI/NavBar";
 import PageHead from "@/components/UI/PageHead";
 import { withProtected } from "@/hoc/route";
 import { NextPage } from "next";

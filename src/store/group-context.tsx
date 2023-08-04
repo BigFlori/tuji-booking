@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Group from "@/models/group/group-model";
-import GroupState from "@/models/group/group-state-model";
-import GroupType from "@/models/group/group-type-model";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/firebase/firebase.config";
 import { deleteGroupDb, readGroups, saveGroupDb } from "@/firebase/firestore-helpers/utils";
+import { useAuthContext, useUser } from "./user-context";
 
 interface IGroupsContextObject {
   groups: Group[];
-  isLoading: boolean;
+  //isLoading: boolean;
+  loadGroups: () => void;
   setGroups: (groups: Group[]) => void;
   addGroup: (group: Group) => void;
   removeGroup: (id: string) => void;
@@ -18,7 +16,8 @@ interface IGroupsContextObject {
 
 export const GroupContext = React.createContext<IGroupsContextObject>({
   groups: [],
-  isLoading: false,
+  //isLoading: false,
+  loadGroups: () => {},
   setGroups: () => {},
   addGroup: () => {},
   removeGroup: () => {},
@@ -28,23 +27,23 @@ export const GroupContext = React.createContext<IGroupsContextObject>({
 
 const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user] = useAuthState(auth);
+  const user = useUser();
+  const authCtx = useAuthContext();
 
   //Loading groups
   useEffect(() => {
-    if (!user) {
+    loadGroups();
+  }, [authCtx.initialUserDataChecked]);
+
+  const loadGroups = () => {
+    if (!user || !authCtx.initialUserDataChecked) {
       setGroups([]);
       return;
-    }    
-    readGroups(user)
-      .then((groups) => {
-        setGroups(groups);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [user]);
+    }
+    readGroups(user).then((groups) => {
+      setGroups(groups);
+    });
+  };
 
   //Elmenti a változtatásokat, és létrehozza a csoportot ha még nem létezik
   const saveGroup = async (group: Group) => {
@@ -94,7 +93,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
 
   const context: IGroupsContextObject = {
     groups,
-    isLoading,
+    loadGroups,
     setGroups,
     addGroup,
     removeGroup,

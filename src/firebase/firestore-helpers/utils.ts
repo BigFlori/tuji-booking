@@ -17,24 +17,30 @@ const initialGroup: Group = {
   state: GroupState.INACTIVE,
 };
 
-export const createInitialUser = async (user: User, displayName?: string | null) => {
+export const isUserdataExist = async (user: User) => {
   const docRef = doc(db, "users", user.uid);
   const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) return;
+  return docSnap.exists();
+};
 
-  //Create user document
-  setDoc(
-    doc(db, "users", user.uid),
-    {
-      displayName: displayName ? displayName : "Nincs megjeleníthető név",
-      createdAt: dayjs().toISOString(),
-    },
-    { merge: true }
-  );
+export const createInitialUser = async (user: User, displayName?: string | null) => {
+  await isUserdataExist(user).then(async (exists) => {
+    if (exists) return;
 
-  addDoc(collection(db, "users", user.uid, "clients"), {});
-  setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
-  await addDoc(collection(db, "users", user.uid, "reservations"), {});
+    //Create user document
+    setDoc(
+      doc(db, "users", user.uid),
+      {
+        displayName: displayName ? displayName : "Nincs megjeleníthető név",
+        createdAt: dayjs().toISOString(),
+      },
+      { merge: true }
+    );
+
+    addDoc(collection(db, "users", user.uid, "clients"), {});
+    setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
+    await addDoc(collection(db, "users", user.uid, "reservations"), {});
+  });
 };
 
 export const readGroups = async (user: User) => {
@@ -43,7 +49,7 @@ export const readGroups = async (user: User) => {
   const groups: Group[] = [];
   await getDocs(groupsRef).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
-      if(!doc.data().hasOwnProperty("id")) return;
+      if (!doc.data().hasOwnProperty("id")) return;
       const group = doc.data() as Group;
       if (group.state === GroupState.DELETED) return;
       groups.push(group);
@@ -67,7 +73,7 @@ export const readReservations = async (user: User) => {
   const reservations: Reservation[] = [];
   await getDocs(reservationsRef).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
-      if(!doc.data().hasOwnProperty("id")) return;
+      if (!doc.data().hasOwnProperty("id")) return;
       const reservation = doc.data() as Reservation;
       const modifiedReservation = {
         ...reservation,
@@ -104,7 +110,7 @@ export const readClients = async (user: User) => {
   const clients: Client[] = [];
   await getDocs(clientsRef).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
-      if(!doc.data().hasOwnProperty("id")) return;
+      if (!doc.data().hasOwnProperty("id")) return;
       const client = doc.data() as Client;
       clients.push(client);
     });
