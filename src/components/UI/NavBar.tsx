@@ -25,7 +25,7 @@ const NavBar: React.FC = () => {
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>
-            <Link href="/" className="disable-default-link">
+            <Link href="/">
               <Typography variant="body1">Tuji-Booking</Typography>
             </Link>
           </Box>
@@ -48,7 +48,9 @@ const NavBar: React.FC = () => {
                 horizontal: "right",
               }}
             >
-              <MenuItem onClick={() => router.push("/settings")}>Beállítások</MenuItem>
+              <MenuItem>
+                <Link href="/settings">Beállítások</Link>
+              </MenuItem>
               <MenuItem onClick={() => signOut()}>Kijelentkezés</MenuItem>
             </Menu>
           </Box>
