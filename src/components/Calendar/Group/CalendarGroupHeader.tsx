@@ -20,7 +20,6 @@ interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
   toggleIsExpanded?: () => void;
   group: Group;
-  isLast?: boolean;
 }
 
 const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHeaderProps) => {
@@ -55,7 +54,7 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
     <>
       <GroupHeaderButton
         sx={(theme) => ({
-          borderBottom: props.isLast ? "1px solid" + theme.palette.grey[300] : "none",
+          borderBottom: "none",
           width: props.isExpanded ? CALENDAR_GROUP_WIDTH : CALENDAR_GROUP_WIDTH * 0.4,
           justifyContent: props.isExpanded ? "space-between" : "center",
           paddingInline: props.isExpanded ? theme.spacing(1) : 0,
@@ -63,10 +62,7 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
         })}
         onClick={handleGroupClick}
       >
-        <Typography
-          fontWeight={500}
-          fontSize={props.isExpanded ? 14 : 10.5}
-        >
+        <Typography fontWeight={500} fontSize={props.isExpanded ? 14 : 10.5}>
           {props.group.title}
         </Typography>
         {props.isExpanded && (

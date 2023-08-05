@@ -1,3 +1,4 @@
+import MonthSelectorButton from "@/components/UI/styled/MonthSelectorButton";
 import { Box, Button, Menu, MenuItem, Theme, Typography, useMediaQuery } from "@mui/material";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -10,7 +11,8 @@ interface IMonthSelectorProps {
 const monthNames = Array.from(Array(12).keys()).map((month) => dayjs().locale("hu-hu").month(month).format("MMM"));
 
 const MonthSelector: React.FC<IMonthSelectorProps> = (props: IMonthSelectorProps) => {
-  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
+  //950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down(950));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -26,17 +28,21 @@ const MonthSelector: React.FC<IMonthSelectorProps> = (props: IMonthSelectorProps
     <>
       {isMobile ? (
         <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-          <Typography variant="h6" sx={{ paddingInline: 1 }}>
+          <Typography fontSize={18} sx={{ paddingInline: 1 }}>
             {monthNames[props.activeMonth]}
           </Typography>
-          <Button onClick={handleClick} variant="text">
+          <Button onClick={handleClick} variant="text" sx={(theme) => ({ color: theme.palette.brandColor.main })}>
             Hónapok
           </Button>
           <Menu id="month-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
             <MenuItem onClick={() => props.jumpToId("today")}>Ma</MenuItem>
             {monthNames.map((monthName, index) => {
               return (
-                <MenuItem key={monthName} onClick={() => props.jumpToId(index.toString())}>
+                <MenuItem
+                  key={monthName}
+                  onClick={() => props.jumpToId(index.toString())}
+                  sx={{ textTransform: "capitalize" }}
+                >
                   {monthName}
                 </MenuItem>
               );
@@ -44,20 +50,20 @@ const MonthSelector: React.FC<IMonthSelectorProps> = (props: IMonthSelectorProps
           </Menu>
         </Box>
       ) : (
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button onClick={() => props.jumpToId("today")} size="small" variant="outlined">
+        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+          <MonthSelectorButton onClick={() => props.jumpToId("today")} size="small" variant="outlined">
             Ma
-          </Button>
+          </MonthSelectorButton>
           {monthNames.map((monthName, index) => {
             return (
-              <Button
+              <MonthSelectorButton
                 key={monthName}
                 onClick={() => props.jumpToId(index.toString())}
                 variant={`${props.activeMonth === index ? "contained" : "text"}`}
                 size="small"
               >
                 {monthName}
-              </Button>
+              </MonthSelectorButton>
             );
           })}
         </Box>

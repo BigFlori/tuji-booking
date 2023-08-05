@@ -2,8 +2,6 @@ import { Box } from "@mui/system";
 import YearSelector from "./YearSelector";
 import MonthSelector from "./MonthSelector";
 import NewReservation from "./NewReservation";
-import { Theme, useMediaQuery } from "@mui/material";
-import NewGroup from "./NewGroup";
 
 interface ICalendarControlsProps {
   year: number;
@@ -13,7 +11,6 @@ interface ICalendarControlsProps {
 }
 
 const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarControlsProps) => {
-  const isSmallMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
   const jumpToId = (id: string) => {
     const monthElement = document.getElementById(id);
     if (monthElement) {
@@ -44,27 +41,21 @@ const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarCont
         alignItems: "space-between",
         background: theme.palette.calendarControls.main,
         padding: 1,
+        paddingInline: 2,
         width: "100%",
+        gap: 1,
       })}
     >
       <Box
         sx={{
           display: "flex",
-          gap: 1,
+          gap: 2,
         }}
       >
         <YearSelector year={props.year} onNextYear={nextYear} onPreviousYear={prevYear} />
         <MonthSelector activeMonth={props.activeMonth} jumpToId={jumpToId} />
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: 1,
-          justifyContent: "space-between",
-          paddingInline: 2,
-        }}
-      >
-        <NewGroup />
+      <Box>
         <NewReservation />
       </Box>
     </Box>

@@ -1,10 +1,16 @@
 import AnimatedModal from "@/components/UI/Modal/AnimatedModal";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import CreateGroupApollo from "@/components/Forms/create-group/CreateGroupApollo";
+import GroupHeaderButton from "@/components/UI/styled/GroupHeaderButton";
+import { CALENDAR_GROUP_WIDTH } from "@/config/config";
 
-const NewGroup: React.FC = () => {
+interface ICalendarGroupHeaderProps {
+  isExpanded: boolean;
+}
+
+const NewGroup: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHeaderProps) => {
   const [modalOpened, setModalOpened] = useState(false);
 
   const handleModalOpen = () => {
@@ -17,9 +23,26 @@ const NewGroup: React.FC = () => {
 
   return (
     <>
-      <Button startIcon={<AddIcon />} onClick={handleModalOpen}>
-        Új csoport
-      </Button>
+      <GroupHeaderButton
+        sx={(theme) => ({
+          borderBottom: "1px solid" + theme.palette.grey[300],
+          width: props.isExpanded ? CALENDAR_GROUP_WIDTH : CALENDAR_GROUP_WIDTH * 0.4,
+          justifyContent: "center",
+          paddingInline: 0,
+        })}
+        onClick={handleModalOpen}
+      >
+        <Typography
+          fontWeight={500}
+          fontSize={props.isExpanded ? 14 : 10.5}
+          alignItems="center"
+          display="flex"
+          gap={0.4}
+        >
+          <AddIcon sx={{ fontSize: 18 }} />
+          Új csoport
+        </Typography>
+      </GroupHeaderButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
         <CreateGroupApollo onClose={handleModalClose} />
       </AnimatedModal>

@@ -25,7 +25,7 @@ export const themeOptions: ThemeOptions = {
       contrastText: '#000',
     },
     calendarBorder: {
-      main: grey[200],
+      main: grey[300],
       contrastText: "#000",
     },
     isToday: {
@@ -37,7 +37,7 @@ export const themeOptions: ThemeOptions = {
       contrastText: "#000",
     },
     isWeekend: {
-      main: grey[100],
+      main: grey[200],
       contrastText: "#000",
     },
     isWeekday: {
@@ -45,12 +45,12 @@ export const themeOptions: ThemeOptions = {
       contrastText: "#000",
     },
     calendarControls: {
-      main: grey[50],
+      main: grey[100],
       contrastText: "#000",
     },
-    appBarBg: {
-      main: grey[700],
-      contrastText: "#fff",
+    brandColor: {
+      main: "#369ed4",
+      contrastText: "#fffffe",
     }
   },
 };
@@ -68,7 +68,7 @@ declare module "@mui/material/styles" {
     isWeekend: Palette["primary"];
     isWeekday: Palette["primary"];
     calendarControls: Palette["primary"];
-    appBarBg: Palette["primary"];
+    brandColor: Palette["primary"];
   }
   interface PaletteOptions {
     notPaid?: PaletteOptions["primary"];
@@ -82,7 +82,7 @@ declare module "@mui/material/styles" {
     isWeekend?: PaletteOptions["primary"];
     isWeekday?: PaletteOptions["primary"];
     calendarControls?: PaletteOptions["primary"];
-    appBarBg?: PaletteOptions["primary"];
+    brandColor?: PaletteOptions["primary"];
   }
 }
 
@@ -98,7 +98,7 @@ declare module '@mui/material/Radio' {
 
 declare module '@mui/material/AppBar' {
   interface AppBarPropsColorOverrides {
-    appBarBg: true;
+    brandColor: true;
   }
 }
 

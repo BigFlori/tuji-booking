@@ -21,7 +21,7 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <AppBar position="static" color="appBarBg">
+    <AppBar position="static" color="brandColor">
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>

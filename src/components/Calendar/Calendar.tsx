@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { CALENDAR_MONTH_GAP } from "@/config/config";
 import CalendarGroupHeaderController from "./Group/CalendarGroupHeaderController";
 import GroupState from "@/models/group/group-state-model";
+import NewGroup from "./Controls/NewGroup";
 
 const months = Array.from(Array(12).keys());
 
@@ -30,18 +31,11 @@ const Calendar: React.FC<{}> = () => {
 
   //Csoport fejlécek generálása
   const generateGroupHeaders = useMemo(() => {
-    const headers = [];
-    for (let i = 0; i < groupCtx.groups.length; i++) {
-      const group = groupCtx.groups[i];
-      headers.push(
-        <CalendarGroupHeader
-          key={group.id}
-          group={group}
-          isLast={i === groupCtx.groups.length - 1}
-          isExpanded={isGroupExpanded}
-        />
-      );
-    }
+    const headers: JSX.Element[] = [];
+    groupCtx.groups.forEach((group) => {
+      headers.push(<CalendarGroupHeader key={group.id} group={group} isExpanded={isGroupExpanded} />);
+    });
+
     return headers;
   }, [groupCtx.groups, isGroupExpanded]);
 
@@ -61,8 +55,8 @@ const Calendar: React.FC<{}> = () => {
     const scrollPosition = event.currentTarget.scrollLeft;
     let i = 0;
     let acc = 0;
-    while (i < monthRefs.length && acc + monthRefs[i].current!.offsetWidth < scrollPosition) {
-      acc += monthRefs[i].current!.offsetWidth;
+    while (i < monthRefs.length && acc + monthRefs[i].current!.offsetWidth + (CALENDAR_MONTH_GAP - 1) < scrollPosition) {
+      acc += monthRefs[i].current!.offsetWidth + (CALENDAR_MONTH_GAP - 1);
       i++;
     }
     setScrolledMonth(i);
@@ -80,6 +74,9 @@ const Calendar: React.FC<{}> = () => {
         <Box>
           <CalendarGroupHeaderController isExpanded={isGroupExpanded} toggleIsExpanded={toggleGroupExpand} />
           {generateGroupHeaders}
+          <Box sx={{ position: "absolute" }}>
+            <NewGroup isExpanded={isGroupExpanded} />
+          </Box>
         </Box>
         <Box sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }} onScroll={handleScroll}>
           {months.map((month, index) => {
