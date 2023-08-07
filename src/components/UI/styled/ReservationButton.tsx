@@ -4,7 +4,7 @@ import { red } from "@mui/material/colors";
 
 const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
   position: "absolute",
-  height: "85%",
+  height: "82%",
   top: "50%",
   transform: "translateY(-50%)",
   zIndex: 5,

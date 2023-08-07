@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/config/config";
 import ReservationButton from "../UI/styled/ReservationButton";
 import { ClientContext } from "@/store/client-context";
-import { ReservationContext } from "@/store/reservation-context";
 import PaymentState from "@/models/reservation/payment-state-model";
 import AnimatedModal from "../UI/Modal/AnimatedModal";
 import { Theme, darken } from "@mui/material";
@@ -51,7 +50,6 @@ const formatName = (name: string, reservedDays: number) => {
 
 const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICalendarReserverationProps) => {
   const clientCtx = useContext(ClientContext);
-  const reservationCtx = useContext(ReservationContext);
 
   //Ha van hozzárendelt ügyfél, akkor azt adja vissza, ha nincs, akkor egy új ügyfelet ami amolyan placeholderként szolgál
   const reservationClient = useMemo(() => {
@@ -65,12 +63,11 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
 
   const width =
     daysReserved * CALENDAR_ITEM_WIDTH +
-    countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP -
-    5;
+    countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP + 6;
 
   const left =
     props.reservation.startDate.diff(dayjs(props.reservation.startDate).startOf("month"), "day") * CALENDAR_ITEM_WIDTH +
-    CALENDAR_ITEM_WIDTH / 2;
+    CALENDAR_ITEM_WIDTH / 2 - 2;
 
   const handleModalClose = () => {
     setModalOpened(false);
@@ -104,6 +101,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
             background: darken(getBgColor(theme), 0.08),
           },
           fontSize: daysReserved === 1 ? "0.7em" : "0.85em",
+          clipPath: `polygon(${width - 15}px 0, 100% 50%, ${width - 15}px 100%, 0% 100%, 15px 50%, 0% 0%)`
         })}
         onClick={() => setModalOpened(true)}
       >
