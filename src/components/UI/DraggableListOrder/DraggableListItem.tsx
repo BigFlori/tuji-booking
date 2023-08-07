@@ -35,16 +35,20 @@ const DraggableListItem: React.FC<IDraggableListItemProps> = (props) => {
   }, [iRef]);
 
   return (
-    <Reorder.Item value={props.item} ref={iRef} style={{ boxShadow, y }} dragListener={false} dragControls={dragControls}>
+    <Reorder.Item
+      value={props.item}
+      ref={iRef}
+      style={{ boxShadow, y }}
+      dragListener={false}
+      dragControls={dragControls}
+    >
       <Paper
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          cursor: "grab",
           userSelect: "none",
           "&:hover": { backgroundColor: darken("#fff", 0.015) },
-          "&:active": { cursor: "grabbing" },
         }}
         variant="outlined"
       >
@@ -52,7 +56,13 @@ const DraggableListItem: React.FC<IDraggableListItemProps> = (props) => {
           {props.item.title}
         </Typography>
         <Box
-          sx={{ backgroundColor: grey[100], borderRadius: 2, display: "flex", alignItems: "center", padding: 2 }}
+          sx={{
+            backgroundColor: grey[100],
+            display: "flex",
+            alignItems: "center",
+            padding: 2,
+            cursor: "move",
+          }}
           onPointerDown={(event) => dragControls.start(event)}
         >
           <DragHandleIcon />
