@@ -1,22 +1,29 @@
 import { useMemo } from "react";
 import DraggableListItem from "./DraggableListItem";
 import { Box, Container } from "@mui/material";
+import { Reorder, useDragControls } from "framer-motion";
 
 interface IDraggableListOrderProps<T> {
   items: T[];
-  onChange: (items: T[]) => void;
+  setItems: (items: T[]) => void;
 }
 
 const DraggableListOrder = <T extends { id: string; title: string }>(props: IDraggableListOrderProps<T>) => {
+  const dragControls = useDragControls();
+
   const dragListItems = useMemo(() => {
-    return props.items.map((item, index) => {
-      return <DraggableListItem key={item.id} id={item.id} title={item.title} index={index} />;
+    return props.items.map((item) => {
+      return <DraggableListItem key={item.id} item={item} />;
     });
   }, [props.items]);
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>{dragListItems}</Box>
+      <Reorder.Group axis="y" values={props.items} onReorder={props.setItems}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          {dragListItems}
+        </Box>
+      </Reorder.Group>
     </Container>
   );
 };

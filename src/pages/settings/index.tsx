@@ -8,9 +8,7 @@ import { useContext } from "react";
 
 const Settings: NextPage = () => {
   const groupCtx = useContext(GroupContext);
-  const handleGroupOrderChange = (items: typeof groupCtx.groups) => {
-    groupCtx.setGroups(items);
-  };
+  
   return (
     <>
       <PageHead page="Beállítások" metaDescription="Tuji-booking foglalási felületének beállításai" />
@@ -22,7 +20,7 @@ const Settings: NextPage = () => {
             Itt betudod állítani, hogy a csoportok milyen sorrendben jelenjenek meg. Használathoz tartsd lenyomva a
             jobboldalon lévő csúszkákat.
           </Typography>
-          <DraggableListOrder items={groupCtx.groups} onChange={handleGroupOrderChange} />
+          <DraggableListOrder items={groupCtx.groups} setItems={groupCtx.setGroups} />
         </Box>
       </Container>
     </>
