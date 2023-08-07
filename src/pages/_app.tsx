@@ -18,7 +18,7 @@ import ReservationContextProvider from "@/store/reservation-context";
 import { huHU } from "@mui/x-date-pickers";
 import ClientContextProvider from "@/store/client-context";
 import { UserContextProvider } from "@/store/user-context";
-import NextTopLoader from "nextjs-toploader";
+import NextNProgress from "nextjs-progressbar";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -39,16 +39,13 @@ export default function App({ Component, pageProps }: AppProps) {
           <GroupContextProvider>
             <ReservationContextProvider>
               <ClientContextProvider>
-                <NextTopLoader
-                  color="#FFFFFF"
-                  initialPosition={0.08}
-                  crawlSpeed={200}
+                <NextNProgress
+                  color="#fff"
                   height={3}
-                  crawl={true}
-                  showSpinner={false}
-                  easing="ease"
-                  speed={200}
-                  shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                  startPosition={0.3}
+                  stopDelayMs={200}
+                  showOnShallow={false}
+                  options={{ showSpinner: false }}
                 />
                 <Component {...pageProps} key={router.route} />
               </ClientContextProvider>

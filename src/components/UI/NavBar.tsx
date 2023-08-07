@@ -5,6 +5,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useUser } from "@/store/user-context";
+import MenuIconItem from "./MenuIconItem";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+import SpacerLine from "./SpacerLine";
 
 const NavBar: React.FC = () => {
   const router = useRouter();
@@ -30,9 +34,8 @@ const NavBar: React.FC = () => {
             </Link>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {user?.displayName && <Typography variant="body1">Üdv, {user?.displayName}</Typography>}
             <IconButton onClick={handleUserMenuOpen} sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}>
-              <Avatar alt="Profil kép" src={user?.photoURL!} />
+              <Avatar alt="Profil kép" src={user?.photoURL!} sx={{ width: 32, height: 32 }} />
             </IconButton>
             <Menu
               open={Boolean(anchorElUser)}
@@ -47,11 +50,28 @@ const NavBar: React.FC = () => {
                 vertical: "bottom",
                 horizontal: "right",
               }}
+              PaperProps={{
+                sx: {
+                  width: 220,
+                },
+              }}
             >
-              <MenuItem>
-                <Link href="/settings">Beállítások</Link>
-              </MenuItem>
-              <MenuItem onClick={() => signOut()}>Kijelentkezés</MenuItem>
+              <Box sx={{ padding: 1, display: "flex", gap: 1 }}>
+                <Avatar alt="Profil kép" src={user?.photoURL!} />
+                <Box>
+                  <Typography variant="body1" fontWeight={500}>
+                    {user?.displayName}
+                  </Typography>
+                  <Link href="/profile">
+                    <Typography variant="body2" color="primary">
+                      Profil szerkesztése
+                    </Typography>
+                  </Link>
+                </Box>
+              </Box>
+              <SpacerLine sx={{ marginBlock: 1 }} />
+              <MenuIconItem icon={<SettingsIcon />} text="Beállítások" href="/settings" />
+              <MenuIconItem icon={<LogoutIcon />} text="Kijelentkezés" onClick={() => signOut()} />
             </Menu>
           </Box>
         </Toolbar>
