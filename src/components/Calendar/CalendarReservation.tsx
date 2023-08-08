@@ -24,26 +24,51 @@ const formatName = (name: string, reservedDays: number) => {
   if (name.length < (reservedDays * CALENDAR_ITEM_WIDTH) / CUT_THRESHOLD) return name;
 
   const nameParts = name.split(" ");
+  //Ha csak egy szótagú a név akkor az első betűt adja vissza
   if (nameParts.length === 1) {
     return nameParts[0].charAt(0) + ".";
   }
 
+  //Ha két szótagú a név
   if (nameParts.length === 2) {
     const shortestNamePart = nameParts.reduce((prev, current) => {
       return prev.length < current.length ? prev : current;
     });
     let shortedName = "";
-    nameParts.forEach((namePart) => {
-      shortedName += namePart === shortestNamePart ? shortestNamePart + " " : namePart.charAt(0) + ". ";
+    nameParts.forEach((namePart, index) => {
+      if (namePart === shortestNamePart) {
+        //Ha csak 1 napos a foglalás, és a rövidebb név is hosszabb mint 6 karakter, akkor csak az első betűt adja vissza
+        if(reservedDays === 1 && shortestNamePart.length > 6) {
+          shortedName += namePart.charAt(0) + ".";
+          return;
+        }
+        //Ha több napos a foglalás, és a rövidebb név is hosszabb mint 9 karakter, akkor csak az első betűt adja vissza
+        if (reservedDays < 3 && shortestNamePart.length > 9) {
+          shortedName += namePart.charAt(0) + ".";
+          return;
+        }
+        //Szélsőséges esetben, ha a rövidebb név is hosszabb mint 14 karakter, akkor csak az első betűt adja vissza
+        if(shortestNamePart.length > 14) {
+          shortedName += namePart.charAt(0) + ".";
+          return;
+        }
+        //Egyéb esetben a teljes nevet adja vissza
+        shortedName += namePart;
+        if(index === 0) shortedName += " ";
+        return;
+      }
+      shortedName += namePart.charAt(0) + ".";
+      if(index === 0) shortedName += " ";
     });
     return shortedName;
   }
 
+  //Ha kettőnél több szótagú a név akkor az első és az utolsó betűt adja vissza
   if (nameParts.length > 2) {
     let shortedName = "";
-    nameParts.forEach((namePart) => {
-      shortedName += namePart.charAt(0) + ".";
-    });
+    shortedName += nameParts[0].charAt(0) + ". ";
+    shortedName += nameParts[1].charAt(0) + ". ";
+    shortedName += nameParts[nameParts.length - 1].charAt(0) + ". ";
     return shortedName;
   }
 };
@@ -63,11 +88,13 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
 
   const width =
     daysReserved * CALENDAR_ITEM_WIDTH +
-    countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP + 10;
+    countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP +
+    5;
 
   const left =
     props.reservation.startDate.diff(dayjs(props.reservation.startDate).startOf("month"), "day") * CALENDAR_ITEM_WIDTH +
-    CALENDAR_ITEM_WIDTH / 2 - 2;
+    CALENDAR_ITEM_WIDTH / 2 -
+    2;
 
   const handleModalClose = () => {
     setModalOpened(false);
@@ -101,7 +128,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
             background: darken(getBgColor(theme), 0.08),
           },
           fontSize: daysReserved === 1 ? "0.7em" : "0.85em",
-          clipPath: `polygon(${width - 15}px 0, 100% 50%, ${width - 15}px 100%, 0% 100%, 15px 50%, 0% 0%)`
+          clipPath: `polygon(${width - 10}px 0, 100% 50%, ${width - 10}px 100%, 0% 100%, 10px 50%, 0% 0%)`,
         })}
         onClick={() => setModalOpened(true)}
       >

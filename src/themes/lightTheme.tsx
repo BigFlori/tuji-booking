@@ -13,7 +13,7 @@ export const themeOptions: ThemeOptions = {
       contrastText: "#000",
     },
     fullPaid: {
-      main: lightGreen[400],
+      main: green[300],
       contrastText: "#000",
     },
     cancelled: {
@@ -29,12 +29,9 @@ export const themeOptions: ThemeOptions = {
       contrastText: "#000",
     },
     isToday: {
-      main: green[300],
-      contrastText: "#000",
-    },
-    isTodayText: {
-      main: green[600],
-      contrastText: "#000",
+      main: green[100],
+      dark: green[600],
+      contrastText: "white",
     },
     isWeekend: {
       main: grey[200],
@@ -64,7 +61,6 @@ declare module "@mui/material/styles" {
     blocked: Palette["primary"];
     calendarBorder: Palette["primary"];
     isToday: Palette["primary"];
-    isTodayText: Palette["primary"];
     isWeekend: Palette["primary"];
     isWeekday: Palette["primary"];
     calendarControls: Palette["primary"];
@@ -78,7 +74,6 @@ declare module "@mui/material/styles" {
     blocked?: PaletteOptions["primary"];
     calendarBorder?: PaletteOptions["primary"];
     isToday?: PaletteOptions["primary"];
-    isTodayText?: PaletteOptions["primary"];
     isWeekend?: PaletteOptions["primary"];
     isWeekday?: PaletteOptions["primary"];
     calendarControls?: PaletteOptions["primary"];

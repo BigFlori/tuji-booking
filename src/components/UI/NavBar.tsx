@@ -9,6 +9,7 @@ import MenuIconItem from "./MenuIconItem";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SpacerLine from "./SpacerLine";
+import SearchIcon from "@mui/icons-material/Search";
 
 const NavBar: React.FC = () => {
   const router = useRouter();
@@ -24,6 +25,8 @@ const NavBar: React.FC = () => {
     setAnchorElUser(null);
   };
 
+  const isOnCalendarPage = router.pathname === "/";
+
   return (
     <AppBar position="static" color="brandColor">
       <Container maxWidth="xl">
@@ -34,6 +37,9 @@ const NavBar: React.FC = () => {
             </Link>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {isOnCalendarPage && (
+                <SearchIcon />
+            )}
             <IconButton onClick={handleUserMenuOpen} sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}>
               <Avatar alt="Profil kép" src={user?.photoURL!} sx={{ width: 32, height: 32 }} />
             </IconButton>

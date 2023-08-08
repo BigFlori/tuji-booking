@@ -12,7 +12,6 @@ const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  paddingLeft: 1,
   fontWeight: "500",
   fontFamily: "Roboto",
   textTransform: "none",
@@ -20,8 +19,9 @@ const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
   minWidth: 0,
   fontSize: '0.8em',
   padding: 0,
+  paddingLeft: "13px",
+  paddingRight: "8px",
   lineHeight: 1.1,
-  //boxShadow: theme.shadows[2],
   color: theme.palette.getContrastText(red[300]),
 }));
 

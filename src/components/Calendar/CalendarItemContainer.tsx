@@ -11,7 +11,7 @@ interface ICalendarItemContainerProps {
   isLastGroup?: boolean;
   isDayRow?: boolean;
   sx?: SxProps<Theme>;
-};
+}
 
 const CalendarItemContainer: React.FC<ICalendarItemContainerProps> = (props: ICalendarItemContainerProps) => {
   const theme = useTheme();
@@ -20,15 +20,16 @@ const CalendarItemContainer: React.FC<ICalendarItemContainerProps> = (props: ICa
   const isWeekend = props.date.day() === 0 || props.date.day() === 6;
   const isToday = props.date.isSame(dayjs().format("YYYY-MM-DD"), "day");
 
-  //Ha a mai nap van kiválasztva, akkor a háttérszín zöld lesz, különben ha hétvége akkor szürke, különben átlátszó
-  const bgColor =
-    isToday && !props.isDayRow
-      ? theme.palette.isToday.main
-      : isWeekend
-      ? theme.palette.isWeekend.main
-      : theme.palette.isWeekday.main;
+  //Ha a mai nap van kiválasztva, akkor a háttérszín zöld lesz, különben ha hétvége akkor szürke, különben fehér
+  const bgColor = isToday
+    ? props.isDayRow
+      ? theme.palette.isToday.dark //Mai nap színe a napok sorában
+      : theme.palette.isToday.main //Mai nap színe a csoportok sorában
+    : isWeekend
+    ? theme.palette.isWeekend.main //Hétvége színe
+    : theme.palette.isWeekday.main; //Hétköznap színe
 
-  const color = isToday ? theme.palette.isTodayText.main : theme.palette.isToday.contrastText;
+  const color = isToday ? theme.palette.isToday.contrastText : theme.palette.isWeekend.contrastText;
 
   //Első rendereléskor a mai naphoz görget
   useEffect(() => {
