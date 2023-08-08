@@ -1,4 +1,4 @@
-import { CALENDAR_GROUP_WIDTH } from "@/config/config";
+import { CALENDAR_GROUP_WIDTH } from "@/utils/config";
 import GroupHeaderButton from "../../UI/styled/GroupHeaderButton";
 import MenuIcon from "@mui/icons-material/Menu";
 

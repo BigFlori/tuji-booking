@@ -27,6 +27,7 @@ const CreateGroupApollo: React.FC<ICreateGroupApolloProps> = (props) => {
       type: groupType,
       state: groupState,
       description: data.description,
+      order: groupCtx.groups.length,
     };
     groupCtx.addGroup(newGroup);
     props.onClose();

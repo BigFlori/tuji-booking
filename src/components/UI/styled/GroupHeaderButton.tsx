@@ -1,4 +1,4 @@
-import { CALENDAR_ITEM_HEIGHT } from "@/config/config";
+import { CALENDAR_ITEM_HEIGHT } from "@/utils/config";
 import { styled } from "@mui/material";
 import { Button, ButtonProps } from "@mui/material";
 

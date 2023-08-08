@@ -6,7 +6,7 @@ import CalendarMonth from "./CalendarMonth";
 import { GroupContext } from "@/store/group-context";
 import CalendarControls from "./Controls/CalendarControls";
 import dayjs from "dayjs";
-import { CALENDAR_MONTH_GAP } from "@/config/config";
+import { CALENDAR_MONTH_GAP } from "@/utils/config";
 import CalendarGroupHeaderController from "./Group/CalendarGroupHeaderController";
 import GroupState from "@/models/group/group-state-model";
 import NewGroup from "./Controls/NewGroup";

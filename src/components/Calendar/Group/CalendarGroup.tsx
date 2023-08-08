@@ -5,7 +5,7 @@ import { useIntersectionObserver } from "usehooks-ts";
 import CalendarReservation from "../CalendarReservation";
 import { ReservationContext } from "@/store/reservation-context";
 import CalendarItemContainer from "../CalendarItemContainer";
-import { CALENDAR_ITEM_HEIGHT } from "@/config/config";
+import { CALENDAR_ITEM_HEIGHT } from "@/utils/config";
 
 interface ICalendarGroupProps {
   children?: React.ReactNode;

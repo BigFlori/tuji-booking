@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import CreateGroupApollo from "@/components/Forms/create-group/CreateGroupApollo";
 import GroupHeaderButton from "@/components/UI/styled/GroupHeaderButton";
-import { CALENDAR_GROUP_WIDTH } from "@/config/config";
+import { CALENDAR_GROUP_WIDTH } from "@/utils/config";
 
 interface ICalendarGroupHeaderProps {
   isExpanded: boolean;

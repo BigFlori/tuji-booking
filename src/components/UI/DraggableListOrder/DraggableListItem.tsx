@@ -52,7 +52,7 @@ const DraggableListItem: React.FC<IDraggableListItemProps> = (props) => {
         }}
         variant="outlined"
       >
-        <Typography variant="body1" fontWeight={500} paddingLeft={1}>
+        <Typography variant="body1" paddingLeft={1}>
           {props.item.title}
         </Typography>
         <Box

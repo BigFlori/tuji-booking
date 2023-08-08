@@ -7,6 +7,7 @@ interface Group {
     description?: string;
     state: GroupState;
     type: GroupType;
+    order: number;
 }
 
 export default Group;

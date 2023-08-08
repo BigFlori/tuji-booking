@@ -1,7 +1,7 @@
 import { useState, useMemo, useContext } from "react";
 import Reservation from "@/models/reservation/reservation-model";
 import dayjs from "dayjs";
-import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/config/config";
+import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/utils/config";
 import ReservationButton from "../UI/styled/ReservationButton";
 import { ClientContext } from "@/store/client-context";
 import PaymentState from "@/models/reservation/payment-state-model";

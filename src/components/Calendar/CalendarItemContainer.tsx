@@ -2,7 +2,7 @@ import { useRef, useEffect, forwardRef } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { SxProps, Theme, useTheme } from "@mui/material/styles";
-import { CALENDAR_ITEM_WIDTH, CALENDAR_ITEM_HEIGHT } from "@/config/config";
+import { CALENDAR_ITEM_WIDTH, CALENDAR_ITEM_HEIGHT } from "@/utils/config";
 
 interface ICalendarItemContainerProps {
   children?: React.ReactNode;

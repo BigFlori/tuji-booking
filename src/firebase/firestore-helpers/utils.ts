@@ -15,6 +15,7 @@ const initialGroup: Group = {
   description: "Leírás...",
   type: GroupType.CAR,
   state: GroupState.INACTIVE,
+  order: 0,
 };
 
 export const isUserdataExist = async (user: User) => {
@@ -60,12 +61,12 @@ export const readGroups = async (user: User) => {
 
 export const saveGroupDb = async (user: User, group: Group) => {
   const groupRef = doc(db, "users", user.uid, "groups", group.id);
-  await setDoc(groupRef, group);
+  await setDoc(groupRef, group, { merge: true });
 };
 
 export const deleteGroupDb = async (user: User, groupId: string) => {
   const groupRef = doc(db, "users", user.uid, "groups", groupId);
-  await setDoc(groupRef, { state: GroupState.DELETED }, { merge: true });
+  await deleteDoc(groupRef);
 };
 
 export const readReservations = async (user: User) => {

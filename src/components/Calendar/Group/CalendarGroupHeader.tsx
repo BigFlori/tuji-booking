@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Group from "@/models/group/group-model";
-import { CALENDAR_GROUP_WIDTH } from "@/config/config";
+import { CALENDAR_GROUP_WIDTH } from "@/utils/config";
 import GroupHeaderButton from "../../UI/styled/GroupHeaderButton";
 import { Box } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";

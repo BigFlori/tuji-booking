@@ -5,9 +5,9 @@ import { useAuthContext, useUser } from "./user-context";
 
 interface IGroupsContextObject {
   groups: Group[];
-  //isLoading: boolean;
   loadGroups: () => void;
   setGroups: (groups: Group[]) => void;
+  setGroupsWithSave: (groups: Group[]) => void;
   addGroup: (group: Group) => void;
   removeGroup: (id: string) => void;
   updateGroup: (id: string, group: Group) => void;
@@ -16,9 +16,9 @@ interface IGroupsContextObject {
 
 export const GroupContext = React.createContext<IGroupsContextObject>({
   groups: [],
-  //isLoading: false,
   loadGroups: () => {},
   setGroups: () => {},
+  setGroupsWithSave: () => {},
   addGroup: () => {},
   removeGroup: () => {},
   updateGroup: () => {},
@@ -41,6 +41,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
       return;
     }
     readGroups(user).then((groups) => {
+      groups.sort((a, b) => a.order - b.order);
       setGroups(groups);
     });
   };
@@ -59,6 +60,17 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
       return;
     }
     deleteGroupDb(user, id);
+  };
+
+  const setGroupsWithSave = (orderedGroups: Group[]) => {    
+    for (let i = 0; i < orderedGroups.length; i++) {
+      const group = orderedGroups[i];
+      if (group.order !== i) {
+        const newGroup = {...group, order: i};
+        saveGroup(newGroup);
+      }
+    }
+    setGroups(orderedGroups);
   };
 
   const addGroup = (group: Group) => {
@@ -95,6 +107,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
     groups,
     loadGroups,
     setGroups,
+    setGroupsWithSave,
     addGroup,
     removeGroup,
     updateGroup,
