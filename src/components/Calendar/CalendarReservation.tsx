@@ -63,7 +63,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
 
   const width =
     daysReserved * CALENDAR_ITEM_WIDTH +
-    countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP + 6;
+    countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP + 10;
 
   const left =
     props.reservation.startDate.diff(dayjs(props.reservation.startDate).startOf("month"), "day") * CALENDAR_ITEM_WIDTH +
