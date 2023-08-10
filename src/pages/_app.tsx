@@ -19,7 +19,6 @@ import { huHU } from "@mui/x-date-pickers";
 import ClientContextProvider from "@/store/client-context";
 import { UserContextProvider } from "@/store/user-context";
 import NextNProgress from "nextjs-progressbar";
-import { Analytics } from "@mui/icons-material";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -49,7 +48,6 @@ export default function App({ Component, pageProps }: AppProps) {
                   options={{ showSpinner: false }}
                 />
                 <Component {...pageProps} key={router.route} />
-                <Analytics />
               </ClientContextProvider>
             </ReservationContextProvider>
           </GroupContextProvider>

@@ -23,6 +23,14 @@ const LayoutModal = styled(Modal)<ModalProps>(({ theme }) => ({
       overflow: "auto",
     },
   },
+  // "& .modal-content": {
+  //   maxHeight: "calc(100vh - 180px)",
+  //   overflowY: "auto",
+  //   [theme.breakpoints.up("sm")]: {
+  //     maxHeight: "calc(80vh - 120px)",
+  //     overflowY: "auto",
+  //   },
+  // },
   "& .modal-header": {
     display: "flex",
     alignItems: "center",

@@ -1,5 +1,5 @@
 import DraggableListOrder from "@/components/UI/DraggableListOrder/DraggableListOrder";
-import PageHead from "@/components/UI/PageHead";
+import PageHead from "@/components/Page/PageHead";
 import { withProtected } from "@/hoc/route";
 import Group from "@/models/group/group-model";
 import { GroupContext } from "@/store/group-context";

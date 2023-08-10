@@ -49,7 +49,9 @@ const ModalControls: React.FC<ModalControlsProps> = (props) => {
           </IconButton>
         </Box>
       </Box>
-      <Box component="main">{props.children}</Box>
+      <Box component="main">
+        {props.children}
+      </Box>
       {isMobile && (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, marginTop: 4 }}>
           <Button variant="outlined" onClick={props.onClose} color="error" fullWidth>

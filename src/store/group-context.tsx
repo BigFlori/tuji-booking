@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Group from "@/models/group/group-model";
 import { deleteGroupDb, readGroups, saveGroupDb } from "@/firebase/firestore-helpers/utils";
 import { useAuthContext, useUser } from "./user-context";
+import { ReservationContext } from "./reservation-context";
 
 interface IGroupsContextObject {
   groups: Group[];
@@ -29,6 +30,7 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
   const [groups, setGroups] = useState<Group[]>([]);
   const user = useUser();
   const authCtx = useAuthContext();
+  const reservationCtx = useContext(ReservationContext);
 
   //Loading groups
   useEffect(() => {
@@ -62,11 +64,11 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
     deleteGroupDb(user, id);
   };
 
-  const setGroupsWithSave = (orderedGroups: Group[]) => {    
+  const setGroupsWithSave = (orderedGroups: Group[]) => {
     for (let i = 0; i < orderedGroups.length; i++) {
       const group = orderedGroups[i];
       if (group.order !== i) {
-        const newGroup = {...group, order: i};
+        const newGroup = { ...group, order: i };
         saveGroup(newGroup);
       }
     }
@@ -81,6 +83,10 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
   };
 
   const removeGroup = (id: string) => {
+    const reservationsInGroup = reservationCtx.getReservationsInGroup(id);
+    reservationsInGroup.forEach((reservation) => {
+      reservationCtx.removeReservation(reservation.id);
+    });
     setGroups((prevGroups) => {
       return prevGroups.filter((group) => group.id !== id);
     });

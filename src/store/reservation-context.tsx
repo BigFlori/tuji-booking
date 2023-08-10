@@ -10,6 +10,7 @@ interface IReservationContextObject {
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
   updateReservation: (id: string, reservation: Reservation) => void;
+  getReservationsInGroup: (groupId: string) => Reservation[];
   findReservationByDate: (date: dayjs.Dayjs, groupId: string) => Reservation[];
   shouldDateBeDisabled: (
     date: dayjs.Dayjs,
@@ -28,6 +29,7 @@ export const ReservationContext = React.createContext<IReservationContextObject>
   addReservation: () => {},
   removeReservation: () => {},
   updateReservation: () => {},
+  getReservationsInGroup: () => [],
   findReservationByDate: () => [],
   shouldDateBeDisabled: () => false,
   getLatestReservation: () => null,
@@ -101,6 +103,11 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       });
     });
     saveReservation(reservation);
+  };
+
+  //Visszaadja az összes foglalást, ami a megadott csoportban van
+  const getReservationsInGroup = (groupId: string): Reservation[] => {
+    return reservations.filter((reservation) => reservation.groupId === groupId);
   };
 
   //Elméletileg csak akkor adhat vissza többet, ha a két különböző foglalásnak ugyanarra a napra esik a kezdő és záró dátuma
@@ -215,6 +222,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     addReservation,
     removeReservation,
     updateReservation,
+    getReservationsInGroup,
     findReservationByDate,
     shouldDateBeDisabled,
     getLatestReservation,
