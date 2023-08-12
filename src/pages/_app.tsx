@@ -36,8 +36,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <UserContextProvider>
-          <GroupContextProvider>
-            <ReservationContextProvider>
+          <ReservationContextProvider>
+            <GroupContextProvider>
               <ClientContextProvider>
                 <NextNProgress
                   color="#fff"
@@ -49,8 +49,8 @@ export default function App({ Component, pageProps }: AppProps) {
                 />
                 <Component {...pageProps} key={router.route} />
               </ClientContextProvider>
-            </ReservationContextProvider>
-          </GroupContextProvider>
+            </GroupContextProvider>
+          </ReservationContextProvider>
         </UserContextProvider>
       </ThemeProvider>
     </LocalizationProvider>
