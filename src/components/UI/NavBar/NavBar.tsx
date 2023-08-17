@@ -32,9 +32,9 @@ const NavBar: React.FC = () => {
             </Link>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {isOnCalendarPage && (
+            {/* {isOnCalendarPage && (
                 <SearchBar placeholder="Foglalás keresés..." />
-            )}
+            )} */}
             <IconButton onClick={handleUserMenuOpen} sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}>
               <Avatar alt="Profil kép" src={user?.photoURL!} sx={{ width: 32, height: 32 }} />
             </IconButton>
