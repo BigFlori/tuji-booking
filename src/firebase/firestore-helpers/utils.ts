@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../firebase.config";
 import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
@@ -42,6 +42,26 @@ export const createInitialUser = async (user: User, displayName?: string | null)
     setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
     await addDoc(collection(db, "users", user.uid, "reservations"), {});
   });
+};
+
+export const searchReservationByClient = async (user: User, clientId: string) => {
+  const queryRes = query(collection(db, "users", user.uid, "reservations"), where("clientId", "==", clientId));
+  const foundReservations: Reservation[] = [];
+  await getDocs(queryRes).then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      if (!doc.data().hasOwnProperty("id")) return;
+      const reservation = doc.data() as Reservation;
+      const modifiedReservation = {
+        ...reservation,
+        startDate: dayjs(reservation.startDate),
+        startTime: reservation.startTime ? dayjs(reservation.startTime) : undefined,
+        endDate: dayjs(reservation.endDate),
+        endTime: reservation.endTime ? dayjs(reservation.endTime) : undefined,
+      };
+      foundReservations.push(modifiedReservation);
+    });
+  });
+  return foundReservations;
 };
 
 export const readGroups = async (user: User) => {

@@ -10,6 +10,7 @@ interface IClientContextObject {
   removeClient: (id: string) => void;
   updateClient: (id: string, client: Client) => void;
   getClientById: (id?: string) => Client | undefined;
+  searchClients: (searchText: string) => Client[];
 }
 
 export const ClientContext = React.createContext<IClientContextObject>({
@@ -19,6 +20,7 @@ export const ClientContext = React.createContext<IClientContextObject>({
   removeClient: () => {},
   updateClient: () => {},
   getClientById: () => undefined,
+  searchClients: () => [],
 });
 
 const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
@@ -87,6 +89,14 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
     return clients.find((client) => client.id === id) || undefined;
   };
 
+  const searchClients = (searchText: string) => {
+    return clients.filter((client) => {
+      const name = client.name.toLowerCase();
+      const searchTextLower = searchText.toLowerCase();
+      return name.includes(searchTextLower);
+    });
+  };
+
   const context: IClientContextObject = {
     clients,
     setClients,
@@ -94,6 +104,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
     removeClient,
     updateClient,
     getClientById,
+    searchClients,
   };
 
   return <ClientContext.Provider value={context}>{props.children}</ClientContext.Provider>;

@@ -47,7 +47,8 @@ export const themeOptions: ThemeOptions = {
     },
     brandColor: {
       main: "#369ed4",
-      contrastText: "#fffffe",
+      light: "#79bee2",
+      contrastText: "#ffffff",
     }
   },
 };

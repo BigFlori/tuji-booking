@@ -11,6 +11,7 @@ interface IReservationContextObject {
   removeReservation: (id: string) => void;
   updateReservation: (id: string, reservation: Reservation) => void;
   getReservationsInGroup: (groupId: string) => Reservation[];
+  getReservationsByClient: (clientId: string) => Reservation[];
   findReservationByDate: (date: dayjs.Dayjs, groupId: string) => Reservation[];
   shouldDateBeDisabled: (
     date: dayjs.Dayjs,
@@ -30,6 +31,7 @@ export const ReservationContext = React.createContext<IReservationContextObject>
   removeReservation: () => {},
   updateReservation: () => {},
   getReservationsInGroup: () => [],
+  getReservationsByClient: () => [],
   findReservationByDate: () => [],
   shouldDateBeDisabled: () => false,
   getLatestReservation: () => null,
@@ -108,6 +110,11 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   //Visszaadja az összes foglalást, ami a megadott csoportban van
   const getReservationsInGroup = (groupId: string): Reservation[] => {
     return reservations.filter((reservation) => reservation.groupId === groupId);
+  };
+
+  //Visszaadja az összes foglalást, ami a megadott ügyfélhez tartozik
+  const getReservationsByClient = (clientId: string): Reservation[] => {
+    return reservations.filter((reservation) => reservation.clientId === clientId);
   };
 
   //Elméletileg csak akkor adhat vissza többet, ha a két különböző foglalásnak ugyanarra a napra esik a kezdő és záró dátuma
@@ -223,6 +230,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     removeReservation,
     updateReservation,
     getReservationsInGroup,
+    getReservationsByClient,
     findReservationByDate,
     shouldDateBeDisabled,
     getLatestReservation,

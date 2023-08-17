@@ -83,10 +83,13 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
   };
 
   const removeGroup = (id: string) => {
+    //Törli a csoportba tartozó foglalásokat
     const reservationsInGroup = reservationCtx.getReservationsInGroup(id);
     reservationsInGroup.forEach((reservation) => {
       reservationCtx.removeReservation(reservation.id);
     });
+
+    //Törli a csoportot
     setGroups((prevGroups) => {
       return prevGroups.filter((group) => group.id !== id);
     });

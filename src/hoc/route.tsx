@@ -1,5 +1,5 @@
 import LoginSkeleton from "@/components/Forms/login/LoginSkeleton";
-import NavBar from "@/components/UI/NavBar";
+import NavBar from "@/components/UI/NavBar/NavBar";
 import PageTransition from "@/components/Page/PageTransition";
 import { useAuthContext } from "@/store/user-context";
 import { Box } from "@mui/material";

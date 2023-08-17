@@ -3,8 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useUser } from "@/store/user-context";
-import SearchIcon from "@mui/icons-material/Search";
 import AvatarMenu from "./AvatarMenu/AvatarMenu";
+import SearchBar from "./SearchBar/SearchBar";
 
 const NavBar: React.FC = () => {
   const router = useRouter();
@@ -33,7 +33,7 @@ const NavBar: React.FC = () => {
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             {isOnCalendarPage && (
-                <SearchIcon />
+                <SearchBar placeholder="Foglalás keresés..." />
             )}
             <IconButton onClick={handleUserMenuOpen} sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}>
               <Avatar alt="Profil kép" src={user?.photoURL!} sx={{ width: 32, height: 32 }} />

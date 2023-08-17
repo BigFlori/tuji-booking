@@ -1,6 +1,6 @@
 import { Avatar, Box, Menu, Typography } from "@mui/material";
 import Link from "next/link";
-import SpacerLine from "../SpacerLine";
+import SpacerLine from "../../SpacerLine";
 import MenuIconItem from "./MenuIconItem";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
