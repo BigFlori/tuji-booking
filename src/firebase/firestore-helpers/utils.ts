@@ -39,8 +39,8 @@ export const createInitialUser = async (user: User, displayName?: string | null)
     );
 
     addDoc(collection(db, "users", user.uid, "clients"), {});
-    setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
-    await addDoc(collection(db, "users", user.uid, "reservations"), {});
+    await setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
+    addDoc(collection(db, "users", user.uid, "reservations"), {});
   });
 };
 
@@ -109,6 +109,47 @@ export const readReservations = async (user: User) => {
   return reservations;
 };
 
+export const updateReservations = async (user: User) => {
+  await readReservations(user).then(async (reservations) => {
+    reservations.forEach(async (reservation) => {
+      await saveReservationDb(user, reservation);
+    });
+  });
+};
+
+export const fetchReservationsInMonth = async (user: User, monthIndex: number) => {
+  const foundReservations: Reservation[] = [];
+  if (monthIndex < 0 || monthIndex > 11) return foundReservations;
+
+  const monthDate = dayjs(`2023-${monthIndex + 1}-01`);
+
+  const queryStartDateRes = query(
+    collection(db, "users", user.uid, "reservations"),
+    //Az adott hónapot tölti be,
+    where("endDateTimestamp", ">=", monthDate.unix()),
+    where("endDateTimestamp", "<=", monthDate.add(1, "month").unix())
+  );
+
+  await getDocs(queryStartDateRes).then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      if (!doc.data().hasOwnProperty("id")) return;
+      const reservation = doc.data() as Reservation;
+      const modifiedReservation = {
+        ...reservation,
+        startDate: dayjs(reservation.startDate),
+        startTime: reservation.startTime ? dayjs(reservation.startTime) : undefined,
+        endDate: dayjs(reservation.endDate),
+        endTime: reservation.endTime ? dayjs(reservation.endTime) : undefined,
+      };
+      foundReservations.push(modifiedReservation);
+    });
+  });
+
+  console.log(`found reservations in ${monthIndex + 1}: `, foundReservations);
+
+  return foundReservations;
+};
+
 export const saveReservationDb = async (user: User, reservation: Reservation) => {
   const modifiedReservation = {
     ...reservation,
@@ -116,6 +157,7 @@ export const saveReservationDb = async (user: User, reservation: Reservation) =>
     startTime: reservation.startTime && reservation.startTime?.toISOString(),
     endDate: reservation.endDate.toISOString(),
     endTime: reservation.endTime && reservation.endTime?.toISOString(),
+    endDateTimestamp: reservation.endDate.unix(),
   };
   const reservationRef = doc(db, "users", user.uid, "reservations", reservation.id);
   await setDoc(reservationRef, modifiedReservation);

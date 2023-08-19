@@ -10,6 +10,7 @@ import { CALENDAR_MONTH_GAP } from "@/utils/config";
 import CalendarGroupHeaderController from "./Group/CalendarGroupHeaderController";
 import GroupState from "@/models/group/group-state-model";
 import NewGroup from "./Controls/NewGroup";
+import { ReservationContext } from "@/store/reservation-context";
 
 const months = Array.from(Array(12).keys());
 
@@ -50,16 +51,25 @@ const Calendar: React.FC<{}> = () => {
   }, []);
 
   const [scrolledMonth, setScrolledMonth] = useState(new Date().getMonth());
+  const reservationCtx = useContext(ReservationContext);
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollPosition = event.currentTarget.scrollLeft;
     let i = 0;
     let acc = 0;
-    while (i < monthRefs.length && acc + monthRefs[i].current!.offsetWidth + (CALENDAR_MONTH_GAP - 1) < scrollPosition) {
+    while (
+      i < monthRefs.length &&
+      acc + monthRefs[i].current!.offsetWidth + (CALENDAR_MONTH_GAP - 1) < scrollPosition
+    ) {
       acc += monthRefs[i].current!.offsetWidth + (CALENDAR_MONTH_GAP - 1);
       i++;
     }
     setScrolledMonth(i);
+
+    reservationCtx.fetchMonth(i - 1);
+    reservationCtx.fetchMonth(i);
+    reservationCtx.fetchMonth(i + 1);
+    reservationCtx.fetchMonth(i + 2);
   };
 
   return (

@@ -13,15 +13,16 @@ type Dictionary = {
   [key: string]: string;
 };
 
+//Az itt definiált sorokban megadott adatokat fogja importálni a program
 const groupIdDictionary: Dictionary = {
-  "560537": "6bb83ac3-304d-497d-b562-080fc6230652", //OPEL VIVARO 818
-  "560538": "d73fee1b-a97e-4d28-8ab1-cd7cafdefb75", //OPEL VIVARO 775
-  "638819": "13f797b6-53d6-42cb-ade6-249d20ec70d4", //OPEL VIVARO 302
-  "560539": "99266b4e-4563-4827-b497-bb548755cb04", //RENAULT TRAFIC 841
-  "560540": "25e6587e-de0d-4a3e-9a80-a47645e2d3ab", //REANULT TRAFIC 842
-  "583923": "fe5c4a76-d1f6-441c-a13b-58ac358c6ab4", //SOFŐR
-  "673404": "50f67e18-84d2-4912-baeb-674fe03ed166", //AUTÓKOZMETIKA
-  "1013689": "8fd213eb-61b5-488f-83d3-bef463d135bb", //LAKÁS
+  // "560537": "6bb83ac3-304d-497d-b562-080fc6230652", //OPEL VIVARO 818
+  // "560538": "d73fee1b-a97e-4d28-8ab1-cd7cafdefb75", //OPEL VIVARO 775
+  // "638819": "13f797b6-53d6-42cb-ade6-249d20ec70d4", //OPEL VIVARO 302
+  // "560539": "99266b4e-4563-4827-b497-bb548755cb04", //RENAULT TRAFIC 841
+  // "560540": "25e6587e-de0d-4a3e-9a80-a47645e2d3ab", //REANULT TRAFIC 842
+  // "583923": "fe5c4a76-d1f6-441c-a13b-58ac358c6ab4", //SOFŐR
+  // "673404": "50f67e18-84d2-4912-baeb-674fe03ed166", //AUTÓKOZMETIKA
+  // "1013689": "8fd213eb-61b5-488f-83d3-bef463d135bb", //LAKÁS
 };
 
 const getUuidByGroupId = (groupId: string) => {

@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
-import { deleteReservationDb, readReservations, saveReservationDb } from "@/firebase/firestore-helpers/utils";
+import { deleteReservationDb, fetchReservationsInMonth, saveReservationDb, updateReservations } from "@/firebase/firestore-helpers/utils";
 import { useAuthContext, useUser } from "./user-context";
 
 interface IReservationContextObject {
   reservations: Reservation[];
+  fetchMonth: (monthIndex: number) => void;
   setReservations: (reservations: Reservation[]) => void;
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
@@ -26,6 +27,7 @@ interface IReservationContextObject {
 
 export const ReservationContext = React.createContext<IReservationContextObject>({
   reservations: [],
+  fetchMonth: () => {},
   setReservations: () => {},
   addReservation: () => {},
   removeReservation: () => {},
@@ -50,20 +52,37 @@ const generateDatesBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
 };
 
 const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
-  const [reservations, setReservations] = React.useState<Reservation[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  //Ez azért kell, hogy ne töltse be többször az adatokat, ha már egyszer betöltötte
+  const [fetchedMonths, setFetchedMonths] = useState<number[]>([]);
+
   const user = useUser();
   const authCtx = useAuthContext();
 
   //Loading reservations
   useEffect(() => {
     if (!user || !authCtx.initialUserDataChecked) {
+      setFetchedMonths([]);
       setReservations([]);
       return;
     }
-    readReservations(user).then((reservations) => {
-      setReservations(reservations);
-    });
+    updateReservations(user);
   }, [authCtx.initialUserDataChecked]);
+
+  const fetchMonth = async (monthIndex: number) => {
+    if (!user || !authCtx.initialUserDataChecked) {
+      setFetchedMonths([]);
+      setReservations([]);
+      return;
+    }
+    if (fetchedMonths.includes(monthIndex)) return;
+
+    setFetchedMonths((prevState) => [...prevState, monthIndex]);
+    await fetchReservationsInMonth(user, monthIndex).then((reservations) => {
+      setReservations((prevState) => [...prevState, ...reservations]);
+    });
+  };
 
   //Elmenti a változatásokat, és létrehozza a foglalást ha még nem létezik
   const saveReservation = async (reservation: Reservation) => {
@@ -225,6 +244,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const context: IReservationContextObject = {
     reservations,
+    fetchMonth,
     setReservations,
     addReservation,
     removeReservation,
