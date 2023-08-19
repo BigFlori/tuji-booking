@@ -67,7 +67,6 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       setReservations([]);
       return;
     }
-    updateReservations(user);
   }, [authCtx.initialUserDataChecked]);
 
   const fetchMonth = async (monthIndex: number) => {
