@@ -96,6 +96,8 @@ export const readReservations = async (user: User) => {
     querySnapshot.forEach((doc) => {
       if (!doc.data().hasOwnProperty("id")) return;
       const reservation = doc.data() as Reservation;
+      console.log(reservation);
+      
       const modifiedReservation = {
         ...reservation,
         startDate: dayjs(reservation.startDate),
@@ -154,9 +156,9 @@ export const saveReservationDb = async (user: User, reservation: Reservation) =>
   const modifiedReservation = {
     ...reservation,
     startDate: reservation.startDate.toISOString(),
-    startTime: reservation.startTime && reservation.startTime?.toISOString(),
+    startTime: reservation.startTime ? reservation.startTime?.toISOString() : "",
     endDate: reservation.endDate.toISOString(),
-    endTime: reservation.endTime && reservation.endTime?.toISOString(),
+    endTime: reservation.endTime ? reservation.endTime?.toISOString() : "",
     endDateTimestamp: reservation.endDate.unix(),
   };
   const reservationRef = doc(db, "users", user.uid, "reservations", reservation.id);

@@ -66,6 +66,7 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
       fullPrice: data.fullPrice,
       depositPrice: data.depositPrice,
       cautionPrice: data.cautionPrice,
+      cautionReturned: data.cautionReturned,
       comment: data.comment,
     };
 

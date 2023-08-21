@@ -76,7 +76,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       return;
     }
     if (fetchedMonths.includes(monthIndex)) return;
-
+    
     setFetchedMonths((prevState) => [...prevState, monthIndex]);
     await fetchReservationsInMonth(user, monthIndex).then((reservations) => {
       setReservations((prevState) => [...prevState, ...reservations]);
