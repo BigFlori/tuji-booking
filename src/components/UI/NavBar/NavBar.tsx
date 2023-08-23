@@ -1,14 +1,20 @@
 import { AppBar, Avatar, Box, Container, IconButton, Toolbar, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useUser } from "@/store/user-context";
 import AvatarMenu from "./AvatarMenu/AvatarMenu";
-import SearchBar from "./SearchBar/SearchBar";
-import { ReservationContext } from "@/store/reservation-context";
+import { useReservationContext } from "@/store/reservation-context";
+import { useClientContext } from "@/store/client-context";
+import { sumDuplicates } from "@/utils/helpers";
 
 const NavBar: React.FC = () => {
-  const reservationCtx = useContext(ReservationContext);
+  const reservationCtx = useReservationContext();
+  const clientCtx = useClientContext();
+
+  //const clientIds = clientCtx.clients.map(client => client.id);
+  //const duplicateCounter = sumDuplicates(clientIds);
+
   const router = useRouter();
   
   const user = useUser();
@@ -32,7 +38,7 @@ const NavBar: React.FC = () => {
             <Link href="/">
               <Typography variant="body1">Tuji-Booking</Typography>
             </Link>
-            <Typography>Betöltött foglalások: {reservationCtx.reservations.length}</Typography>
+            <Typography>Foglalások: {reservationCtx.reservations.length}, Ügyfelek: {clientCtx.clients.length}</Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             {/* {isOnCalendarPage && (

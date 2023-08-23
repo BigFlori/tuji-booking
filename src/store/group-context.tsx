@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Group from "@/models/group/group-model";
 import { deleteGroupDb, readGroups, saveGroupDb } from "@/firebase/firestore-helpers/utils";
 import { useAuthContext, useUser } from "./user-context";
-import { ReservationContext } from "./reservation-context";
+import { useReservationContext } from "./reservation-context";
 
 interface IGroupsContextObject {
   groups: Group[];
@@ -26,11 +26,15 @@ export const GroupContext = React.createContext<IGroupsContextObject>({
   getGroup: () => undefined,
 });
 
+export const useGroupContext = () => {
+  return useContext(GroupContext);
+};
+
 const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [groups, setGroups] = useState<Group[]>([]);
   const user = useUser();
   const authCtx = useAuthContext();
-  const reservationCtx = useContext(ReservationContext);
+  const reservationCtx = useReservationContext();
 
   //Loading groups
   useEffect(() => {

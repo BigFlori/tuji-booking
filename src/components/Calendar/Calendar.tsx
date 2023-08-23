@@ -1,16 +1,16 @@
 import React from "react";
-import { useContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import CalendarGroupHeader from "./Group/CalendarGroupHeader";
 import CalendarMonth from "./CalendarMonth";
-import { GroupContext } from "@/store/group-context";
+import { useGroupContext } from "@/store/group-context";
 import CalendarControls from "./Controls/CalendarControls";
 import dayjs from "dayjs";
 import { CALENDAR_MONTH_GAP } from "@/utils/config";
 import CalendarGroupHeaderController from "./Group/CalendarGroupHeaderController";
-import GroupState from "@/models/group/group-state-model";
 import NewGroup from "./Controls/NewGroup";
-import { ReservationContext } from "@/store/reservation-context";
+import { useReservationContext } from "@/store/reservation-context";
+import { useClientContext } from "@/store/client-context";
 
 const months = Array.from(Array(12).keys());
 
@@ -28,7 +28,7 @@ const Calendar: React.FC<{}> = () => {
     setYear((prevYear) => (prevYear < dayjs().add(10, "year").year() ? prevYear + 1 : prevYear));
   const decreaseYear = () => setYear((prevYear) => (prevYear > 2000 ? prevYear - 1 : prevYear));
 
-  const groupCtx = useContext(GroupContext);
+  const groupCtx = useGroupContext();
 
   //Csoport fejlécek generálása
   const generateGroupHeaders = useMemo(() => {
@@ -51,10 +51,14 @@ const Calendar: React.FC<{}> = () => {
   }, []);
 
   const [scrolledMonth, setScrolledMonth] = useState(new Date().getMonth());
-  const reservationCtx = useContext(ReservationContext);
+  const [scrollLeftPosition, setScrollLeftPosition] = useState(0);
+  const reservationCtx = useReservationContext();
+  const clientCtx = useClientContext();
+  const isLoading = reservationCtx.isFetching || clientCtx.isFetching;
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollPosition = event.currentTarget.scrollLeft;
+    setScrollLeftPosition(scrollPosition);
     let i = 0;
     let acc = 0;
     while (
@@ -73,6 +77,10 @@ const Calendar: React.FC<{}> = () => {
     reservationCtx.fetchMonth(i + 2);
   };
 
+  const disableScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    event.currentTarget.scrollTo(scrollLeftPosition, 0);
+  };
+
   return (
     <>
       <CalendarControls
@@ -89,7 +97,10 @@ const Calendar: React.FC<{}> = () => {
             <NewGroup isExpanded={isGroupExpanded} />
           </Box>
         </Box>
-        <Box sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }} onScroll={handleScroll}>
+        <Box
+          sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }}
+          onScroll={isLoading ? disableScroll : handleScroll}
+        >
           {months.map((month, index) => {
             return <CalendarMonth key={month} month={month} today={today} year={year} monthRef={monthRefs[index]} />;
           })}

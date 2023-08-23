@@ -36,9 +36,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <UserContextProvider>
-          <ReservationContextProvider>
-            <GroupContextProvider>
-              <ClientContextProvider>
+          <ClientContextProvider>
+            <ReservationContextProvider>
+              <GroupContextProvider>
                 <NextNProgress
                   color="#fff"
                   height={3}
@@ -48,9 +48,9 @@ export default function App({ Component, pageProps }: AppProps) {
                   options={{ showSpinner: false }}
                 />
                 <Component {...pageProps} key={router.route} />
-              </ClientContextProvider>
-            </GroupContextProvider>
-          </ReservationContextProvider>
+              </GroupContextProvider>
+            </ReservationContextProvider>
+          </ClientContextProvider>
         </UserContextProvider>
       </ThemeProvider>
     </LocalizationProvider>

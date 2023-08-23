@@ -8,6 +8,7 @@ import Group from "@/models/group/group-model";
 import Reservation from "@/models/reservation/reservation-model";
 import dayjs from "dayjs";
 import Client from "@/models/client-model";
+import { chunkArray, removeDuplicates } from "@/utils/helpers";
 
 const initialGroup: Group = {
   id: uuidv4(),
@@ -97,7 +98,7 @@ export const readReservations = async (user: User) => {
       if (!doc.data().hasOwnProperty("id")) return;
       const reservation = doc.data() as Reservation;
       console.log(reservation);
-      
+
       const modifiedReservation = {
         ...reservation,
         startDate: dayjs(reservation.startDate),
@@ -125,14 +126,14 @@ export const fetchReservationsInMonth = async (user: User, monthIndex: number) =
 
   const monthDate = dayjs(`2023-${monthIndex + 1}-01`);
 
-  const queryStartDateRes = query(
+  const queryResult = query(
     collection(db, "users", user.uid, "reservations"),
     //Az adott hónapot tölti be,
     where("endDateTimestamp", ">=", monthDate.unix()),
     where("endDateTimestamp", "<=", monthDate.add(1, "month").unix())
   );
 
-  await getDocs(queryStartDateRes).then((querySnapshot) => {
+  await getDocs(queryResult).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
       if (!doc.data().hasOwnProperty("id")) return;
       const reservation = doc.data() as Reservation;
@@ -181,6 +182,26 @@ export const readClients = async (user: User) => {
     });
   });
   return clients;
+};
+
+export const fetchClientsById = async (user: User, clientIds: string[]) => {
+  const uniqueIds = removeDuplicates(clientIds);
+  const chunkedArrays = chunkArray(uniqueIds, 30);
+  const foundClients: Client[] = [];
+  
+  for (let i = 0; i < chunkedArrays.length; i++) {
+    const queryResult = query(collection(db, "users", user.uid, "clients"), where("id", "in", chunkedArrays[i]));
+    await getDocs(queryResult).then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (!doc.data().hasOwnProperty("id")) return;
+        const client = doc.data() as Client;
+        if (clientIds.includes(client.id)) {
+          foundClients.push(client);
+        }
+      });
+    });
+  }
+  return foundClients;
 };
 
 export const saveClientDb = async (user: User, client: Client) => {
