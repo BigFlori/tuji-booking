@@ -87,14 +87,9 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
   };
 
   const startDate = watch("startDate");
-  
+
   return (
-    <Box
-      component="form"
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit(props.onSubmit)}
-    >
+    <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit(props.onSubmit)}>
       <ModalControls title="Új foglalás" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="body1">Alapinformációk</Typography>
@@ -483,43 +478,48 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
             )}
           />
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Controller
-              name="clientPhone"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  sx={{ flexGrow: 1 }}
-                  id="clientPhone"
-                  label="Telefonszám"
-                  type="text"
-                  error={!!errors.clientPhone}
-                  helperText={errors.clientPhone && errors.clientPhone.message}
-                  {...field}
-                />
-              )}
-            />
-            <ExternalActionButton type="tel" value={watch("clientPhone")} />
-          </Box>
+          <Controller
+            name="clientPhone"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                sx={{ flexGrow: 1 }}
+                id="clientPhone"
+                label="Telefonszám"
+                type="text"
+                error={!!errors.clientPhone}
+                helperText={errors.clientPhone && errors.clientPhone.message}
+                InputProps={{
+                  endAdornment: (
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <ExternalActionButton type="tel" value={watch("clientPhone")} />
+                      <ExternalActionButton type="sms" value={watch("clientPhone")} />
+                    </Box>
+                  ),
+                }}
+                {...field}
+              />
+            )}
+          />
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Controller
-              name="clientEmail"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  sx={{ flexGrow: 1 }}
-                  id="clientEmail"
-                  label="E-mail cím"
-                  type="email"
-                  error={!!errors.clientEmail}
-                  helperText={errors.clientEmail && errors.clientEmail.message}
-                  {...field}
-                />
-              )}
-            />
-            <ExternalActionButton type="mailto" value={watch("clientEmail")} />
-          </Box>
+          <Controller
+            name="clientEmail"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                sx={{ flexGrow: 1 }}
+                id="clientEmail"
+                label="E-mail cím"
+                type="email"
+                error={!!errors.clientEmail}
+                helperText={errors.clientEmail && errors.clientEmail.message}
+                InputProps={{
+                  endAdornment: <ExternalActionButton type="mailto" value={watch("clientEmail")} />,
+                }}
+                {...field}
+              />
+            )}
+          />
 
           <Controller
             name="clientAddress"

@@ -7,7 +7,7 @@ interface IClientContextObject {
   clients: Client[];
   isFetching: boolean;
   setClients: (clients: Client[]) => void;
-  fetchClients: (clientIds: string[]) => void;
+  // fetchClients: (clientIds: string[]) => void;
   addClient: (client: Client) => void;
   removeClient: (id: string) => void;
   updateClient: (id: string, client: Client) => void;
@@ -19,7 +19,7 @@ export const ClientContext = React.createContext<IClientContextObject>({
   clients: [],
   isFetching: false,
   setClients: () => {},
-  fetchClients: () => {},
+  // fetchClients: () => {},
   addClient: () => {},
   removeClient: () => {},
   updateClient: () => {},
@@ -44,24 +44,27 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
       setClients([]);
       return;
     }
+    readClients(user).then((clients) => {
+      setClients(clients);
+    });
   }, [authCtx.initialUserDataChecked]);
 
-  const fetchClients = async (clientIds: string[]) => {
-    if (!user || !authCtx.initialUserDataChecked) {
-      setClients([]);
-      return;
-    }
-    const notLoadedClients = clientIds.filter((clientId) => !clients.find((client) => client.id === clientId));
-    if (notLoadedClients.length === 0) {
-      return;
-    }
-    setIsFetching(true);
-    fetchClientsById(user, notLoadedClients).then((clients) => {
-      setClients((prevState) => [...prevState, ...clients]);
-    }).finally(() => {
-      setIsFetching(false);
-    });
-  };
+  // const fetchClients = async (clientIds: string[]) => {
+  //   if (!user || !authCtx.initialUserDataChecked) {
+  //     setClients([]);
+  //     return;
+  //   }
+  //   const notLoadedClients = clientIds.filter((clientId) => !clients.find((client) => client.id === clientId));
+  //   if (notLoadedClients.length === 0) {
+  //     return;
+  //   }
+  //   setIsFetching(true);
+  //   fetchClientsById(user, notLoadedClients).then((clients) => {
+  //     setClients((prevState) => [...prevState, ...clients]);
+  //   }).finally(() => {
+  //     setIsFetching(false);
+  //   });
+  // };
 
   //Elmenti a váltztatásokat, és létrehozza az ügyfelet ha még nem létezik
   const saveClient = async (client: Client) => {
@@ -124,7 +127,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
     clients,
     isFetching,
     setClients,
-    fetchClients,
+    // fetchClients,
     addClient,
     removeClient,
     updateClient,

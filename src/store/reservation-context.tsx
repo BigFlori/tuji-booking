@@ -97,9 +97,9 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       .then((reservations) => {
         if (reservations.length === 0) return;
         setReservations((prevState) => [...prevState, ...reservations]);
-        const clientIds = reservations.map((reservation) => reservation.clientId);
-        const filteredClientIds = clientIds.filter((clientId) => clientId !== undefined) as string[];
-        clientCtx.fetchClients(filteredClientIds);
+        // const clientIds = reservations.map((reservation) => reservation.clientId);
+        // const filteredClientIds = clientIds.filter((clientId) => clientId !== undefined) as string[];
+        // clientCtx.fetchClients(filteredClientIds);
       })
       .finally(() => {
         setIsFetching(false);

@@ -92,12 +92,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
   const startDate = watch("startDate");
 
   return (
-    <Box
-      component="form"
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit(props.onSubmit)}
-    >
+    <Box component="form" autoComplete="off" noValidate onSubmit={handleSubmit(props.onSubmit)}>
       <ModalControls
         title="Foglalás szerkesztése"
         onClose={props.onClose}
@@ -496,24 +491,29 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             )}
           />
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Controller
-              name="clientPhone"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  sx={{ flexGrow: 1 }}
-                  id="clientPhone"
-                  label="Telefonszám"
-                  type="text"
-                  error={!!errors.clientPhone}
-                  helperText={errors.clientPhone && errors.clientPhone.message}
-                  {...field}
-                />
-              )}
-            />
-            <ExternalActionButton type="tel" value={watch("clientPhone")} />
-          </Box>
+          <Controller
+            name="clientPhone"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                sx={{ flexGrow: 1 }}
+                id="clientPhone"
+                label="Telefonszám"
+                type="text"
+                error={!!errors.clientPhone}
+                helperText={errors.clientPhone && errors.clientPhone.message}
+                InputProps={{
+                  endAdornment: (
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <ExternalActionButton type="tel" value={watch("clientPhone")} />
+                      <ExternalActionButton type="sms" value={watch("clientPhone")} />
+                    </Box>
+                  ),
+                }}
+                {...field}
+              />
+            )}
+          />
 
           <Box sx={{ display: "flex", gap: 2 }}>
             <Controller
@@ -527,11 +527,13 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
                   type="email"
                   error={!!errors.clientEmail}
                   helperText={errors.clientEmail && errors.clientEmail.message}
+                  InputProps={{
+                    endAdornment: <ExternalActionButton type="mailto" value={watch("clientEmail")} />,
+                  }}
                   {...field}
                 />
               )}
             />
-            <ExternalActionButton type="mailto" value={watch("clientEmail")} />
           </Box>
 
           <Controller
