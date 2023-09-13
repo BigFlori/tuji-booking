@@ -6,7 +6,7 @@ import { useUser } from "@/store/user-context";
 import AvatarMenu from "./AvatarMenu/AvatarMenu";
 import { useReservationContext } from "@/store/reservation-context";
 import { useClientContext } from "@/store/client-context";
-import { sumDuplicates } from "@/utils/helpers";
+import SearchBar from "./SearchBar/SearchBar";
 
 const NavBar: React.FC = () => {
   const reservationCtx = useReservationContext();

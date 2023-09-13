@@ -13,7 +13,7 @@ import { useClientContext } from "./client-context";
 interface IReservationContextObject {
   reservations: Reservation[];
   isFetching: boolean;
-  fetchMonth: (monthIndex: number) => void;
+  fetchMonth: (year: number, monthIndex: number) => void;
   setReservations: (reservations: Reservation[]) => void;
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
@@ -59,6 +59,11 @@ const generateDatesBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
   return dates;
 };
 
+interface IFetchedMonth {
+  year: number;
+  monthIndex: number;
+}
+
 export const useReservationContext = () => {
   return useContext(ReservationContext);
 };
@@ -67,7 +72,7 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
   //Ez azért kell, hogy ne töltse be többször az adatokat, ha már egyszer betöltötte
-  const [fetchedMonths, setFetchedMonths] = useState<number[]>([]);
+  const [fetchedMonths, setFetchedMonths] = useState<IFetchedMonth[]>([]);
   const [isFetching, setIsFetching] = useState(false);
 
   const user = useUser();
@@ -83,17 +88,19 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     }
   }, [authCtx.initialUserDataChecked]);
 
-  const fetchMonth = async (monthIndex: number) => {
+  const fetchMonth = async (year: number, monthIndex: number) => {
     if (!user || !authCtx.initialUserDataChecked) {
       setFetchedMonths([]);
       setReservations([]);
       return;
     }
-    if (fetchedMonths.includes(monthIndex)) return;
+    const isInitialFetch = fetchedMonths.length === 0;
+    const currentYearFetchedMonths = fetchedMonths.filter((fetchedMonth) => fetchedMonth.year === year).map((fetchedMonth) => fetchedMonth.monthIndex);
+    if (!isInitialFetch && monthIndex >= Math.min(...currentYearFetchedMonths)) return;
 
-    setFetchedMonths((prevState) => [...prevState, monthIndex]);
+    setFetchedMonths((prevState) => [...prevState, { year, monthIndex }]);
     setIsFetching(true);
-    await fetchReservationsInMonth(user, monthIndex)
+    await fetchReservationsInMonth(user, isInitialFetch, year, monthIndex)
       .then((reservations) => {
         if (reservations.length === 0) return;
         setReservations((prevState) => [...prevState, ...reservations]);

@@ -120,18 +120,26 @@ export const updateReservations = async (user: User) => {
   });
 };
 
-export const fetchReservationsInMonth = async (user: User, monthIndex: number) => {
+export const fetchReservationsInMonth = async (user: User, isInitialFetch: boolean, year: number, monthIndex: number) => {
   const foundReservations: Reservation[] = [];
   if (monthIndex < 0 || monthIndex > 11) return foundReservations;
 
-  const monthDate = dayjs(`2023-${monthIndex + 1}-01`);
+  const monthDate = dayjs(`${year}-${monthIndex + 1}-01`);
 
-  const queryResult = query(
+  let queryResult = query(
     collection(db, "users", user.uid, "reservations"),
-    //Az adott hónapot tölti be,
+    //Az adott hónap után mindent betölt
     where("endDateTimestamp", ">=", monthDate.unix()),
-    where("endDateTimestamp", "<=", monthDate.add(1, "month").unix())
   );
+
+  if (!isInitialFetch) {
+    queryResult = query(
+      collection(db, "users", user.uid, "reservations"),
+      //Az adott hónapot tölti be,
+      where("endDateTimestamp", ">=", monthDate.unix()),
+      where("endDateTimestamp", "<=", monthDate.add(1, "month").unix())
+    );
+  }
 
   await getDocs(queryResult).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -148,7 +156,7 @@ export const fetchReservationsInMonth = async (user: User, monthIndex: number) =
     });
   });
 
-  console.log(`found reservations in ${monthIndex + 1}: `, foundReservations);
+  console.log(`found reservations from ${monthIndex + 1}: `, foundReservations);
 
   return foundReservations;
 };

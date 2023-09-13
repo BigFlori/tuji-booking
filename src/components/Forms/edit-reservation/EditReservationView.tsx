@@ -515,26 +515,24 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             )}
           />
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Controller
-              name="clientEmail"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  sx={{ flexGrow: 1 }}
-                  id="clientEmail"
-                  label="E-mail cím"
-                  type="email"
-                  error={!!errors.clientEmail}
-                  helperText={errors.clientEmail && errors.clientEmail.message}
-                  InputProps={{
-                    endAdornment: <ExternalActionButton type="mailto" value={watch("clientEmail")} />,
-                  }}
-                  {...field}
-                />
-              )}
-            />
-          </Box>
+          <Controller
+            name="clientEmail"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                sx={{ flexGrow: 1 }}
+                id="clientEmail"
+                label="E-mail cím"
+                type="email"
+                error={!!errors.clientEmail}
+                helperText={errors.clientEmail && errors.clientEmail.message}
+                InputProps={{
+                  endAdornment: <ExternalActionButton type="mailto" value={watch("clientEmail")} />,
+                }}
+                {...field}
+              />
+            )}
+          />
 
           <Controller
             name="clientAddress"

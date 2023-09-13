@@ -2,6 +2,7 @@ import { deleteClientDb, fetchClientsById, readClients, saveClientDb } from "@/f
 import Client from "@/models/client-model";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthContext, useUser } from "./user-context";
+import { normalizeText } from "@/utils/helpers";
 
 interface IClientContextObject {
   clients: Client[];
@@ -117,9 +118,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
 
   const searchClients = (searchText: string) => {
     return clients.filter((client) => {
-      const name = client.name.toLowerCase();
-      const searchTextLower = searchText.toLowerCase();
-      return name.includes(searchTextLower);
+      const normalizedName = normalizeText(client.name);
+      const normalizedSearchText = normalizeText(searchText);
+      return normalizedName.includes(normalizedSearchText);
     });
   };
 

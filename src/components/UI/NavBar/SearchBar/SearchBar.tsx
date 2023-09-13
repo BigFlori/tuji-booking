@@ -57,7 +57,7 @@ const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
   };
 
   return (
-    <Box sx={{ position: "relative", width: 300 }}>
+    <Box sx={{ position: "relative", width: 400 }}>
       <TextField
         id="search-bar"
         placeholder={props.placeholder}

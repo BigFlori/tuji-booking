@@ -71,10 +71,7 @@ const Calendar: React.FC<{}> = () => {
     setScrolledMonth(i);
 
     //TODO: Az adott évben a jövöbeni hónapokat töltse be, hogy látszódjanak az egész éves foglalások pl.
-    reservationCtx.fetchMonth(i - 1);
-    reservationCtx.fetchMonth(i);
-    reservationCtx.fetchMonth(i + 1);
-    reservationCtx.fetchMonth(i + 2);
+    reservationCtx.fetchMonth(year, i - 1);
   };
 
   const disableScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
