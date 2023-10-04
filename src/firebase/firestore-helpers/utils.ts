@@ -156,7 +156,7 @@ export const fetchReservationsInMonth = async (user: User, isInitialFetch: boole
     });
   });
 
-  console.log(`found reservations from ${monthIndex + 1}: `, foundReservations);
+  //console.log(`found reservations from ${monthIndex + 1}: `, foundReservations);
 
   return foundReservations;
 };
