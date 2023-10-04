@@ -41,7 +41,11 @@ const BookingApp: NextPage = () => {
         const clientName = clientCtx.getClientById(reservation.clientId)?.name;
         const keptClient = uniqueClients.find((client) => client.name === clientName);
         if (keptClient) {
-          reservation.clientId = keptClient.id;
+          const updatedReservation = {
+            ...reservation,
+            clientId: keptClient.id,
+          }
+          reservationCtx.updateReservation(reservation.id, updatedReservation);
         }
       }
     });
