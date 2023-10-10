@@ -11,6 +11,8 @@ import EditReservationApollo from "../Forms/edit-reservation/EditReservationApol
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
+  isOverflowing?: boolean;
+  viewYear: number;
 }
 
 const countMonthsBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
@@ -38,7 +40,7 @@ const formatName = (name: string, reservedDays: number) => {
     nameParts.forEach((namePart, index) => {
       if (namePart === shortestNamePart) {
         //Ha csak 1 napos a foglalás, és a rövidebb név is hosszabb mint 6 karakter, akkor csak az első betűt adja vissza
-        if(reservedDays === 1 && shortestNamePart.length > 6) {
+        if (reservedDays === 1 && shortestNamePart.length > 6) {
           shortedName += namePart.charAt(0) + ".";
           return;
         }
@@ -48,17 +50,17 @@ const formatName = (name: string, reservedDays: number) => {
           return;
         }
         //Szélsőséges esetben, ha a rövidebb név is hosszabb mint 14 karakter, akkor csak az első betűt adja vissza
-        if(shortestNamePart.length > 14) {
+        if (shortestNamePart.length > 14) {
           shortedName += namePart.charAt(0) + ".";
           return;
         }
         //Egyéb esetben a teljes nevet adja vissza
         shortedName += namePart;
-        if(index === 0) shortedName += " ";
+        if (index === 0) shortedName += " ";
         return;
       }
       shortedName += namePart.charAt(0) + ".";
-      if(index === 0) shortedName += " ";
+      if (index === 0) shortedName += " ";
     });
     return shortedName;
   }
@@ -91,6 +93,21 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     countMonthsBetween(props.reservation.startDate, props.reservation.endDate) * CALENDAR_MONTH_GAP +
     5;
 
+  const differentYearEnding = props.reservation.startDate.get("year") < props.reservation.endDate.get("year");
+
+  //Decemberi foglalásoknál a szélesség kiszámítása amik átérnek az új évbe
+  const widthWithYearEnding =
+    (31 - props.reservation.startDate.get("date")) * CALENDAR_ITEM_WIDTH + CALENDAR_ITEM_WIDTH - 8;
+
+  //Decemberből érkező átlógó foglalásoknál a szélesség kiszámítása
+  const overflowWidth =
+    (props.reservation.endDate.diff(dayjs(`${props.reservation.endDate.get("year")}-01-01`), "day") + 1) *
+      CALENDAR_ITEM_WIDTH -
+    CALENDAR_ITEM_WIDTH / 2 -
+    8 +
+    countMonthsBetween(dayjs(`${props.reservation.endDate.get("year")}-01-01`), props.reservation.endDate) *
+      CALENDAR_MONTH_GAP;
+
   const left =
     props.reservation.startDate.diff(dayjs(props.reservation.startDate).startOf("month"), "day") * CALENDAR_ITEM_WIDTH +
     CALENDAR_ITEM_WIDTH / 2 -
@@ -117,22 +134,35 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     }
   };
 
+  const renderOverflowedYear = props.isOverflowing && props.viewYear !== props.reservation.endDate.get("year");
   return (
     <>
       <ReservationButton
         sx={(theme) => ({
-          left,
-          width,
+          left: !differentYearEnding ? left : !renderOverflowedYear ? 4 : left - 16,
+          width: !differentYearEnding ? width : !renderOverflowedYear ? overflowWidth : widthWithYearEnding,
           background: getBgColor(theme),
           "&:hover": {
             background: darken(getBgColor(theme), 0.08),
           },
-          fontSize: daysReserved === 1 ? "0.7em" : "0.85em",
-          clipPath: `polygon(${width - 10}px 0, 100% 50%, ${width - 10}px 100%, 0% 100%, 10px 50%, 0% 0%)`,
+          fontSize:
+            daysReserved === 1 ||
+            props.reservation.startDate.get("date") === 31 ||
+            props.reservation.endDate.get("date") === 1
+              ? "0.7em"
+              : "0.85em",
+          clipPath: !differentYearEnding
+            ? `polygon(${width - 10}px 0, 100% 50%, ${width - 10}px 100%, 0% 100%, 10px 50%, 0% 0%)`
+            : null,
         })}
         onClick={() => setModalOpened(true)}
       >
-        {formatName(reservationClient.name, daysReserved)}
+        {formatName(
+          reservationClient.name,
+          props.reservation.startDate.get("date") === 31 || props.reservation.endDate.get("date") === 1
+            ? 1
+            : daysReserved
+        )}
       </ReservationButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
         <EditReservationApollo onClose={handleModalClose} reservation={props.reservation} />

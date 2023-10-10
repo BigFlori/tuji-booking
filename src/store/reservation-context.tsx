@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
 import {
@@ -14,7 +14,7 @@ interface IReservationContextObject {
   reservations: Reservation[];
   isFetching: boolean;
   fetchMonth: (year: number, monthIndex: number) => void;
-  setReservations: (reservations: Reservation[]) => void;
+  setReservations: Dispatch<SetStateAction<Reservation[]>>;
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
   updateReservation: (id: string, reservation: Reservation) => void;
@@ -95,18 +95,22 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       return;
     }
     const isInitialFetch = fetchedMonths.length === 0;
-    const currentYearFetchedMonths = fetchedMonths.filter((fetchedMonth) => fetchedMonth.year === year).map((fetchedMonth) => fetchedMonth.monthIndex);
+    const currentYearFetchedMonths = fetchedMonths
+      .filter((fetchedMonth) => fetchedMonth.year === year)
+      .map((fetchedMonth) => fetchedMonth.monthIndex);
     if (!isInitialFetch && monthIndex >= Math.min(...currentYearFetchedMonths)) return;
 
     setFetchedMonths((prevState) => [...prevState, { year, monthIndex }]);
     setIsFetching(true);
     await fetchReservationsInMonth(user, isInitialFetch, year, monthIndex)
-      .then((reservations) => {
-        if (reservations.length === 0) return;
-        setReservations((prevState) => [...prevState, ...reservations]);
-        // const clientIds = reservations.map((reservation) => reservation.clientId);
-        // const filteredClientIds = clientIds.filter((clientId) => clientId !== undefined) as string[];
-        // clientCtx.fetchClients(filteredClientIds);
+      .then((fetchedReservations) => {
+        if (fetchedReservations.length === 0) return;
+        fetchedReservations.forEach((reservation) => {
+          if (reservations.find((res) => res.id === reservation.id)) {
+            return;
+          }
+          setReservations((prevReservations) => [...prevReservations, reservation]);
+        });
       })
       .finally(() => {
         setIsFetching(false);

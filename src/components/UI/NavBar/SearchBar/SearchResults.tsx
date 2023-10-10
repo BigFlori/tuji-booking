@@ -1,22 +1,23 @@
 import Reservation from "@/models/reservation/reservation-model";
 import { List, Paper } from "@mui/material";
 import SpacerLine from "../../SpacerLine";
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import ResultItem from "./ResultItem";
 import AnimatedModal from "../../Modal/AnimatedModal";
 import EditReservationApollo from "@/components/Forms/edit-reservation/EditReservationApollo";
 
 interface ISearchResultsProps {
   results: Reservation[];
+  isModalOpened: boolean;
+  setModalOpened: Dispatch<SetStateAction<boolean>>;
 }
 
 const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps) => {
-  const [modalOpened, setModalOpened] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
   const handleResultItemClick = (reservation: Reservation) => {
     setSelectedReservation(reservation);
-    setModalOpened(true);
+    props.setModalOpened(true);
   };
 
   if (props.results.length === 0) return <></>;
@@ -26,16 +27,15 @@ const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps
       <Paper
         sx={{
           position: "absolute",
-          zIndex: 10,
+          zIndex: 20,
           width: "100%",
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
-          // backgroundColor: (theme) => theme.palette.brandColor.light,
-          // color: (theme) => theme.palette.brandColor.contrastText,
+          top: "100%"
         }}
         elevation={6}
       >
-        <List disablePadding>
+        <List disablePadding sx={{overflowY: "auto", maxHeight: 450}}>
           {props.results.map((reservation, index) => {
             return (
               <Fragment key={reservation.id}>
@@ -46,8 +46,8 @@ const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps
           })}
         </List>
       </Paper>
-      <AnimatedModal open={modalOpened} onClose={() => setModalOpened(false)}>
-        <EditReservationApollo onClose={() => setModalOpened(false)} reservation={selectedReservation!} />
+      <AnimatedModal open={props.isModalOpened} onClose={() => props.setModalOpened(false)}>
+        <EditReservationApollo onClose={() => props.setModalOpened(false)} reservation={selectedReservation!} />
       </AnimatedModal>
     </>
   );

@@ -12,7 +12,7 @@ interface ICalendarGroupProps {
   monthDate: dayjs.Dayjs;
   isLastGroup?: boolean;
   groupId: string;
-};
+}
 
 //Minden hónapban renderelődik és a csoportok sorait fogja össze
 const CalendarGroup: React.FC<ICalendarGroupProps> = (props: ICalendarGroupProps) => {
@@ -41,11 +41,24 @@ const CalendarGroup: React.FC<ICalendarGroupProps> = (props: ICalendarGroupProps
   const generateReservations = useMemo(() => {
     const items = [];
     for (let i = 0; i < reservationCtx.reservations.length; i++) {
+      const reservation = reservationCtx.reservations[i];
+      const isOverflowing =
+        reservation.groupId === props.groupId && reservation.startDate.get("year") < reservation.endDate.get("year");
+
       if (
-        reservationCtx.reservations[i].groupId === props.groupId &&
-        reservationCtx.reservations[i].startDate.isSame(props.monthDate, "month")
+        (reservation.groupId === props.groupId && reservation.startDate.isSame(props.monthDate, "month")) ||
+        (isOverflowing &&
+          props.monthDate.get("month") === 0 &&
+          props.monthDate.get("year") === reservation.endDate.get("year"))
       ) {
-        items.push(<CalendarReservation key={i} reservation={reservationCtx.reservations[i]} />);
+        items.push(
+          <CalendarReservation
+            key={i}
+            reservation={reservation}
+            isOverflowing={isOverflowing}
+            viewYear={props.monthDate.get("year")}
+          />
+        );
       }
     }
     return items;
