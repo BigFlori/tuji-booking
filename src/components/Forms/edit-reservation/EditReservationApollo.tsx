@@ -14,6 +14,7 @@ interface IEditReservationApolloProps {
   onClose: () => void;
   reservation: Reservation;
   disableDateChange?: boolean;
+  disableGroupChange?: boolean;
 }
 
 export type IEditReservationFormModelWithEmptyDate =
@@ -114,6 +115,7 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
       reservationId={props.reservation.id}
       reservationGroupId={props.reservation.groupId}
       disableDateChange={props.disableDateChange}
+      disableGroupChange={props.disableGroupChange}
     />
   );
 };

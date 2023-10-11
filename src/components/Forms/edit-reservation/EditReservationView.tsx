@@ -38,6 +38,7 @@ interface IEditReservationViewProps {
   reservationId: string;
   reservationGroupId: string;
   disableDateChange?: boolean;
+  disableGroupChange?: boolean;
 }
 
 const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
@@ -112,6 +113,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
               control={control}
               render={({ field }) => (
                 <Select
+                  disabled={props.disableGroupChange}
                   labelId="groupId"
                   id="groupId"
                   label="Csoport"

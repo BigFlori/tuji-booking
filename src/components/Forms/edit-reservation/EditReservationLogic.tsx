@@ -17,6 +17,7 @@ interface IEditReservationLogicProps {
   reservationId: string;
   reservationGroupId: string;
   disableDateChange?: boolean;
+  disableGroupChange?: boolean;
 }
 
 export interface IEditReservationFormModel {
@@ -133,6 +134,7 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       reservationId={props.reservationId}
       reservationGroupId={props.reservationGroupId}
       disableDateChange={props.disableDateChange}
+      disableGroupChange={props.disableGroupChange}
     />
   );
 };
