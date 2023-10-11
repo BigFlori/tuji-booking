@@ -37,6 +37,7 @@ interface IEditReservationViewProps {
   clientOptions: IClientOption[];
   reservationId: string;
   reservationGroupId: string;
+  disableDateChange?: boolean;
 }
 
 const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
@@ -142,6 +143,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
               control={control}
               render={({ field }) => (
                 <DatePicker
+                  disabled={props.disableDateChange}
                   label="Kezdő dátum"
                   orientation="portrait"
                   sx={{ flexGrow: 1 }}
@@ -189,6 +191,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
               control={control}
               render={({ field }) => (
                 <DatePicker
+                  disabled={props.disableDateChange}
                   label="Záró dátum"
                   orientation="portrait"
                   sx={{ flexGrow: 1 }}

@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 interface IEditReservationApolloProps {
   onClose: () => void;
   reservation: Reservation;
+  disableDateChange?: boolean;
 }
 
 export type IEditReservationFormModelWithEmptyDate =
@@ -112,6 +113,7 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
       onDelete={deleteHandler}
       reservationId={props.reservation.id}
       reservationGroupId={props.reservation.groupId}
+      disableDateChange={props.disableDateChange}
     />
   );
 };

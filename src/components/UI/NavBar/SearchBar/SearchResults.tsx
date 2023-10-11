@@ -47,7 +47,7 @@ const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps
         </List>
       </Paper>
       <AnimatedModal open={props.isModalOpened} onClose={() => props.setModalOpened(false)}>
-        <EditReservationApollo onClose={() => props.setModalOpened(false)} reservation={selectedReservation!} />
+        <EditReservationApollo onClose={() => props.setModalOpened(false)} reservation={selectedReservation!} disableDateChange />
       </AnimatedModal>
     </>
   );
