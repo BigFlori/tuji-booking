@@ -24,15 +24,20 @@ const Settings: NextPage = () => {
   const discardHandler = () => {
     setClonedGroups(cloneArray(groupCtx.groups));
   };
-  
+
   return (
     <>
       <PageHead page="Beállítások" metaDescription="Tuji-booking foglalási felületének beállításai" />
-      <Container maxWidth="lg" sx={{marginTop: 2}}>
+      <Container maxWidth="lg" sx={{ marginTop: 2 }} component="main">
         <Typography variant="h5">Alkalmazás beállítások</Typography>
-        <Box sx={{marginInline: 1}}>
+        <Box sx={{ marginInline: 1 }} component="section">
           <Typography variant="subtitle1">Csoportok sorrendje</Typography>
-          <DraggableListOrder clonedItems={clonedGroups} setClonedItems={setClonedGroups} onSave={saveHandler} onDiscard={discardHandler} />
+          <DraggableListOrder
+            clonedItems={clonedGroups}
+            setClonedItems={setClonedGroups}
+            onSave={saveHandler}
+            onDiscard={discardHandler}
+          />
         </Box>
       </Container>
     </>

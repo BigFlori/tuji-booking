@@ -30,7 +30,7 @@ const NavBar: React.FC = () => {
     <AppBar position="static" color="brandColor">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             {searchMode && isMobile ? (
               <motion.div
                 key="searchBar"
@@ -40,20 +40,18 @@ const NavBar: React.FC = () => {
                 transition={{ duration: 0.2 }}
                 style={{ width: "100%", zIndex: 20 }}
               >
-                {isOnCalendarPage && (
-                  <SearchBar
-                    placeholder="Foglalás keresés..."
-                    onSearchModeChange={setSearchMode}
-                    searchMode={searchMode}
-                  />
-                )}
+                <SearchBar
+                  placeholder="Foglalás keresés..."
+                  onSearchModeChange={setSearchMode}
+                  searchMode={searchMode}
+                />
               </motion.div>
             ) : (
               <motion.div
                 key="navBar"
-                initial={{ opacity: 0.2, x: "120%" }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: "120%" }}
+                initial={{ opacity: 0.2 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 style={{ width: "100%", zIndex: 20 }}
               >
@@ -65,13 +63,11 @@ const NavBar: React.FC = () => {
                     {/* <Typography>Foglalások: {reservationCtx.reservations.length}, Ügyfelek: {clientCtx.clients.length}</Typography> */}
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {isOnCalendarPage && (
-                      <SearchBar
-                        placeholder="Foglalás keresés..."
-                        onSearchModeChange={setSearchMode}
-                        searchMode={searchMode}
-                      />
-                    )}
+                    <SearchBar
+                      placeholder="Foglalás keresés..."
+                      onSearchModeChange={setSearchMode}
+                      searchMode={searchMode}
+                    />
                     <IconButton
                       onClick={handleUserMenuOpen}
                       sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}

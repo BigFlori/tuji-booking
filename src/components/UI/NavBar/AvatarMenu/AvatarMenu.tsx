@@ -3,6 +3,7 @@ import Link from "next/link";
 import SpacerLine from "../../SpacerLine";
 import MenuIconItem from "./MenuIconItem";
 import SettingsIcon from "@mui/icons-material/Settings";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUser } from "@/store/user-context";
 import { useSignOut } from "react-firebase-hooks/auth";
@@ -50,6 +51,7 @@ const AvatarMenu: React.FC<IAvatarMenuProps> = (props) => {
         </Box>
       </Box>
       <SpacerLine sx={{ marginBlock: 1 }} />
+      <MenuIconItem icon={<MonetizationOnIcon />} text="Pénzügyi jelentések" href="/finances" />
       <MenuIconItem icon={<SettingsIcon />} text="Beállítások" href="/settings" />
       <MenuIconItem icon={<LogoutIcon />} text="Kijelentkezés" onClick={() => signOut()} />
     </Menu>
