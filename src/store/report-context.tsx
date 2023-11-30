@@ -1,11 +1,9 @@
-import { deleteReportDb, fetchReports, saveReportDb } from "@/firebase/firestore-helpers/utils";
 import Report from "@/models/report-model";
 import React from "react";
 import { useUser } from "./user-context";
 
 interface IReportContextObject {
   reports: Report[];
-  loadReports: () => void;
   setReports: (reports: Report[]) => void;
   addReport: (report: Report) => void;
   removeReport: (id: string) => void;
@@ -15,7 +13,6 @@ interface IReportContextObject {
 
 export const ReportContext = React.createContext<IReportContextObject>({
   reports: [],
-  loadReports: () => {},
   setReports: () => {},
   addReport: () => {},
   removeReport: () => {},
@@ -31,34 +28,16 @@ const ReportContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
   const [reports, setReports] = React.useState<Report[]>([]);
   const user = useUser();
 
-  //Loading reports
-  React.useEffect(() => {
-    loadReports();
-  }, []);
-
-  const loadReports = () => {
-    if (!user) {
-      setReports([]);
-      return;
-    }
-
-    fetchReports(user).then((reports) => {
-      setReports(reports);
-    });
-  };
-
   const saveReport = async (report: Report) => {
     if (!user) {
       return;
     }
-    saveReportDb(user, report);
   }
 
   const deleteReport = async (id: string) => {
     if (!user) {
       return;
     }
-    deleteReportDb(user, id);
   }
 
   const addReport = (report: Report) => {
@@ -87,7 +66,6 @@ const ReportContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
 
   const contextValue: IReportContextObject = {
     reports,
-    loadReports,
     setReports,
     addReport,
     removeReport,

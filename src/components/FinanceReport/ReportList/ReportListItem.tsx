@@ -1,9 +1,12 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, ListItem, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Report from "@/models/report-model";
-import { useState } from "react";
-import { useReportContext } from "@/store/report-context";
-import { useGroupContext } from "@/store/group-context";
 import ReportTable from "./ReportTable";
 
 interface IReportListItemProps {
@@ -11,9 +14,6 @@ interface IReportListItemProps {
 }
 
 const ReportListItem: React.FC<IReportListItemProps> = (props: IReportListItemProps) => {
-  const reportCtx = useReportContext();
-  const groupCtx = useGroupContext();
-
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>

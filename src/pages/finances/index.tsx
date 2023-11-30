@@ -10,7 +10,7 @@ const Finances: NextPage = () => {
   return (
     <ReportContextProvider>
       <PageHead page="Pénzügy" metaDescription="Tuji-booking pénzügyi felülete" />
-      <Container maxWidth="lg" sx={{ marginTop: 2 }} component="main">
+      <Container maxWidth="lg" sx={{ marginY: 2 }} component="main">
         <Typography variant="h5">Pénzügyi jelentések</Typography>
         <Box component="section" sx={{ marginInline: 1, display: "flex", flexDirection: "column", gap: 1 }}>
           <Typography variant="subtitle1">
@@ -19,7 +19,9 @@ const Finances: NextPage = () => {
           <Box marginX="auto">
             <CreateReport />
           </Box>
-          <ReportList />
+          <Box marginTop={3}>
+            <ReportList />
+          </Box>
         </Box>
       </Container>
     </ReportContextProvider>
