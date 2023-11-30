@@ -23,7 +23,6 @@ import Reservation from "@/models/reservation/reservation-model";
 import dayjs from "dayjs";
 import Client from "@/models/client-model";
 import { chunkArray, removeDuplicates } from "@/utils/helpers";
-import Report from "@/models/report-model";
 
 const initialGroup: Group = {
   id: uuidv4(),
@@ -57,7 +56,6 @@ export const createInitialUser = async (user: User, displayName?: string | null)
     addDoc(collection(db, "users", user.uid, "clients"), {});
     await setDoc(doc(db, "users", user.uid, "groups", initialGroup.id), initialGroup);
     addDoc(collection(db, "users", user.uid, "reservations"), {});
-    addDoc(collection(db, "users", user.uid, "reports"), {});
   });
 };
 
