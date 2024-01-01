@@ -2,6 +2,7 @@ import { Box } from "@mui/system";
 import YearSelector from "./YearSelector";
 import MonthSelector from "./MonthSelector";
 import NewReservation from "./NewReservation";
+import { useReservationContext } from "@/store/reservation-context";
 
 interface ICalendarControlsProps {
   year: number;
@@ -11,6 +12,8 @@ interface ICalendarControlsProps {
 }
 
 const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarControlsProps) => {
+  const reservationCtx = useReservationContext();
+
   const jumpToId = (id: string) => {
     const monthElement = document.getElementById(id);
     if (monthElement) {
@@ -28,8 +31,11 @@ const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarCont
   };
 
   const prevYear = () => {
+    reservationCtx.fetchMonth(props.year - 1, 11);
     props.decreaseYear();
-    jumpToId("11");
+    setTimeout(() => {
+      jumpToId("11");
+    }, 200);
   };
 
   return (

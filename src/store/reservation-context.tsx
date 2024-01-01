@@ -86,7 +86,40 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       setReservations([]);
       return;
     }
+    fetchFutureReservations();
   }, [authCtx.initialUserDataChecked]);
+
+  const fetchFutureReservations = async () => {
+    if (!user || !authCtx.initialUserDataChecked) {
+      setFetchedMonths([]);
+      setReservations([]);
+      return;
+    }
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    const currentYearFetchedMonths = fetchedMonths
+      .filter((fetchedMonth) => fetchedMonth.year === currentYear)
+      .map((fetchedMonth) => fetchedMonth.monthIndex);
+    if (currentMonth >= Math.min(...currentYearFetchedMonths)) return;
+
+    setFetchedMonths((prevState) => [...prevState, { year: currentYear, monthIndex: currentMonth }]);
+    setIsFetching(true);
+    await fetchReservationsInMonth(user, false, currentYear, currentMonth)
+      .then((fetchedReservations) => {
+        if (fetchedReservations.length === 0) return;
+        fetchedReservations.forEach((reservation) => {
+          if (reservations.find((res) => res.id === reservation.id)) {
+            return;
+          }
+          //temp
+          //saveReservation(reservation);
+          setReservations((prevReservations) => [...prevReservations, reservation]);
+        });
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
+  };
 
   const fetchMonth = async (year: number, monthIndex: number) => {
     if (!user || !authCtx.initialUserDataChecked) {
