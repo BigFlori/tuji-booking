@@ -13,7 +13,7 @@ import { useClientContext } from "./client-context";
 interface IReservationContextObject {
   reservations: Reservation[];
   isFetching: boolean;
-  fetchMonth: (year: number, monthIndex: number) => void;
+  fetchMonth: (year: number, monthIndex: number, isRecursiveCall: boolean) => void;
   setReservations: Dispatch<SetStateAction<Reservation[]>>;
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
@@ -86,52 +86,45 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
       setReservations([]);
       return;
     }
-    fetchFutureReservations();
+    fetchMonth(new Date().getFullYear(), new Date().getMonth() - 1, false);
   }, [authCtx.initialUserDataChecked]);
 
-  const fetchFutureReservations = async () => {
+  const fetchMonth = async (year: number, monthIndex: number, isRecursiveCall: boolean) => {
     if (!user || !authCtx.initialUserDataChecked) {
       setFetchedMonths([]);
       setReservations([]);
       return;
     }
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
-    const currentYearFetchedMonths = fetchedMonths
-      .filter((fetchedMonth) => fetchedMonth.year === currentYear)
-      .map((fetchedMonth) => fetchedMonth.monthIndex);
-    if (currentMonth >= Math.min(...currentYearFetchedMonths)) return;
-
-    setFetchedMonths((prevState) => [...prevState, { year: currentYear, monthIndex: currentMonth }]);
-    setIsFetching(true);
-    await fetchReservationsInMonth(user, false, currentYear, currentMonth)
-      .then((fetchedReservations) => {
-        if (fetchedReservations.length === 0) return;
-        fetchedReservations.forEach((reservation) => {
-          if (reservations.find((res) => res.id === reservation.id)) {
-            return;
-          }
-          //temp
-          //saveReservation(reservation);
-          setReservations((prevReservations) => [...prevReservations, reservation]);
-        });
-      })
-      .finally(() => {
-        setIsFetching(false);
-      });
-  };
-
-  const fetchMonth = async (year: number, monthIndex: number) => {
-    if (!user || !authCtx.initialUserDataChecked) {
-      setFetchedMonths([]);
-      setReservations([]);
-      return;
+    if (monthIndex < 0) {
+      monthIndex = 0;
     }
+
+    if (monthIndex > 11) {
+      monthIndex = 0;
+      year++;
+    }
+
     const isInitialFetch = fetchedMonths.length === 0;
     const currentYearFetchedMonths = fetchedMonths
       .filter((fetchedMonth) => fetchedMonth.year === year)
       .map((fetchedMonth) => fetchedMonth.monthIndex);
     if (!isInitialFetch && monthIndex >= Math.min(...currentYearFetchedMonths)) return;
+
+    if (!isRecursiveCall) {
+      const currentYearMinMonth = Math.min(...currentYearFetchedMonths);
+      if (
+        currentYearFetchedMonths.length !== 0 &&
+        currentYearMinMonth > monthIndex &&
+        currentYearMinMonth - monthIndex > 1
+      ) {
+        for (let i = monthIndex + 1; i < currentYearMinMonth; i++) {
+          fetchMonth(year, i, true);
+        }
+      }
+    }
+
+    // console.log("fetching month");
+    // console.log(year, monthIndex, isInitialFetch);
 
     setFetchedMonths((prevState) => [...prevState, { year, monthIndex }]);
     setIsFetching(true);

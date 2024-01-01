@@ -31,11 +31,8 @@ const CalendarControls: React.FC<ICalendarControlsProps> = (props: ICalendarCont
   };
 
   const prevYear = () => {
-    reservationCtx.fetchMonth(props.year - 1, 11);
     props.decreaseYear();
-    setTimeout(() => {
-      jumpToId("11");
-    }, 200);
+    jumpToId("11");
   };
 
   return (
