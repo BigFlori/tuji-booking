@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, Theme, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContentText, DialogTitle, IconButton, Theme, Typography, useMediaQuery } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
@@ -46,7 +46,7 @@ const ModalControls: React.FC<ModalControlsProps> = (props) => {
                 <DeleteIcon />
               </IconButton>
               <Dialog open={openDialog} onClose={handleDialogClose}>
-                <DialogTitle>Biztosan törölni szeretnéd a foglalást?</DialogTitle>
+                <DialogTitle>Biztosan törölni szeretnéd?</DialogTitle>
                 <DialogActions>
                   <Button onClick={handleDialogClose}>Mégse</Button>
                   <Button onClick={handleDialogDelete} color="error">

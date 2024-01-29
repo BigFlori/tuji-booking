@@ -1,4 +1,6 @@
+import StateDot from "@/components/UI/StateDot";
 import Report from "@/models/report-model";
+import PaymentState from "@/models/reservation/payment-state-model";
 import { useGroupContext } from "@/store/group-context";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
@@ -35,9 +37,15 @@ const ReportTable: React.FC<IReportTableProps> = (props: IReportTableProps) => {
         <TableHead>
           <TableRow>
             <TableCell>Csoport</TableCell>
-            <TableCell>Fizetés hiánya</TableCell>
-            <TableCell>Foglaló fizetve</TableCell>
-            <TableCell>Teljesen fizetve</TableCell>
+            <TableCell>
+              <StateDot state={PaymentState.NOT_PAID} /> Fizetés hiánya
+            </TableCell>
+            <TableCell>
+              <StateDot state={PaymentState.DEPOSIT_PAID} /> Foglaló fizetve
+            </TableCell>
+            <TableCell>
+              <StateDot state={PaymentState.FULL_PAID} /> Teljesen fizetve
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

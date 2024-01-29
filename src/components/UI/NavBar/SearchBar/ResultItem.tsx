@@ -1,6 +1,6 @@
 import Reservation from "@/models/reservation/reservation-model";
 import { Box, ListItemButton, Typography } from "@mui/material";
-import StateDot from "./StateDot";
+import StateDot from "../../StateDot";
 import { useClientContext } from "@/store/client-context";
 import { useGroupContext } from "@/store/group-context";
 
