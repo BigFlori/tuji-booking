@@ -8,7 +8,7 @@ import SearchResults from "./SearchResults";
 import Reservation from "@/models/reservation/reservation-model";
 import { ReservationContext } from "@/store/reservation-context";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { searchReservationByClient } from "@/firebase/firestore-helpers/utils";
+import { searchReservationByClient } from "@/firebase/firestore-helpers/reservation/reservation-utils";
 import { useUser } from "@/store/user-context";
 
 interface ISearchBarProps {

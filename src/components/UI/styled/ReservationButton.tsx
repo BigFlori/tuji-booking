@@ -1,6 +1,5 @@
 import { styled } from "@mui/material/styles";
 import { Button, ButtonProps } from "@mui/material";
-import { red } from "@mui/material/colors";
 
 const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
   position: "absolute",
@@ -22,7 +21,7 @@ const ReservationButton = styled(Button)<ButtonProps>(({ theme }) => ({
   paddingLeft: "13px",
   paddingRight: "8px",
   lineHeight: 1.1,
-  color: theme.palette.getContrastText(red[300]),
+  color: theme.palette.notPaid.contrastText,
 }));
 
 export default ReservationButton;

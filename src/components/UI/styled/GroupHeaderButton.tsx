@@ -6,14 +6,14 @@ const GroupHeaderButton = styled(Button)<ButtonProps>(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   height: CALENDAR_ITEM_HEIGHT,
-  border: "1px solid" + theme.palette.grey[300],
+  border: "1px solid" + theme.palette.calendarBorder.main,
   textTransform: "none",
-  color: theme.palette.getContrastText(theme.palette.grey[300]),
+  color: theme.palette.isWeekday.contrastText,
   borderRadius: 0,
   padding: 0,
-  backgroundColor: "#fff",
+  backgroundColor: theme.palette.isWeekday.main,
   "&:hover": {
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: theme.palette.isWeekday.main,
   },
 }));
 

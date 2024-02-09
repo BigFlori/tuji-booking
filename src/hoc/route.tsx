@@ -5,6 +5,9 @@ import { useAuthContext } from "@/store/user-context";
 import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
+import ClientContextProvider from "@/store/client-context";
+import ReservationContextProvider from "@/store/reservation-context";
+import GroupContextProvider from "@/store/group-context";
 
 export function withPublic<T>(Component: React.ComponentType<T>) {
   return function WithPublic(props: T) {
@@ -48,12 +51,16 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
     }
 
     return (
-      <>
-        <NavBar />
-        <PageTransition path={router.route}>
-          <Component {...props!} />
-        </PageTransition>
-      </>
+      <ClientContextProvider>
+        <ReservationContextProvider>
+          <GroupContextProvider>
+            <NavBar />
+            <PageTransition path={router.route}>
+              <Component {...props!} />
+            </PageTransition>
+          </GroupContextProvider>
+        </ReservationContextProvider>
+      </ClientContextProvider>
     );
   };
 }

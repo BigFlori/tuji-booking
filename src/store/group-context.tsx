@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Group from "@/models/group/group-model";
-import { deleteGroupDb, readGroups, saveGroupDb } from "@/firebase/firestore-helpers/utils";
-import { useAuthContext, useUser } from "./user-context";
+import { deleteGroupDb, readGroups, saveGroupDb } from "@/firebase/firestore-helpers/group/group-utils";
+import { useUser } from "./user-context";
 import { useReservationContext } from "./reservation-context";
+import { useQuery } from "react-query";
 
 interface IGroupsContextObject {
   groups: Group[];
-  loadGroups: () => void;
   setGroups: (groups: Group[]) => void;
   setGroupsWithSave: (groups: Group[]) => void;
   addGroup: (group: Group) => void;
@@ -17,7 +17,6 @@ interface IGroupsContextObject {
 
 export const GroupContext = React.createContext<IGroupsContextObject>({
   groups: [],
-  loadGroups: () => {},
   setGroups: () => {},
   setGroupsWithSave: () => {},
   addGroup: () => {},
@@ -33,24 +32,24 @@ export const useGroupContext = () => {
 const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [groups, setGroups] = useState<Group[]>([]);
   const user = useUser();
-  const authCtx = useAuthContext();
   const reservationCtx = useReservationContext();
 
-  //Loading groups
-  useEffect(() => {
-    loadGroups();
-  }, [authCtx.initialUserDataChecked]);
-
-  const loadGroups = () => {
-    if (!user || !authCtx.initialUserDataChecked) {
+  const query = useQuery({
+    queryKey: ["groups", user?.uid],
+    queryFn: async () => {
+      if (!user) return [];
+      return readGroups(user);
+    },
+    refetchOnWindowFocus: false,
+    onSuccess(data) {
+      data.sort((a, b) => a.order - b.order);
+      setGroups(data);
+    },
+    onError(error) {
       setGroups([]);
-      return;
-    }
-    readGroups(user).then((groups) => {
-      groups.sort((a, b) => a.order - b.order);
-      setGroups(groups);
-    });
-  };
+      console.error(error);
+    },
+  });
 
   //Elmenti a változtatásokat, és létrehozza a csoportot ha még nem létezik
   const saveGroup = async (group: Group) => {
@@ -118,7 +117,6 @@ const GroupContextProvider: React.FC<{ children: React.ReactNode }> = (props) =>
 
   const context: IGroupsContextObject = {
     groups,
-    loadGroups,
     setGroups,
     setGroupsWithSave,
     addGroup,

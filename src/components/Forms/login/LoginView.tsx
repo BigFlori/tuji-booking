@@ -107,7 +107,14 @@ const LoginView: React.FC<ILoginViewProps> = ({
             />
           )}
         />
-        <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }} disabled={isLoading || isSubmitting}>
+        <Button
+          variant="contained"
+          color="success"
+          type="submit"
+          fullWidth
+          sx={{ padding: 1 }}
+          disabled={isLoading || isSubmitting}
+        >
           Bejelentkezés
         </Button>
 
@@ -136,7 +143,10 @@ const LoginView: React.FC<ILoginViewProps> = ({
         <SpacerLine sx={{ marginBlock: 1 }} />
         <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
           <Button
-            sx={{ textTransform: "initial", color: grey[800] }}
+            sx={{
+              textTransform: "initial",
+              color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]),
+            }}
             onClick={() => onRedirect("forgetPassword")}
             disabled={isLoading || isSubmitting}
           >

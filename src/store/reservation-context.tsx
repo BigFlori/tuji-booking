@@ -1,26 +1,23 @@
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useState } from "react";
 import Reservation from "../models/reservation/reservation-model";
 import dayjs from "dayjs";
 import {
   deleteReservationDb,
-  fetchReservationsInMonth,
+  fetchReservationsInPeriod,
   saveReservationDb,
-  updateReservations,
-} from "@/firebase/firestore-helpers/utils";
-import { useAuthContext, useUser } from "./user-context";
-import { useClientContext } from "./client-context";
+} from "@/firebase/firestore-helpers/reservation/reservation-utils";
+import { useUser } from "./user-context";
+import { useQuery } from "react-query";
 
 interface IReservationContextObject {
   reservations: Reservation[];
-  isFetching: boolean;
-  fetchMonth: (year: number, monthIndex: number, isRecursiveCall: boolean) => void;
+  setFetchStartDate: (date: dayjs.Dayjs) => void;
   setReservations: Dispatch<SetStateAction<Reservation[]>>;
   addReservation: (reservation: Reservation) => void;
   removeReservation: (id: string) => void;
   updateReservation: (id: string, reservation: Reservation) => void;
   getReservationsInGroup: (groupId: string) => Reservation[];
   getReservationsByClient: (clientId: string) => Reservation[];
-  findReservationByDate: (date: dayjs.Dayjs, groupId: string) => Reservation[];
   shouldDateBeDisabled: (
     date: dayjs.Dayjs,
     type: "startDate" | "endDate",
@@ -34,15 +31,13 @@ interface IReservationContextObject {
 
 export const ReservationContext = React.createContext<IReservationContextObject>({
   reservations: [],
-  isFetching: false,
-  fetchMonth: () => {},
+  setFetchStartDate: () => {},
   setReservations: () => {},
   addReservation: () => {},
   removeReservation: () => {},
   updateReservation: () => {},
   getReservationsInGroup: () => [],
   getReservationsByClient: () => [],
-  findReservationByDate: () => [],
   shouldDateBeDisabled: () => false,
   getLatestReservation: () => null,
   getNextReservation: () => null,
@@ -59,11 +54,6 @@ const generateDatesBetween = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs) => {
   return dates;
 };
 
-interface IFetchedMonth {
-  year: number;
-  monthIndex: number;
-}
-
 export const useReservationContext = () => {
   return useContext(ReservationContext);
 };
@@ -71,78 +61,47 @@ export const useReservationContext = () => {
 const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
-  //Ez azért kell, hogy ne töltse be többször az adatokat, ha már egyszer betöltötte
-  const [fetchedMonths, setFetchedMonths] = useState<IFetchedMonth[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
-
   const user = useUser();
-  const authCtx = useAuthContext();
-  const clientCtx = useClientContext();
 
-  //Loading reservations
-  useEffect(() => {
-    if (!user || !authCtx.initialUserDataChecked) {
-      setFetchedMonths([]);
-      setReservations([]);
-      return;
-    }
-    fetchMonth(new Date().getFullYear(), new Date().getMonth() - 1, false);
-  }, [authCtx.initialUserDataChecked]);
+  const [cachedPeriods, setCachedPeriods] = useState<{ [key: string]: Reservation[] }>({});
+  const [startDate, setStartDate] = useState(dayjs().subtract(2, "month").startOf("month"));
+  const [endDate, setEndDate] = useState(dayjs().add(50, "year"));
 
-  const fetchMonth = async (year: number, monthIndex: number, isRecursiveCall: boolean) => {
-    if (!user || !authCtx.initialUserDataChecked) {
-      setFetchedMonths([]);
-      setReservations([]);
-      return;
-    }
-    if (monthIndex < 0) {
-      monthIndex = 0;
-    }
-
-    if (monthIndex > 11) {
-      monthIndex = 0;
-      year++;
-    }
-
-    const isInitialFetch = fetchedMonths.length === 0;
-    const currentYearFetchedMonths = fetchedMonths
-      .filter((fetchedMonth) => fetchedMonth.year === year)
-      .map((fetchedMonth) => fetchedMonth.monthIndex);
-    if (!isInitialFetch && monthIndex >= Math.min(...currentYearFetchedMonths)) return;
-
-    if (!isRecursiveCall) {
-      const currentYearMinMonth = Math.min(...currentYearFetchedMonths);
-      if (
-        currentYearFetchedMonths.length !== 0 &&
-        currentYearMinMonth > monthIndex &&
-        currentYearMinMonth - monthIndex > 1
-      ) {
-        for (let i = monthIndex + 1; i < currentYearMinMonth; i++) {
-          fetchMonth(year, i, true);
-        }
+  const { data: fetchedReservations, isLoading } = useQuery({
+    queryKey: ["reservations", user?.uid, startDate, endDate],
+    queryFn: async () => {
+      if (!user) return [];
+      if (cachedPeriods[`${startDate.unix()}-${endDate.unix()}`]) {
+        return cachedPeriods[`${startDate.unix()}-${endDate.unix()}`];
       }
-    }
-
-    // console.log("fetching month");
-    // console.log(year, monthIndex, isInitialFetch);
-
-    setFetchedMonths((prevState) => [...prevState, { year, monthIndex }]);
-    setIsFetching(true);
-    await fetchReservationsInMonth(user, isInitialFetch, year, monthIndex)
-      .then((fetchedReservations) => {
-        if (fetchedReservations.length === 0) return;
-        fetchedReservations.forEach((reservation) => {
-          if (reservations.find((res) => res.id === reservation.id)) {
-            return;
-          }
-          //temp
-          //saveReservation(reservation);
-          setReservations((prevReservations) => [...prevReservations, reservation]);
-        });
-      })
-      .finally(() => {
-        setIsFetching(false);
+      return fetchReservationsInPeriod(user, startDate, endDate);
+    },
+    refetchOnWindowFocus: false,
+    onSuccess(data) {
+      setCachedPeriods((prevData) => {
+        return { ...prevData, [`${startDate.unix()}-${endDate.unix()}`]: data };
       });
+      setReservations((prevData) => {
+        const filtered = data.filter(
+          (reservation) => !prevData.some((prevReservation) => prevReservation.id === reservation.id)
+        );
+        return [...prevData, ...filtered];
+      });
+    },
+    onError(error) {
+      setReservations([]);
+      setCachedPeriods({});
+      console.error(error);
+    },
+  });
+
+  const setFetchStartDate = (date: dayjs.Dayjs) => {
+    if (date.isAfter(startDate) || date.isSame(startDate)) return;
+    console.log("setting start date" + date.format("YYYY-MM-DD"));
+    setStartDate((prevValue) => {
+      setEndDate(prevValue);
+      return date;
+    });
   };
 
   //Elmenti a változatásokat, és létrehozza a foglalást ha még nem létezik
@@ -163,6 +122,9 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const addReservation = (reservation: Reservation) => {
     setReservations((prevReservations) => {
+      if (prevReservations.some((prevReservation) => prevReservation.id === reservation.id)) {
+        return prevReservations;
+      }
       return [...prevReservations, reservation];
     });
     saveReservation(reservation);
@@ -305,15 +267,13 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const context: IReservationContextObject = {
     reservations,
-    isFetching,
-    fetchMonth,
+    setFetchStartDate,
     setReservations,
     addReservation,
     removeReservation,
     updateReservation,
     getReservationsInGroup,
     getReservationsByClient,
-    findReservationByDate,
     shouldDateBeDisabled,
     getLatestReservation,
     getNextReservation,

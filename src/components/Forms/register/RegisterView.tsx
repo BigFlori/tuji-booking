@@ -150,9 +150,12 @@ const RegisterView: React.FC<IRegisterViewProps> = ({
           Regisztrálok
         </Button>
         <SpacerLine sx={{ marginBlock: 1 }} />
-        <Button sx={{ textTransform: "initial", color: grey[800] }} onClick={() => onRedirect("login")}>
-            Van már fiókom, bejelentkezek
-          </Button>
+        <Button
+          sx={{ textTransform: "initial", color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]) }}
+          onClick={() => onRedirect("login")}
+        >
+          Van már fiókom, bejelentkezek
+        </Button>
       </ElevatedFormBox>
     </Box>
   );

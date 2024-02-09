@@ -14,4 +14,4 @@ const ContainedIconButton = styled(IconButton)<IContainedIconButtonProps>(({ the
   },
 }));
 
-export default ContainedIconButton;
+// export default ContainedIconButton;

@@ -1,14 +1,13 @@
-import { deleteClientDb, fetchClientsById, readClients, saveClientDb } from "@/firebase/firestore-helpers/utils";
+import { deleteClientDb, readClients, saveClientDb } from "@/firebase/firestore-helpers/client/client-utils";
 import Client from "@/models/client-model";
-import React, { useContext, useEffect, useState } from "react";
-import { useAuthContext, useUser } from "./user-context";
+import React, { useContext, useState } from "react";
+import { useUser } from "./user-context";
 import { normalizeText } from "@/utils/helpers";
+import { useQuery } from "react-query";
 
 interface IClientContextObject {
   clients: Client[];
-  isFetching: boolean;
   setClients: (clients: Client[]) => void;
-  // fetchClients: (clientIds: string[]) => void;
   addClient: (client: Client) => void;
   removeClient: (id: string) => void;
   updateClient: (id: string, client: Client) => void;
@@ -18,9 +17,7 @@ interface IClientContextObject {
 
 export const ClientContext = React.createContext<IClientContextObject>({
   clients: [],
-  isFetching: false,
   setClients: () => {},
-  // fetchClients: () => {},
   addClient: () => {},
   removeClient: () => {},
   updateClient: () => {},
@@ -35,37 +32,23 @@ export const useClientContext = () => {
 const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const [clients, setClients] = useState<Client[]>([]);
   const user = useUser();
-  const authCtx = useAuthContext();
 
-  const [isFetching, setIsFetching] = useState(false);
-
-  //Loading clients
-  useEffect(() => {
-    if (!user || !authCtx.initialUserDataChecked) {
+  const query = useQuery({
+    queryKey: ["clients", user?.uid],
+    queryFn: async () => {
+      if (!user) return [];
+      return readClients(user);
+    },
+    refetchOnWindowFocus: false,
+    onSuccess(data) {
+      data.sort((a, b) => a.name.localeCompare(b.name));
+      setClients(data);
+    },
+    onError(error) {
       setClients([]);
-      return;
-    }
-    readClients(user).then((clients) => {
-      setClients(clients);
-    });
-  }, [authCtx.initialUserDataChecked]);
-
-  // const fetchClients = async (clientIds: string[]) => {
-  //   if (!user || !authCtx.initialUserDataChecked) {
-  //     setClients([]);
-  //     return;
-  //   }
-  //   const notLoadedClients = clientIds.filter((clientId) => !clients.find((client) => client.id === clientId));
-  //   if (notLoadedClients.length === 0) {
-  //     return;
-  //   }
-  //   setIsFetching(true);
-  //   fetchClientsById(user, notLoadedClients).then((clients) => {
-  //     setClients((prevState) => [...prevState, ...clients]);
-  //   }).finally(() => {
-  //     setIsFetching(false);
-  //   });
-  // };
+      console.error(error);
+    },
+  });
 
   //Elmenti a váltztatásokat, és létrehozza az ügyfelet ha még nem létezik
   const saveClient = async (client: Client) => {
@@ -126,9 +109,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = (props) =
 
   const context: IClientContextObject = {
     clients,
-    isFetching,
     setClients,
-    // fetchClients,
     addClient,
     removeClient,
     updateClient,

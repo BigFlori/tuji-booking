@@ -54,7 +54,7 @@ const Calendar: React.FC<{}> = () => {
   const [scrollLeftPosition, setScrollLeftPosition] = useState(0);
   const reservationCtx = useReservationContext();
   const clientCtx = useClientContext();
-  const isLoading = reservationCtx.isFetching || clientCtx.isFetching;
+  // const isLoading = reservationCtx.isFetching || clientCtx.isFetching;
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollPosition = event.currentTarget.scrollLeft;
@@ -70,8 +70,8 @@ const Calendar: React.FC<{}> = () => {
     }
     setScrolledMonth(i);
 
-    //TODO: Az adott évben a jövöbeni hónapokat töltse be, hogy látszódjanak az egész éves foglalások pl.
-    reservationCtx.fetchMonth(year, i, false);
+    const scrolledMonth = dayjs().year(year).month(i).startOf("month");
+    reservationCtx.setFetchStartDate(scrolledMonth.subtract(2, "month"));
   };
 
   const disableScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -96,7 +96,7 @@ const Calendar: React.FC<{}> = () => {
         </Box>
         <Box
           sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }}
-          onScroll={isLoading ? disableScroll : handleScroll}
+          // onScroll={isLoading ? disableScroll : handleScroll}
         >
           {months.map((month, index) => {
             return <CalendarMonth key={month} month={month} today={today} year={year} monthRef={monthRefs[index]} />;

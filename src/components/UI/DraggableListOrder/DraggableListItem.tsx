@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, lighten } from "@mui/material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { darken } from "@mui/material";
 import { Reorder, useDragControls, useMotionValue } from "framer-motion";
@@ -48,7 +48,12 @@ const DraggableListItem: React.FC<IDraggableListItemProps> = (props) => {
           justifyContent: "space-between",
           alignItems: "center",
           userSelect: "none",
-          "&:hover": { backgroundColor: darken("#fff", 0.015) },
+          "&:hover": {
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? darken(theme.palette.background.paper, 0.02)
+                : lighten(theme.palette.background.paper, 0.03),
+          },
         }}
         variant="outlined"
       >
@@ -57,7 +62,10 @@ const DraggableListItem: React.FC<IDraggableListItemProps> = (props) => {
         </Typography>
         <Box
           sx={{
-            backgroundColor: grey[100],
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? darken(theme.palette.background.paper, 0.1)
+                : lighten(theme.palette.background.paper, 0.2),
             display: "flex",
             alignItems: "center",
             padding: 2,

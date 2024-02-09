@@ -6,10 +6,14 @@ import { useUser } from "@/store/user-context";
 import AvatarMenu from "./AvatarMenu/AvatarMenu";
 import SearchBar from "./SearchBar/SearchBar";
 import { AnimatePresence, motion } from "framer-motion";
+import { useThemeChanger } from "@/store/theme-context";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 const NavBar: React.FC = () => {
   //950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down(950));
+  const themeChanger = useThemeChanger();
   const router = useRouter();
 
   const user = useUser();
@@ -22,6 +26,10 @@ const NavBar: React.FC = () => {
 
   const handleUserMenuClose = () => {
     setAnchorElUser(null);
+  };
+
+  const handleThemeChange = () => {
+    themeChanger.setTheme(themeChanger.theme === "light" ? "dark" : "light");
   };
 
   const isOnCalendarPage = router.pathname === "/";
@@ -68,6 +76,12 @@ const NavBar: React.FC = () => {
                       onSearchModeChange={setSearchMode}
                       searchMode={searchMode}
                     />
+                    <IconButton
+                      onClick={handleThemeChange}
+                      sx={{ color: (theme) => theme.palette.brandColor.contrastText }}
+                    >
+                      {themeChanger.theme === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
+                    </IconButton>
                     <IconButton
                       onClick={handleUserMenuOpen}
                       sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}

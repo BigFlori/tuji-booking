@@ -6,7 +6,7 @@ interface IElevatedFormBoxProps extends BoxProps {
 }
 
 const ElevatedFormBox = styled(Box)<IElevatedFormBoxProps>(({ theme }) => ({
-  backgroundColor: "white",
+  backgroundColor: theme.palette.background.paper,
   borderRadius: 5,
   maxWidth: theme.breakpoints.values.sm,
   paddingInline: theme.spacing(5),

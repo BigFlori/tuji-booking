@@ -13,12 +13,13 @@ import { useRouter } from "next/router";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/hu";
-import GroupContextProvider from "@/store/group-context";
-import ReservationContextProvider from "@/store/reservation-context";
 import { huHU } from "@mui/x-date-pickers";
-import ClientContextProvider from "@/store/client-context";
 import { UserContextProvider } from "@/store/user-context";
 import NextNProgress from "nextjs-progressbar";
+import { QueryClient, QueryClientProvider } from "react-query";
+import ThemeChanger from "@/store/theme-context";
+
+const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -33,26 +34,22 @@ export default function App({ Component, pageProps }: AppProps) {
       adapterLocale="hu"
       localeText={huHU.components.MuiLocalizationProvider.defaultProps.localeText}
     >
-      <ThemeProvider theme={lightTheme}>
+      <ThemeChanger>
         <CssBaseline />
-        <UserContextProvider>
-          <ClientContextProvider>
-            <ReservationContextProvider>
-              <GroupContextProvider>
-                <NextNProgress
-                  color="#fff"
-                  height={3}
-                  startPosition={0.3}
-                  stopDelayMs={200}
-                  showOnShallow={false}
-                  options={{ showSpinner: false }}
-                />
-                <Component {...pageProps} key={router.route} />
-              </GroupContextProvider>
-            </ReservationContextProvider>
-          </ClientContextProvider>
-        </UserContextProvider>
-      </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <UserContextProvider>
+            <NextNProgress
+              color="#fff"
+              height={3}
+              startPosition={0.3}
+              stopDelayMs={200}
+              showOnShallow={false}
+              options={{ showSpinner: false }}
+            />
+            <Component {...pageProps} key={router.route} />
+          </UserContextProvider>
+        </QueryClientProvider>
+      </ThemeChanger>
     </LocalizationProvider>
   );
 }

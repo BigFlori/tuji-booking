@@ -1,12 +1,12 @@
-import { Button, ButtonProps, styled } from "@mui/material";
+import { Button, ButtonProps, lighten, styled } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
-const YearSelectorButton = styled(Button)<ButtonProps>(({theme}) => ({
+const YearSelectorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: grey[700],
   fontSize: "18px",
-  backgroundColor: grey[300],
+  backgroundColor: theme.palette.mode === "light" ? grey[400] : lighten(theme.palette.calendarControls.main, 0.2),
   minWidth: "auto",
-  '&:hover': {
+  "&:hover": {
     backgroundColor: grey[400],
   },
 }));

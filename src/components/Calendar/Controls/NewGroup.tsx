@@ -1,5 +1,5 @@
 import AnimatedModal from "@/components/UI/Modal/AnimatedModal";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import CreateGroupApollo from "@/components/Forms/create-group/CreateGroupApollo";
@@ -25,7 +25,7 @@ const NewGroup: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHead
     <>
       <GroupHeaderButton
         sx={(theme) => ({
-          borderBottom: "1px solid" + theme.palette.grey[300],
+          borderBottom: "1px solid" + theme.palette.calendarBorder.main,
           width: props.isExpanded ? CALENDAR_GROUP_WIDTH : CALENDAR_GROUP_WIDTH * 0.4,
           justifyContent: "center",
           paddingInline: 0,

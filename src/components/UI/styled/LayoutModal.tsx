@@ -7,7 +7,7 @@ const LayoutModal = styled(Modal)<ModalProps>(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   "& .modal-container": {
-    backgroundColor: "white",
+    backgroundColor: theme.palette.background.paper,
     borderRadius: 5,
     width: "100%",
     height: "100%",

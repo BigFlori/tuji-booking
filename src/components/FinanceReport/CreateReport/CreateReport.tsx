@@ -1,5 +1,5 @@
 import DateRangePicker from "@/components/UI/DateRangePicker/DateRangePicker";
-import { fetchReservationsInPeriod } from "@/firebase/firestore-helpers/utils";
+import { fetchReservationsInPeriod } from "@/firebase/firestore-helpers/reservation/reservation-utils";
 import Report, { GroupSummaryDictionary, Summary } from "@/models/report-model";
 import PaymentState from "@/models/reservation/payment-state-model";
 import { useReportContext } from "@/store/report-context";
@@ -28,8 +28,6 @@ const CreateReport: React.FC = () => {
       return;
     }
     fetchReservationsInPeriod(user!, startDate, endDate).then((reservations) => {
-      //console.log(reservations);
-
       const groupSummary: GroupSummaryDictionary = {};
       const summary: Summary = {
         notPaid: 0,
