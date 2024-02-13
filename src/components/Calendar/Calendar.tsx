@@ -97,6 +97,7 @@ const Calendar: React.FC<{}> = () => {
         <Box
           sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }}
           // onScroll={isLoading ? disableScroll : handleScroll}
+          onScroll={handleScroll}
         >
           {months.map((month, index) => {
             return <CalendarMonth key={month} month={month} today={today} year={year} monthRef={monthRefs[index]} />;
