@@ -86,6 +86,7 @@ const ImportData: React.FC = () => {
         depositPrice: 0,
         cautionPrice: 0,
         cautionReturned: false,
+        expenses: 0,
         comment: obj["ClientNote"] || "",
       };
       reservationCtx.addReservation(newReservation);
