@@ -50,6 +50,7 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
     formState: { errors },
   } = props.form;
 
+  //Fizetendő összeg kiszámítása
   const calculatePayToGo = (
     changedFullPrice?: number,
     changedCautionPrice?: number,
@@ -71,6 +72,7 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
   const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(undefined);
   const [payToGo, setPayToGo] = useState<number>(calculatePayToGo());
 
+  //Ügyfél adatainak frissítése
   const updateClientData = (client?: Client) => {
     if (client && client.id !== "not-selected") {
       setValue("clientName", client.name);
@@ -410,6 +412,25 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
             onChange={(event) => {
               return;
             }}
+          />
+
+          <Controller
+            name="expenses"
+            control={control}
+            rules={{ pattern: /^[0-9]*$/ }}
+            render={({ field }) => (
+              <TextField
+                id="expenses"
+                label="Költségek"
+                type="number"
+                error={!!errors.expenses}
+                helperText={errors.expenses && errors.expenses.message}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Ft</InputAdornment>,
+                }}
+                {...field}
+              />
+            )}
           />
 
           <Controller

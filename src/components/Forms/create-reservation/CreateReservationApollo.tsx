@@ -8,6 +8,7 @@ import { ClientContext } from "@/store/client-context";
 import { v4 as uuidv4 } from "uuid";
 import Reservation from "@/models/reservation/reservation-model";
 import { ReservationContext } from "@/store/reservation-context";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 interface ICreateReservationApolloProps {
   onClose: () => void;
@@ -66,10 +67,17 @@ const CreateReservationApollo: React.FC<ICreateReservationApolloProps> = (props)
       depositPrice: data.depositPrice,
       cautionPrice: data.cautionPrice,
       cautionReturned: data.cautionReturned,
+      expenses: data.expenses,
       comment: data.comment,
     };
 
     reservationCtx.addReservation(newReservation);
+    const key: SnackbarKey = enqueueSnackbar("Foglalás létrehozva!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 
@@ -84,6 +92,7 @@ const CreateReservationApollo: React.FC<ICreateReservationApolloProps> = (props)
     depositPrice: 0,
     cautionPrice: 0,
     cautionReturned: false,
+    expenses: 0,
     comment: "",
     selectedClientOption: NOT_SELECTED_CLIENT_OPTION,
     clientName: "",

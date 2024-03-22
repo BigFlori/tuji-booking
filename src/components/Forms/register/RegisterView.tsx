@@ -29,135 +29,128 @@ const RegisterView: React.FC<IRegisterViewProps> = ({
   } = form;
 
   return (
-    <Box
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh", background: grey[50] }}
+    <ElevatedFormBox
+      component="form"
+      autoComplete="off"
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        margin: "0 auto",
+        marginTop: 10,
+      }}
     >
-      <ElevatedFormBox
-        component="form"
-        autoComplete="off"
-        noValidate
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 2,
-        }}
-      >
-        <Typography variant="body1" sx={{ fontWeight: 500 }}>
-          Tuji Booking - Regisztráció
-        </Typography>
-        <SpacerLine sx={{ marginBlock: 1 }} />
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Email"
-              variant="outlined"
-              type="email"
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              fullWidth
-            />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Jelszó"
-              variant="outlined"
-              type={showPassword ? "text" : "password"}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <ToggleIconButton
-                    onIcon={<Visibility />}
-                    offIcon={<VisibilityOff />}
-                    onToggle={toggleShowPassword}
-                    state={showPassword}
-                  />
-                ),
-              }}
-            />
-          )}
-        />
+      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+        Tuji Booking - Regisztráció
+      </Typography>
+      <SpacerLine sx={{ marginBlock: 1 }} />
+      <Controller
+        name="email"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="E-mail"
+            variant="outlined"
+            type="email"
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            fullWidth
+          />
+        )}
+      />
+      <Controller
+        name="password"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Jelszó"
+            variant="outlined"
+            type={showPassword ? "text" : "password"}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <ToggleIconButton
+                  onIcon={<Visibility />}
+                  offIcon={<VisibilityOff />}
+                  onToggle={toggleShowPassword}
+                  state={showPassword}
+                />
+              ),
+            }}
+          />
+        )}
+      />
 
-        <Controller
-          name="passwordConfirm"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Jelszó megerősítése"
-              variant="outlined"
-              type={showPassword ? "text" : "password"}
-              error={!!errors.passwordConfirm}
-              helperText={errors.passwordConfirm?.message}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <ToggleIconButton
-                    onIcon={<Visibility />}
-                    offIcon={<VisibilityOff />}
-                    onToggle={toggleShowPassword}
-                    state={showPassword}
-                  />
-                ),
-              }}
-            />
-          )}
-        />
-        <Controller
-          name="firstName"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Keresztnév"
-              variant="outlined"
-              type="text"
-              error={!!errors.firstName}
-              helperText={errors.firstName?.message}
-              fullWidth
-            />
-          )}
-        />
-        <Controller
-          name="lastName"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Vezetéknév"
-              variant="outlined"
-              type="text"
-              error={!!errors.lastName}
-              helperText={errors.lastName?.message}
-              fullWidth
-            />
-          )}
-        />
-        {/*TODO: Elfogadom a felhasználási feltételek stb...*/}
-        <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }}>
-          Regisztrálok
-        </Button>
-        <SpacerLine sx={{ marginBlock: 1 }} />
-        <Button
-          sx={{ textTransform: "initial", color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]) }}
-          onClick={() => onRedirect("login")}
-        >
-          Van már fiókom, bejelentkezek
-        </Button>
-      </ElevatedFormBox>
-    </Box>
+      <Controller
+        name="passwordConfirm"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Jelszó megerősítése"
+            variant="outlined"
+            type={showPassword ? "text" : "password"}
+            error={!!errors.passwordConfirm}
+            helperText={errors.passwordConfirm?.message}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <ToggleIconButton
+                  onIcon={<Visibility />}
+                  offIcon={<VisibilityOff />}
+                  onToggle={toggleShowPassword}
+                  state={showPassword}
+                />
+              ),
+            }}
+          />
+        )}
+      />
+      <Controller
+        name="firstName"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Keresztnév"
+            variant="outlined"
+            type="text"
+            error={!!errors.firstName}
+            helperText={errors.firstName?.message}
+            fullWidth
+          />
+        )}
+      />
+      <Controller
+        name="lastName"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Vezetéknév"
+            variant="outlined"
+            type="text"
+            error={!!errors.lastName}
+            helperText={errors.lastName?.message}
+            fullWidth
+          />
+        )}
+      />
+      {/*TODO: Elfogadom a felhasználási feltételek stb...*/}
+      <Button variant="contained" color="success" type="submit" fullWidth sx={{ padding: 1 }}>
+        Regisztrálok
+      </Button>
+      <SpacerLine sx={{ marginBlock: 1 }} />
+      <Button
+        sx={{ textTransform: "initial", color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]) }}
+        onClick={() => onRedirect("login")}
+      >
+        Van már fiókom, bejelentkezek
+      </Button>
+    </ElevatedFormBox>
   );
 };
 

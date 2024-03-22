@@ -1,13 +1,12 @@
-import LoginSkeleton from "@/components/Forms/login/LoginSkeleton";
 import NavBar from "@/components/UI/NavBar/NavBar";
 import PageTransition from "@/components/Page/PageTransition";
 import { useAuthContext } from "@/store/user-context";
-import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
 import ClientContextProvider from "@/store/client-context";
 import ReservationContextProvider from "@/store/reservation-context";
 import GroupContextProvider from "@/store/group-context";
+import LoadingScreen from "@/components/UI/LoadingScreen";
 
 export function withPublic<T>(Component: React.ComponentType<T>) {
   return function WithPublic(props: T) {
@@ -16,12 +15,12 @@ export function withPublic<T>(Component: React.ComponentType<T>) {
     const router = useRouter();
 
     if (loading) {
-      return <Box>Loading...</Box>;
+      return <LoadingScreen />;
     }
 
     if (user && !error) {
       router.replace("/");
-      return <Box>Redirecting...</Box>;
+      return <LoadingScreen />;
     }
 
     return (
@@ -42,12 +41,12 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
     const router = useRouter();
 
     if (loading && !user) {
-      return <LoginSkeleton />;
+      return <LoadingScreen />;
     }
 
     if (!user || error) {
       router.replace("/login");
-      return <LoginSkeleton />;
+      return <LoadingScreen />;
     }
 
     return (

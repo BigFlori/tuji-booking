@@ -42,127 +42,120 @@ const LoginView: React.FC<ILoginViewProps> = ({
   } = form;
 
   return (
-    <Box
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh", background: grey[50] }}
+    <ElevatedFormBox
+      component="form"
+      autoComplete="off"
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        margin: "0 auto",
+        marginTop: 10,
+      }}
     >
-      <ElevatedFormBox
-        component="form"
-        autoComplete="off"
-        noValidate
-        onSubmit={handleSubmit(onSubmit)}
+      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+        Tuji Booking
+      </Typography>
+      <SpacerLine sx={{ marginBlock: 1 }} />
+      <Controller
+        name="email"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="E-mail"
+            variant="outlined"
+            type="email"
+            error={!!errors.email || !!epError?.code}
+            disabled={isLoading || isSubmitting}
+            helperText={
+              errors.email?.message ||
+              ((epError?.type === AuthErrorType.EMAIL || epError?.type === AuthErrorType.ACCOUNT) && epError.message)
+            }
+            fullWidth
+          />
+        )}
+      />
+      <Controller
+        name="password"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label="Jelszó"
+            variant="outlined"
+            type={showPassword ? "text" : "password"}
+            error={!!errors.password || !!epError?.code}
+            helperText={errors.password?.message || (epError?.type === AuthErrorType.PASSWORD && epError.message)}
+            fullWidth
+            disabled={isLoading || isSubmitting}
+            InputProps={{
+              endAdornment: (
+                <ToggleIconButton
+                  onIcon={<Visibility />}
+                  offIcon={<VisibilityOff />}
+                  onToggle={toggleShowPassword}
+                  state={showPassword}
+                />
+              ),
+            }}
+          />
+        )}
+      />
+      <Button
+        variant="contained"
+        color="success"
+        type="submit"
+        fullWidth
+        sx={{ padding: 1 }}
+        disabled={isLoading || isSubmitting}
+      >
+        Bejelentkezés
+      </Button>
+
+      <SpacerLine>
+        <Typography variant="body1" sx={{ color: grey[500], marginInline: 3 }}>
+          Vagy
+        </Typography>
+      </SpacerLine>
+      <Button
+        onClick={onGoogleLogin}
+        fullWidth
+        disabled={isLoading || isSubmitting}
         sx={{
+          padding: 1,
+          color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]),
+          textTransform: "initial",
+          border: `${grey[300]} 1px solid`,
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
           gap: 2,
         }}
       >
-        <Typography variant="body1" sx={{ fontWeight: 500 }}>
-          Tuji Booking
-        </Typography>
-        <SpacerLine sx={{ marginBlock: 1 }} />
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Email"
-              variant="outlined"
-              type="email"
-              error={!!errors.email || !!epError?.code}
-              disabled={isLoading || isSubmitting}
-              helperText={
-                errors.email?.message ||
-                ((epError?.type === AuthErrorType.EMAIL || epError?.type === AuthErrorType.ACCOUNT) && epError.message)
-              }
-              fullWidth
-            />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Jelszó"
-              variant="outlined"
-              type={showPassword ? "text" : "password"}
-              error={!!errors.password || !!epError?.code}
-              helperText={errors.password?.message || (epError?.type === AuthErrorType.PASSWORD && epError.message)}
-              fullWidth
-              disabled={isLoading || isSubmitting}
-              InputProps={{
-                endAdornment: (
-                  <ToggleIconButton
-                    onIcon={<Visibility />}
-                    offIcon={<VisibilityOff />}
-                    onToggle={toggleShowPassword}
-                    state={showPassword}
-                  />
-                ),
-              }}
-            />
-          )}
-        />
+        <Image src={GoogleIcon} alt="Google" width={20} height={20} />
+        Jelentkezzen be Google fiókjával
+      </Button>
+      {/*TODO: ÁSZF és Adatvédelmi szabályzat*/}
+      <SpacerLine sx={{ marginBlock: 1 }} />
+      <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
         <Button
-          variant="contained"
-          color="success"
-          type="submit"
-          fullWidth
-          sx={{ padding: 1 }}
-          disabled={isLoading || isSubmitting}
-        >
-          Bejelentkezés
-        </Button>
-
-        <SpacerLine>
-          <Typography variant="body1" sx={{ color: grey[500], marginInline: 3 }}>
-            Vagy
-          </Typography>
-        </SpacerLine>
-        <Button
-          onClick={onGoogleLogin}
-          fullWidth
-          disabled={isLoading || isSubmitting}
           sx={{
-            padding: 1,
-            color: grey[800],
             textTransform: "initial",
-            border: `${grey[300]} 1px solid`,
-            display: "flex",
-            gap: 2,
+            color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]),
           }}
+          onClick={() => onRedirect("forgetPassword")}
+          disabled={isLoading || isSubmitting}
         >
-          <Image src={GoogleIcon} alt="Google" width={20} height={20} />
-          Jelentkezzen be Google fiókjával
+          Elfelejtettem a jelszavam
         </Button>
-        {/*TODO: ÁSZF és Adatvédelmi szabályzat*/}
-        <SpacerLine sx={{ marginBlock: 1 }} />
-        <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <Button
-            sx={{
-              textTransform: "initial",
-              color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]),
-            }}
-            onClick={() => onRedirect("forgetPassword")}
-            disabled={isLoading || isSubmitting}
-          >
-            Elfelejtettem a jelszavam
-          </Button>
-          <Button
-            sx={{ textTransform: "initial" }}
-            color="success"
-            onClick={() => onRedirect("register")}
-            disabled={isLoading || isSubmitting}
-          >
-            Regisztráció
-          </Button>
-        </Box>
-      </ElevatedFormBox>
-    </Box>
+        <Button
+          sx={{ textTransform: "initial" }}
+          color="success"
+          onClick={() => onRedirect("register")}
+          disabled={isLoading || isSubmitting}
+        >
+          Regisztráció
+        </Button>
+      </Box>
+    </ElevatedFormBox>
   );
 };
 

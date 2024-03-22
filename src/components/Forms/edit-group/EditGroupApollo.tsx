@@ -5,6 +5,7 @@ import { GroupContext } from "@/store/group-context";
 import { useContext } from "react";
 import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 interface IEditGroupApolloProps {
   onClose: () => void;
@@ -30,11 +31,23 @@ const EditGroupApollo: React.FC<IEditGroupApolloProps> = (props) => {
       description: data.description,
     };
     groupCtx.updateGroup(props.group.id, updatedGroup);
+    const key: SnackbarKey = enqueueSnackbar("Csoport frissítve!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 
   const deleteHandler = () => {
     groupCtx.removeGroup(props.group.id);
+    const key: SnackbarKey = enqueueSnackbar("Csoport törölve!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 

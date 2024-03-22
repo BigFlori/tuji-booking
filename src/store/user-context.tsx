@@ -16,7 +16,6 @@ interface IUserContextObject {
     loading: boolean;
     error: Error | undefined;
   };
-  initialUserDataChecked: boolean;
   createUserState: {
     createUserWithEmailAndPassword: (data: IRegisterFormModel) => Promise<void>;
     loading: boolean;
@@ -40,7 +39,6 @@ export const UserContext = React.createContext<IUserContextObject>({
     loading: false,
     error: undefined,
   },
-  initialUserDataChecked: false,
   createUserState: {
     createUserWithEmailAndPassword: async () => {},
     loading: false,
@@ -69,10 +67,7 @@ export const useUser = () => {
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const onAuthStateChangeEvent = async (user: User | null) => {
     if (!user) return;
-    setInitialUserDataChecked(false);
-    await isUserdataExist(user).then(() => {
-      setInitialUserDataChecked(true);
-    });
+    await isUserdataExist(user);
   };
 
   const [user, loading, error] = useAuthState(auth, { onUserChanged: onAuthStateChangeEvent });
@@ -87,42 +82,30 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   ] = useSignInWithEmailAndPassword(auth);
   const [_signInWithGoogle, googleUser, signInWithGoogleLoading, signInWithGoogleError] = useSignInWithGoogle(auth);
 
-  //Amikor ez a state megváltozik akkor lekéri az adatbázisból a foglalásokat, csoportokat és ügyfeleket
-  const [initialUserDataChecked, setInitialUserDataChecked] = React.useState(false);
-
   const createUserWithEmailAndPassword = async (data: IRegisterFormModel) => {
-    setInitialUserDataChecked(false);
     await _createUserWithEmailAndPassword(data.email, data.password).then(async (userCredential) => {
       const user = userCredential?.user;
       if (!user) return;
       const displayName = `${data.firstName} ${data.lastName}`;
 
       await updateProfile(user, { displayName: displayName });
-      await createInitialUser(user, displayName).then(() => {
-        setInitialUserDataChecked(true);
-      });
+      await createInitialUser(user, displayName);
     });
   };
 
   const signInWithEmailAndPassword = async (email: string, password: string) => {
-    setInitialUserDataChecked(false);
     await _signInWithEmailAndPassword(email, password).then(async (userCredential) => {
       const user = userCredential?.user;
       if (!user) return;
-      await isUserdataExist(user).then(() => {
-        setInitialUserDataChecked(true);
-      });
+      await isUserdataExist(user);
     });
   };
 
   const signInWithGoogle = async () => {
-    setInitialUserDataChecked(false);
     await _signInWithGoogle().then(async (userCredential) => {
       const user = userCredential?.user;
       if (!user) return;
-      await createInitialUser(user, user.displayName).then(() => {
-        setInitialUserDataChecked(true);
-      });
+      await createInitialUser(user, user.displayName);
     });
   };
 
@@ -130,7 +113,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     <UserContext.Provider
       value={{
         userState: { user, loading, error },
-        initialUserDataChecked,
         createUserState: { createUserWithEmailAndPassword, loading: createUserloading, error: createUserError },
         signInWithEmailAndPasswordState: {
           signInWithEmailAndPassword,

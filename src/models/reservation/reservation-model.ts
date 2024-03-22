@@ -14,6 +14,7 @@ interface Reservation {
     depositPrice: number;
     cautionPrice: number;
     cautionReturned: boolean;
+    expenses: number;
     comment?: string;
 }
 

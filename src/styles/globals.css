@@ -31,6 +31,7 @@ ul {
 ::-webkit-scrollbar-thumb {
   background-color: rgba(185, 185, 185, 0.562);
   border-radius: 20px;
+  cursor: pointer;
 }
 
 /* Handle on hover */

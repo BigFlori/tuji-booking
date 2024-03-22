@@ -1,7 +1,7 @@
 import CallIcon from "@mui/icons-material/Call";
 import EmailIcon from "@mui/icons-material/Email";
 import SmsIcon from "@mui/icons-material/Sms";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 
 interface ExternalActionButtonProps {
   type: "mailto" | "tel" | "sms";
@@ -29,9 +29,11 @@ const ExternalActionButton: React.FC<ExternalActionButtonProps> = ({ type, value
   };
 
   return (
-    <IconButton onClick={handleOnClick} aria-label={`${type}-client-button`}>
-      {icon()}
-    </IconButton>
+    <Tooltip title={type === "tel" ? "Hívás" : type === "sms" ? "SMS küldés" : "E-mail küldés"}>
+      <IconButton onClick={handleOnClick} aria-label={`${type}-client-button`}>
+        {icon()}
+      </IconButton>
+    </Tooltip>
   );
 };
 

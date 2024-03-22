@@ -63,7 +63,7 @@ export const fetchReservationsInPeriod = async (user: User, startDate: dayjs.Day
     foundReservations.push(...reservations);
   });
   console.log(`fetched ${foundReservations.length} reservations from ${startDate} to ${endDate}`); // eslint-disable-line no-console
-  
+
   return foundReservations;
 };
 
@@ -118,7 +118,9 @@ export const saveReservationDb = async (user: User, reservation: Reservation) =>
 
 export const deleteReservationDb = async (user: User, reservationId: string) => {
   const reservationRef = doc(db, "users", user.uid, "reservations", reservationId);
-  await deleteDoc(reservationRef);
+  await deleteDoc(reservationRef).catch((error) => {
+    console.error("Error removing document: ", error);
+  });
 };
 
 // export const updateReservations = async (user: User) => {

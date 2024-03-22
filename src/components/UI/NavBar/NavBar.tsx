@@ -1,4 +1,15 @@
-import { AppBar, Avatar, Box, Container, IconButton, Theme, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Container,
+  IconButton,
+  Theme,
+  Toolbar,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -35,7 +46,7 @@ const NavBar: React.FC = () => {
   const isOnCalendarPage = router.pathname === "/";
 
   return (
-    <AppBar position="static" color="brandColor">
+    <AppBar position="static" sx={{ backgroundColor: (theme) => theme.palette.brandColor.main }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AnimatePresence mode="wait" initial={false}>
@@ -76,12 +87,14 @@ const NavBar: React.FC = () => {
                       onSearchModeChange={setSearchMode}
                       searchMode={searchMode}
                     />
-                    <IconButton
-                      onClick={handleThemeChange}
-                      sx={{ color: (theme) => theme.palette.brandColor.contrastText }}
-                    >
-                      {themeChanger.theme === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
-                    </IconButton>
+                    <Tooltip title={themeChanger.theme === "dark" ? "Világós mód" : "Sötét mód"}>
+                      <IconButton
+                        onClick={handleThemeChange}
+                        sx={{ color: (theme) => theme.palette.brandColor.contrastText }}
+                      >
+                        {themeChanger.theme === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
+                      </IconButton>
+                    </Tooltip>
                     <IconButton
                       onClick={handleUserMenuOpen}
                       sx={{ boxShadow: (theme) => theme.shadows[10], padding: 0 }}

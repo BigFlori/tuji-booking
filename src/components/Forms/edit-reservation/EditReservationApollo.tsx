@@ -9,6 +9,7 @@ import { ReservationContext } from "@/store/reservation-context";
 import PaymentState from "@/models/reservation/payment-state-model";
 import Client from "@/models/client-model";
 import { v4 as uuidv4 } from "uuid";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 interface IEditReservationApolloProps {
   onClose: () => void;
@@ -28,6 +29,7 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
 
+  //Foglalás módosítása
   const submitHandler: SubmitHandler<IEditReservationFormModel> = (data) => {
     const paymentState = Object.values(PaymentState).find((state) => state === data.paymentState);
     if (!paymentState) return;
@@ -69,19 +71,33 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
       depositPrice: data.depositPrice,
       cautionPrice: data.cautionPrice,
       cautionReturned: data.cautionReturned,
+      expenses: data.expenses,
       comment: data.comment,
     };
 
     reservationCtx.updateReservation(props.reservation.id, modifiedReservation);
-
+    const key: SnackbarKey = enqueueSnackbar("Foglalás módosítva!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 
+  //Foglalás törlése
   const deleteHandler = () => {
     reservationCtx.removeReservation(props.reservation.id);
+    const key: SnackbarKey = enqueueSnackbar("Foglalás törölve!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 
+  //Ügyfél adatainak lekérése
   const reservationClient = useMemo(() => {
     const client = clientCtx.getClientById(props.reservation.clientId);
     return client ? client : { id: "not-selected", name: "" };
@@ -98,6 +114,7 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
     depositPrice: props.reservation.depositPrice,
     cautionPrice: props.reservation.cautionPrice,
     cautionReturned: props.reservation.cautionReturned,
+    expenses: props.reservation.expenses,
     comment: props.reservation.comment,
     selectedClientOption: clientToOption(reservationClient),
     clientName: reservationClient.name,

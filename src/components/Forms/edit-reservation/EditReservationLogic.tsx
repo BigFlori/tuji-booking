@@ -31,6 +31,7 @@ export interface IEditReservationFormModel {
   depositPrice: number;
   cautionPrice: number;
   cautionReturned: boolean;
+  expenses: number;
   comment?: string;
   selectedClientOption: IClientOption;
   clientName?: string;
@@ -101,6 +102,11 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       .required("Kaució megadása kötelező")
       .min(0, "Kaució nem lehet negatív"),
     cautionReturned: yup.boolean().required(),
+    expenses: yup
+      .number()
+      .transform((value) => (isNaN(value) ? 0 : value))
+      .required("Költségek megadása kötelező")
+      .min(0, "Költségek nem lehet negatív"),
     comment: yup.string().optional(),
     selectedClientOption: CLIENT_OPTION_SCHEMA.required(),
     clientName: yup.string().optional(),

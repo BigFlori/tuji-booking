@@ -117,6 +117,10 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
     setModalOpened(false);
   };
 
+  const handleModalOpen = () => {
+    setModalOpened(true);
+  }
+
   const getBgColor = (theme: Theme) => {
     switch (props.reservation.paymentState) {
       case PaymentState.NOT_PAID:
@@ -155,7 +159,7 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
             ? `polygon(${width - 10}px 0, 100% 50%, ${width - 10}px 100%, 0% 100%, 10px 50%, 0% 0%)`
             : null,
         })}
-        onClick={() => setModalOpened(true)}
+        onClick={handleModalOpen}
       >
         {formatName(
           reservationClient.name,

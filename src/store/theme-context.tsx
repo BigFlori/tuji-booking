@@ -28,6 +28,7 @@ export const ThemeChanger: React.FC<{ children: React.ReactNode }> = ({ children
   const [theme, setTheme] = useState<Theme>("light");
 
   const handleSetTheme = (newTheme: Theme) => {
+    localStorage.setItem("theme", newTheme);
     setTheme(newTheme);
   };
 
@@ -38,11 +39,6 @@ export const ThemeChanger: React.FC<{ children: React.ReactNode }> = ({ children
       setTheme(savedTheme as Theme);
     }
   }, []);
-
-  // Save the theme to local storage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>

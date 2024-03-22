@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { IEditReservationFormModel } from "./EditReservationLogic";
-import { SubmitHandler, UseFormReturn, Controller } from "react-hook-form";
+import { SubmitHandler, UseFormReturn, Controller, set } from "react-hook-form";
 import Client from "@/models/client-model";
 import Group from "@/models/group/group-model";
 import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
@@ -55,6 +55,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
     formState: { errors },
   } = props.form;
 
+  //Ha a teljes ár, a kaució vagy a foglaló megváltozik, akkor újra kiszámolja a fizetendő összeget
   const calculatePayToGo = (
     changedFullPrice?: number,
     changedCautionPrice?: number,
@@ -73,9 +74,11 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
     }
   };
 
+  const [summaryPrice, setSummaryPrice] = useState<number>(getValues("fullPrice") - getValues("expenses") || 0);
   const [payToGo, setPayToGo] = useState<number>(calculatePayToGo());
   const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(groupCtx.getGroup(props.reservationGroupId));
 
+  //Ha a kiválasztott ügyfél megváltozik, akkor frissíti az ügyfél adatait
   const updateClientData = (client?: Client) => {
     if (client && client.id !== "not-selected") {
       setValue("clientName", client.name);
@@ -342,6 +345,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
                 onChange={(event) => {
                   field.onChange(event);
                   setPayToGo(calculatePayToGo(Number(event.target.value)));
+                  setSummaryPrice(Number(event.target.value) - getValues("expenses"));
                 }}
               />
             )}
@@ -429,6 +433,33 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
               return;
             }}
           />
+
+          <Controller
+            name="expenses"
+            control={control}
+            rules={{ pattern: /^[0-9]*$/ }}
+            render={({ field }) => (
+              <TextField
+                id="expenses"
+                label="Költségek"
+                type="number"
+                error={!!errors.expenses}
+                helperText={errors.expenses && errors.expenses.message}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Ft</InputAdornment>,
+                }}
+                {...field}
+                onChange={(event) => {
+                  field.onChange(event);
+                  setSummaryPrice(getValues("fullPrice") - Number(event.target.value));
+                }}
+              />
+            )}
+          />
+
+          <Typography variant="body1" fontWeight="500" marginLeft={1}>
+            Összesítve: {summaryPrice > 0 ? "+" : ""}{summaryPrice.toLocaleString("hu-HU")} Ft
+          </Typography>
 
           <Controller
             name="comment"
