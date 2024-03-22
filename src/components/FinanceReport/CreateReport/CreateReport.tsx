@@ -56,7 +56,9 @@ const CreateReport: React.FC = () => {
           summary.depositPaid += reservation.depositPrice;
         } else if (reservation.paymentState === PaymentState.FULL_PAID) {
           groupSummary[reservation.groupId].fullPaid += reservation.fullPrice;
+          groupSummary[reservation.groupId].fullPaid -= reservation.expenses;
           summary.fullPaid += reservation.fullPrice;
+          summary.fullPaid -= reservation.expenses;
         }
       });
 

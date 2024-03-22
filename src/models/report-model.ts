@@ -21,11 +21,6 @@ export interface Summary {
 }
 
 export interface GroupSummaryDictionary {
-  [key: string]: GroupSummary;
+  [key: string]: Summary;
 }
 
-export interface GroupSummary {
-  notPaid: number;
-  depositPaid: number;
-  fullPaid: number;
-}
