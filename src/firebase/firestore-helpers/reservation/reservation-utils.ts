@@ -15,7 +15,7 @@ import {
   where,
 } from "firebase/firestore";
 
-const processReservationQuerySnapshot = async (queryRes: Query<DocumentData> | CollectionReference<DocumentData>) => {
+const processReservationQuerySnapshot = async (queryRes: Query<DocumentData> | CollectionReference<DocumentData>, user: User) => {
   const reservations: Reservation[] = [];
   await getDocs(queryRes).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -28,6 +28,13 @@ const processReservationQuerySnapshot = async (queryRes: Query<DocumentData> | C
         endDate: dayjs(reservation.endDate),
         endTime: reservation.endTime ? dayjs(reservation.endTime) : undefined,
       };
+
+      //Check for missing fields
+      if (!Object.hasOwn(modifiedReservation, "expenses")) {
+        modifiedReservation.expenses = 0;
+        saveReservationDb(user, modifiedReservation);
+      }
+
       reservations.push(modifiedReservation);
     });
   });
@@ -38,7 +45,7 @@ const processReservationQuerySnapshot = async (queryRes: Query<DocumentData> | C
 export const searchReservationByClient = async (user: User, clientId: string) => {
   const queryRes = query(collection(db, "users", user.uid, "reservations"), where("clientId", "==", clientId));
   const foundReservations: Reservation[] = [];
-  await processReservationQuerySnapshot(queryRes).then((reservations) => {
+  await processReservationQuerySnapshot(queryRes, user).then((reservations) => {
     foundReservations.push(...reservations);
   });
   return foundReservations;
@@ -59,7 +66,7 @@ export const fetchReservationsInPeriod = async (user: User, startDate: dayjs.Day
   }
 
   const foundReservations: Reservation[] = [];
-  await processReservationQuerySnapshot(queryRes).then((reservations) => {
+  await processReservationQuerySnapshot(queryRes, user).then((reservations) => {
     foundReservations.push(...reservations);
   });
   console.log(`fetched ${foundReservations.length} reservations from ${startDate} to ${endDate}`); // eslint-disable-line no-console
@@ -93,7 +100,7 @@ export const fetchReservationsInMonth = async (
     );
   }
 
-  await processReservationQuerySnapshot(queryResult).then((reservations) => {
+  await processReservationQuerySnapshot(queryResult, user).then((reservations) => {
     foundReservations.push(...reservations);
   });
 
