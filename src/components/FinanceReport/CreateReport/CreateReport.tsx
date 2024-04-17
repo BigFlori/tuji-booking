@@ -34,6 +34,7 @@ const CreateReport: React.FC = () => {
         depositPaid: 0,
         fullPaid: 0,
         blocked: 0,
+        expenses: 0,
       };
 
       reservations.forEach((reservation) => {
@@ -47,30 +48,25 @@ const CreateReport: React.FC = () => {
             depositPaid: 0,
             fullPaid: 0,
             blocked: 0,
+            expenses: 0,
           };
         }
 
         if (reservation.paymentState === PaymentState.NOT_PAID) {
           groupSummary[reservation.groupId].notPaid += reservation.fullPrice;
           summary.notPaid += reservation.fullPrice;
-          groupSummary[reservation.groupId].notPaid -= reservation.expenses;
-          summary.notPaid -= reservation.expenses;
         } else if (reservation.paymentState === PaymentState.DEPOSIT_PAID) {
           groupSummary[reservation.groupId].depositPaid += reservation.fullPrice;
           summary.depositPaid += reservation.fullPrice;
-          groupSummary[reservation.groupId].depositPaid -= reservation.expenses;
-          summary.depositPaid -= reservation.expenses;
         } else if (reservation.paymentState === PaymentState.FULL_PAID) {
           groupSummary[reservation.groupId].fullPaid += reservation.fullPrice;
           summary.fullPaid += reservation.fullPrice;
-          groupSummary[reservation.groupId].fullPaid -= reservation.expenses;
-          summary.fullPaid -= reservation.expenses;
         } else if (reservation.paymentState === PaymentState.BLOCKED) {
           groupSummary[reservation.groupId].blocked += reservation.fullPrice;
           summary.blocked += reservation.fullPrice;
-          groupSummary[reservation.groupId].blocked -= reservation.expenses;
-          summary.blocked -= reservation.expenses;
         }
+        groupSummary[reservation.groupId].expenses -= reservation.expenses;
+        summary.expenses -= reservation.expenses;
       });
 
       const report: Report = {
