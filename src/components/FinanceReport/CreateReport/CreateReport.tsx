@@ -33,10 +33,11 @@ const CreateReport: React.FC = () => {
         notPaid: 0,
         depositPaid: 0,
         fullPaid: 0,
+        blocked: 0,
       };
 
       reservations.forEach((reservation) => {
-        if (reservation.paymentState === PaymentState.CANCELLED || reservation.paymentState === PaymentState.BLOCKED) {
+        if (reservation.paymentState === PaymentState.CANCELLED) {
           return;
         }
 
@@ -45,20 +46,30 @@ const CreateReport: React.FC = () => {
             notPaid: 0,
             depositPaid: 0,
             fullPaid: 0,
+            blocked: 0,
           };
         }
 
         if (reservation.paymentState === PaymentState.NOT_PAID) {
           groupSummary[reservation.groupId].notPaid += reservation.fullPrice;
           summary.notPaid += reservation.fullPrice;
+          groupSummary[reservation.groupId].notPaid -= reservation.expenses;
+          summary.notPaid -= reservation.expenses;
         } else if (reservation.paymentState === PaymentState.DEPOSIT_PAID) {
-          groupSummary[reservation.groupId].depositPaid += reservation.depositPrice;
-          summary.depositPaid += reservation.depositPrice;
+          groupSummary[reservation.groupId].depositPaid += reservation.fullPrice;
+          summary.depositPaid += reservation.fullPrice;
+          groupSummary[reservation.groupId].depositPaid -= reservation.expenses;
+          summary.depositPaid -= reservation.expenses;
         } else if (reservation.paymentState === PaymentState.FULL_PAID) {
           groupSummary[reservation.groupId].fullPaid += reservation.fullPrice;
-          groupSummary[reservation.groupId].fullPaid -= reservation.expenses;
           summary.fullPaid += reservation.fullPrice;
+          groupSummary[reservation.groupId].fullPaid -= reservation.expenses;
           summary.fullPaid -= reservation.expenses;
+        } else if (reservation.paymentState === PaymentState.BLOCKED) {
+          groupSummary[reservation.groupId].blocked += reservation.fullPrice;
+          summary.blocked += reservation.fullPrice;
+          groupSummary[reservation.groupId].blocked -= reservation.expenses;
+          summary.blocked -= reservation.expenses;
         }
       });
 

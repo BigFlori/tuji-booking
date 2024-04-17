@@ -18,6 +18,7 @@ export interface Summary {
   notPaid: number;
   depositPaid: number;
   fullPaid: number;
+  blocked: number;
 }
 
 export interface GroupSummaryDictionary {
