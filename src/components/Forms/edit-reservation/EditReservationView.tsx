@@ -28,7 +28,7 @@ import ExternalActionButton from "@/components/UI/Button/ExternalActionButton";
 import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import { GroupContext } from "@/store/group-context";
-import { isDevMode } from "@/store/dev-context";
+import { useIsDevMode } from "@/store/dev-context";
 
 interface IEditReservationViewProps {
   form: UseFormReturn<IEditReservationFormModel>;
@@ -586,7 +586,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             )}
           />
         </Box>
-        {isDevMode() && (
+        {useIsDevMode() && (
           <Box sx={{ display: "flex", gap: 1, marginBlock: 2, flexDirection: 'column' }}>
             <TextField
               id="reservationId"

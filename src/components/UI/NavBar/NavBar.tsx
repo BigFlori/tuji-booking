@@ -20,7 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useThemeChanger } from "@/store/theme-context";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { isDevMode } from "@/store/dev-context";
+import { useIsDevMode } from "@/store/dev-context";
 import { red } from "@mui/material/colors";
 
 const NavBar: React.FC = () => {
@@ -46,7 +46,7 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: (theme) => isDevMode() ? red[400] : theme.palette.brandColor.main }}>
+    <AppBar position="static" sx={{ backgroundColor: (theme) => useIsDevMode() ? red[400] : theme.palette.brandColor.main }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AnimatePresence mode="wait" initial={false}>

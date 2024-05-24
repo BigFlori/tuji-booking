@@ -14,7 +14,7 @@ export const useDevContext = () => {
   return React.useContext(DevContext);
 };
 
-export const isDevMode = () => {
+export const useIsDevMode = () => {
   return React.useContext(DevContext).devMode;
 };
 
