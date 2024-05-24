@@ -45,8 +45,13 @@ const NavBar: React.FC = () => {
     themeChanger.setTheme(themeChanger.theme === "light" ? "dark" : "light");
   };
 
+  const isDevMode = useIsDevMode();
+
   return (
-    <AppBar position="static" sx={{ backgroundColor: (theme) => useIsDevMode() ? red[400] : theme.palette.brandColor.main }}>
+    <AppBar
+      position="static"
+      sx={{ backgroundColor: (theme) => (isDevMode ? red[400] : theme.palette.brandColor.main) }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AnimatePresence mode="wait" initial={false}>
