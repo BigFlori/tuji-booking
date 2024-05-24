@@ -20,6 +20,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useThemeChanger } from "@/store/theme-context";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { isDevMode } from "@/store/dev-context";
+import { red } from "@mui/material/colors";
 
 const NavBar: React.FC = () => {
   //950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
@@ -43,10 +45,8 @@ const NavBar: React.FC = () => {
     themeChanger.setTheme(themeChanger.theme === "light" ? "dark" : "light");
   };
 
-  const isOnCalendarPage = router.pathname === "/";
-
   return (
-    <AppBar position="static" sx={{ backgroundColor: (theme) => theme.palette.brandColor.main }}>
+    <AppBar position="static" sx={{ backgroundColor: (theme) => isDevMode() ? red[400] : theme.palette.brandColor.main }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AnimatePresence mode="wait" initial={false}>

@@ -19,6 +19,7 @@ import NextNProgress from "nextjs-progressbar";
 import { QueryClient, QueryClientProvider } from "react-query";
 import ThemeChanger from "@/store/theme-context";
 import { SnackbarProvider } from "notistack";
+import DevContextProvider from "@/store/dev-context";
 
 const queryClient = new QueryClient();
 
@@ -48,7 +49,9 @@ export default function App({ Component, pageProps }: AppProps) {
               options={{ showSpinner: false }}
             />
             <SnackbarProvider maxSnack={3} autoHideDuration={3000} SnackbarProps={{ style: { cursor: "pointer" } }}>
-              <Component {...pageProps} key={router.route} />
+              <DevContextProvider>
+                <Component {...pageProps} key={router.route} />
+              </DevContextProvider>
             </SnackbarProvider>
           </UserContextProvider>
         </QueryClientProvider>

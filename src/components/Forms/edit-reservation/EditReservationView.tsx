@@ -28,6 +28,7 @@ import ExternalActionButton from "@/components/UI/Button/ExternalActionButton";
 import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import { GroupContext } from "@/store/group-context";
+import { isDevMode } from "@/store/dev-context";
 
 interface IEditReservationViewProps {
   form: UseFormReturn<IEditReservationFormModel>;
@@ -585,6 +586,38 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             )}
           />
         </Box>
+        {isDevMode() && (
+          <Box sx={{ display: "flex", gap: 1, marginBlock: 2, flexDirection: 'column' }}>
+            <TextField
+              id="reservationId"
+              label="Foglalás azonosító"
+              type="text"
+              value={props.reservationId}
+              disabled
+            />
+            <TextField
+              id="reservationGroupId"
+              label="Csoport azonosító"
+              type="text"
+              value={props.reservationGroupId}
+              disabled
+            />
+            <TextField
+              id="reservationStartDate"
+              label="Foglalás kezdete"
+              type="text"
+              value={startDate?.format("YYYY-MM-DD HH:mm") + " - " + startDate.unix()}
+              disabled
+            />
+            <TextField
+              id="reservationEndDate"
+              label="Foglalás vége"
+              type="text"
+              value={watch("endDate")?.format("YYYY-MM-DD HH:mm") + " - " + watch("endDate").unix()}
+              disabled
+            />
+          </Box>
+        )}
       </ModalControls>
     </Box>
   );
