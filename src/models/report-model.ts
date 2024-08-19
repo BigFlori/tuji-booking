@@ -20,6 +20,7 @@ export interface Summary {
   fullPaid: number;
   blocked: number;
   expenses: number;
+  balance: number;
 }
 
 export interface GroupSummaryDictionary {

@@ -35,6 +35,7 @@ const CreateReport: React.FC = () => {
         fullPaid: 0,
         blocked: 0,
         expenses: 0,
+        balance: 0,
       };
 
       reservations.forEach((reservation) => {
@@ -49,6 +50,7 @@ const CreateReport: React.FC = () => {
             fullPaid: 0,
             blocked: 0,
             expenses: 0,
+            balance: 0,
           };
         }
 
@@ -57,6 +59,7 @@ const CreateReport: React.FC = () => {
           summary.notPaid += reservation.fullPrice;
         } else if (reservation.paymentState === PaymentState.DEPOSIT_PAID) {
           groupSummary[reservation.groupId].depositPaid += reservation.fullPrice;
+
           summary.depositPaid += reservation.fullPrice;
         } else if (reservation.paymentState === PaymentState.FULL_PAID) {
           groupSummary[reservation.groupId].fullPaid += reservation.fullPrice;
@@ -67,6 +70,11 @@ const CreateReport: React.FC = () => {
         }
         groupSummary[reservation.groupId].expenses -= reservation.expenses;
         summary.expenses -= reservation.expenses;
+
+        groupSummary[reservation.groupId].balance += reservation.fullPrice;
+        groupSummary[reservation.groupId].balance -= reservation.expenses;
+        summary.balance += reservation.fullPrice;
+        summary.balance -= reservation.expenses;
       });
 
       const report: Report = {
