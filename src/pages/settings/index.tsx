@@ -2,8 +2,12 @@ import DraggableListOrder from "@/components/UI/DraggableListOrder/DraggableList
 import PageHead from "@/components/Page/PageHead";
 import { withProtected } from "@/hoc/route";
 import Group from "@/models/group/group-model";
-import { GroupContext } from "@/store/group-context";
+import { useGroupContext } from "@/store/group-context";
 import { cloneArray } from "@/utils/helpers";
+import { Box, Container, Switch, Typography } from "@mui/material";
+import { NextPage } from "next";
+import { useEffect, useState } from "react";
+import { useDevContext } from "@/store/dev-context";
 import { 
   Box, 
   Container, 
@@ -24,7 +28,8 @@ import CodeIcon from '@mui/icons-material/Code';
 
 const Settings: NextPage = () => {
   const theme = useTheme();
-  const groupCtx = useContext(GroupContext);
+  const devCtx = useDevContext();
+  const groupCtx = useGroupContext();
 
   const [clonedGroups, setClonedGroups] = useState<Group[]>(cloneArray(groupCtx.groups));
 

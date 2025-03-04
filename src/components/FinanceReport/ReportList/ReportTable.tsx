@@ -8,8 +8,16 @@ interface IReportTableProps {
   report: Report;
 }
 
-function createData(groupTitle: string, notPaid: number, depositPaid: number, fullPaid: number) {
-  return { groupTitle, notPaid, depositPaid, fullPaid };
+function createData(
+  groupTitle: string,
+  notPaid: number,
+  depositPaid: number,
+  fullPaid: number,
+  blocked: number,
+  expenses: number,
+  balance: number
+) {
+  return { groupTitle, notPaid, depositPaid, fullPaid, blocked, expenses, balance };
 }
 
 const formatCurrency = (value: number) => {
@@ -25,10 +33,18 @@ const ReportTable: React.FC<IReportTableProps> = (props: IReportTableProps) => {
   const groupCtx = useGroupContext();
   const rows = groupCtx.groups.map((group) => {
     if (!props.report.groups[group.id]) {
-      return createData(group.title, 0, 0, 0);
+      return createData(group.title, 0, 0, 0, 0, 0, 0);
     }
     const summaryGroup = props.report.groups[group.id];
-    return createData(group.title, summaryGroup.notPaid, summaryGroup.depositPaid, summaryGroup.fullPaid);
+    return createData(
+      group.title,
+      summaryGroup.notPaid,
+      summaryGroup.depositPaid,
+      summaryGroup.fullPaid,
+      summaryGroup.blocked,
+      summaryGroup.expenses,
+      summaryGroup.balance
+    );
   });
 
   return (
@@ -46,6 +62,11 @@ const ReportTable: React.FC<IReportTableProps> = (props: IReportTableProps) => {
             <TableCell>
               <StateDot state={PaymentState.FULL_PAID} /> Teljesen fizetve
             </TableCell>
+            <TableCell>
+              <StateDot state={PaymentState.BLOCKED} /> Blokkolt
+            </TableCell>
+            <TableCell>Kiadás</TableCell>
+            <TableCell>Egyenleg</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -57,6 +78,9 @@ const ReportTable: React.FC<IReportTableProps> = (props: IReportTableProps) => {
               <TableCell>{formatCurrency(row.notPaid)}</TableCell>
               <TableCell>{formatCurrency(row.depositPaid)}</TableCell>
               <TableCell>{formatCurrency(row.fullPaid)}</TableCell>
+              <TableCell>{formatCurrency(row.blocked)}</TableCell>
+              <TableCell>{formatCurrency(row.expenses)}</TableCell>
+              <TableCell>{formatCurrency(row.balance)}</TableCell>
             </TableRow>
           ))}
           <TableRow>
@@ -66,6 +90,9 @@ const ReportTable: React.FC<IReportTableProps> = (props: IReportTableProps) => {
             <TableCell sx={{ fontWeight: "500" }}>{formatCurrency(props.report.summary.notPaid)}</TableCell>
             <TableCell sx={{ fontWeight: "500" }}>{formatCurrency(props.report.summary.depositPaid)}</TableCell>
             <TableCell sx={{ fontWeight: "500" }}>{formatCurrency(props.report.summary.fullPaid)}</TableCell>
+            <TableCell sx={{ fontWeight: "500" }}>{formatCurrency(props.report.summary.blocked)}</TableCell>
+            <TableCell sx={{ fontWeight: "500" }}>{formatCurrency(props.report.summary.expenses)}</TableCell>
+            <TableCell sx={{ fontWeight: "500" }}>{formatCurrency(props.report.summary.balance)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

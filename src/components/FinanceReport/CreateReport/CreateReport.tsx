@@ -33,10 +33,13 @@ const CreateReport: React.FC = () => {
         notPaid: 0,
         depositPaid: 0,
         fullPaid: 0,
+        blocked: 0,
+        expenses: 0,
+        balance: 0,
       };
 
       reservations.forEach((reservation) => {
-        if (reservation.paymentState === PaymentState.CANCELLED || reservation.paymentState === PaymentState.BLOCKED) {
+        if (reservation.paymentState === PaymentState.CANCELLED) {
           return;
         }
 
@@ -45,6 +48,9 @@ const CreateReport: React.FC = () => {
             notPaid: 0,
             depositPaid: 0,
             fullPaid: 0,
+            blocked: 0,
+            expenses: 0,
+            balance: 0,
           };
         }
 
@@ -52,14 +58,22 @@ const CreateReport: React.FC = () => {
           groupSummary[reservation.groupId].notPaid += reservation.fullPrice;
           summary.notPaid += reservation.fullPrice;
         } else if (reservation.paymentState === PaymentState.DEPOSIT_PAID) {
-          groupSummary[reservation.groupId].depositPaid += reservation.depositPrice;
-          summary.depositPaid += reservation.depositPrice;
+          groupSummary[reservation.groupId].depositPaid += reservation.fullPrice;
+          summary.depositPaid += reservation.fullPrice;
         } else if (reservation.paymentState === PaymentState.FULL_PAID) {
           groupSummary[reservation.groupId].fullPaid += reservation.fullPrice;
-          groupSummary[reservation.groupId].fullPaid -= reservation.expenses;
           summary.fullPaid += reservation.fullPrice;
-          summary.fullPaid -= reservation.expenses;
+        } else if (reservation.paymentState === PaymentState.BLOCKED) {
+          groupSummary[reservation.groupId].blocked += reservation.fullPrice;
+          summary.blocked += reservation.fullPrice;
         }
+        groupSummary[reservation.groupId].expenses -= reservation.expenses;
+        summary.expenses -= reservation.expenses;
+
+        groupSummary[reservation.groupId].balance += reservation.fullPrice;
+        groupSummary[reservation.groupId].balance -= reservation.expenses;
+        summary.balance += reservation.fullPrice;
+        summary.balance -= reservation.expenses;
       });
 
       const report: Report = {
