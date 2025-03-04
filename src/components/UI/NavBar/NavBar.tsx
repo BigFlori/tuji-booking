@@ -10,7 +10,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useUser } from "@/store/user-context";
@@ -25,7 +25,6 @@ const NavBar: React.FC = () => {
   //950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down(950));
   const themeChanger = useThemeChanger();
-  const router = useRouter();
 
   const user = useUser();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -42,8 +41,6 @@ const NavBar: React.FC = () => {
   const handleThemeChange = () => {
     themeChanger.setTheme(themeChanger.theme === "light" ? "dark" : "light");
   };
-
-  const isOnCalendarPage = router.pathname === "/";
 
   return (
     <AppBar position="static" sx={{ backgroundColor: (theme) => theme.palette.brandColor.main }}>
@@ -79,7 +76,6 @@ const NavBar: React.FC = () => {
                     <Link href="/">
                       <Typography variant="body1">Tuji-Booking</Typography>
                     </Link>
-                    {/* <Typography>Foglalások: {reservationCtx.reservations.length}, Ügyfelek: {clientCtx.clients.length}</Typography> */}
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <SearchBar
