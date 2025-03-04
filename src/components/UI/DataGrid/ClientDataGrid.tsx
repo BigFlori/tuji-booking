@@ -27,8 +27,8 @@ const ClientDataGrid = () => {
         headerName: "Műveletek",
         width: 100,
         getActions: (params: GridRowParams) => [
-          <GridActionsCellEdit params={params} />,
-          <GridActionsCellDelete params={params} />,
+          <GridActionsCellEdit params={params} key={params.id} />,
+          <GridActionsCellDelete params={params} key={params.id} />,
         ],
       },
     ];
@@ -45,8 +45,8 @@ const ClientDataGrid = () => {
         headerName: "Műveletek",
         width: 100,
         getActions: (params: GridRowParams) => [
-          <GridActionsCellEdit params={params} />,
-          <GridActionsCellDelete params={params} />,
+          <GridActionsCellEdit params={params} key={params.id} />,
+          <GridActionsCellDelete params={params} key={params.id} />,
         ],
       },
     ];

@@ -120,18 +120,22 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
 
   const handleModalOpen = () => {
     setModalOpened(true);
-  }
+  };
 
   const renderOverflowedYear = props.isOverflowing && props.viewYear !== props.reservation.endDate.get("year");
+
+  const paymentStateColor = usePaymentStateColor(props.reservation.paymentState);
+  const paymentStateColorHover = darken(usePaymentStateColor(props.reservation.paymentState), 0.08);
+  
   return (
     <>
       <ReservationButton
-        sx={(theme) => ({
+        sx={() => ({
           left: !differentYearEnding ? left : !renderOverflowedYear ? 4 : left - 16,
           width: !differentYearEnding ? width : !renderOverflowedYear ? overflowWidth : widthWithYearEnding,
-          background: usePaymentStateColor(props.reservation.paymentState),
+          background: paymentStateColor,
           "&:hover": {
-            background: darken(usePaymentStateColor(props.reservation.paymentState), 0.08),
+            background: paymentStateColorHover,
           },
           fontSize:
             daysReserved === 1 ||

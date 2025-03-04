@@ -1,7 +1,6 @@
 import { GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import Client from "@/models/client-model";
-import { useClientContext } from "@/store/client-context";
 import { useState } from "react";
 import AnimatedModal from "../Modal/AnimatedModal";
 import EditClientApollo from "@/components/Forms/edit-client/EditClientApollo";
