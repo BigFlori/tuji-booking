@@ -8,7 +8,7 @@ import { ClientContext } from "@/store/client-context";
 import { v4 as uuidv4 } from "uuid";
 import Reservation from "@/models/reservation/reservation-model";
 import { ReservationContext } from "@/store/reservation-context";
-import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
+import { useSnack } from "@/hooks/useSnack";
 
 interface ICreateReservationApolloProps {
   onClose: () => void;
@@ -26,6 +26,8 @@ export type ICreateReservationFormModelWithEmptyDate =
 const CreateReservationApollo: React.FC<ICreateReservationApolloProps> = (props) => {
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
+  const showSnackbar = useSnack();
+
   const submitHandler: SubmitHandler<ICreateReservationFormModel> = (data) => {
     const paymentState = Object.values(PaymentState).find((state) => state === data.paymentState);
     if (!paymentState) return;
@@ -72,12 +74,7 @@ const CreateReservationApollo: React.FC<ICreateReservationApolloProps> = (props)
     };
 
     reservationCtx.addReservation(newReservation);
-    const key: SnackbarKey = enqueueSnackbar("Foglalás létrehozva!", {
-      variant: "success",
-      SnackbarProps: {
-        onClick: () => closeSnackbar(key),
-      },
-    });
+    showSnackbar("Foglalás létrehozva!", "success");
     props.onClose();
   };
 

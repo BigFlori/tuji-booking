@@ -2,9 +2,9 @@ import Reservation from "@/models/reservation/reservation-model";
 import { List, Paper } from "@mui/material";
 import SpacerLine from "../../SpacerLine";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
-import ResultItem from "./ResultItem";
 import AnimatedModal from "../../Modal/AnimatedModal";
 import EditReservationApollo from "@/components/Forms/edit-reservation/EditReservationApollo";
+import ReservationCard from "../../Card/ReservationCard";
 
 interface ISearchResultsProps {
   results: Reservation[];
@@ -39,7 +39,7 @@ const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps
           {props.results.map((reservation, index) => {
             return (
               <Fragment key={reservation.id}>
-                <ResultItem result={reservation} onClick={handleResultItemClick} />
+                <ReservationCard reservation={reservation} onClick={handleResultItemClick} />
                 {index !== props.results.length - 1 && <SpacerLine />}
               </Fragment>
             );
