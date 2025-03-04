@@ -5,7 +5,7 @@ import { GroupContext } from "@/store/group-context";
 import { useContext } from "react";
 import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
-import { useSnack } from "@/hooks/useSnack";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 interface IEditGroupApolloProps {
   onClose: () => void;
@@ -14,7 +14,6 @@ interface IEditGroupApolloProps {
 
 const EditGroupApollo: React.FC<IEditGroupApolloProps> = (props) => {
   const groupCtx = useContext(GroupContext);
-  const showSnackbar = useSnack();
 
   const submitHandler: SubmitHandler<IEditGroupFormModel> = (data) => {
     const groupType = Object.values(GroupType).find((type) => type === data.type);
@@ -32,13 +31,23 @@ const EditGroupApollo: React.FC<IEditGroupApolloProps> = (props) => {
       description: data.description,
     };
     groupCtx.updateGroup(props.group.id, updatedGroup);
-    showSnackbar("Csoport frissítve!", "success");
+    const key: SnackbarKey = enqueueSnackbar("Csoport frissítve!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 
   const deleteHandler = () => {
     groupCtx.removeGroup(props.group.id);
-    showSnackbar("Csoport törölve!", "success");
+    const key: SnackbarKey = enqueueSnackbar("Csoport törölve!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 

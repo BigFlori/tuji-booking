@@ -4,12 +4,11 @@ import SpacerLine from "../../SpacerLine";
 import MenuIconItem from "./MenuIconItem";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUser } from "@/store/user-context";
 import { useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/firebase.config";
-import { useSnack } from "@/hooks/useSnack";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 interface IAvatarMenuProps {
   anchorEl: null | HTMLElement;
@@ -18,18 +17,26 @@ interface IAvatarMenuProps {
 
 const AvatarMenu: React.FC<IAvatarMenuProps> = (props) => {
   const user = useUser();
-  const showSnackbar = useSnack();
-
   const [signOut] = useSignOut(auth);
 
   const handleSignOut = () => {
     signOut()
       .then(() => {
-        showSnackbar("Sikeres kijelentkezés!", "info");
+        const key: SnackbarKey = enqueueSnackbar("Sikeres kijelentkezés!", {
+          variant: "info",
+          SnackbarProps: {
+            onClick: () => closeSnackbar(key),
+          },
+        });
       })
       .catch((error) => {
         console.error(error);
-        showSnackbar("Hiba történt a kijelentkezés során!", "error");
+        const key: SnackbarKey = enqueueSnackbar("Hiba történt a kijelentkezés során!", {
+          variant: "error",
+          SnackbarProps: {
+            onClick: () => closeSnackbar(key),
+          },
+        });
       });
   };
 
@@ -68,7 +75,6 @@ const AvatarMenu: React.FC<IAvatarMenuProps> = (props) => {
       </Box>
       <SpacerLine sx={{ marginBlock: 1 }} />
       <MenuIconItem icon={<MonetizationOnIcon />} text="Pénzügyi jelentések" href="/finances" />
-      <MenuIconItem icon={<PeopleAltIcon />} text="Ügyfelek" href="/clients" />
       <MenuIconItem icon={<SettingsIcon />} text="Beállítások" href="/settings" />
       <MenuIconItem icon={<LogoutIcon />} text="Kijelentkezés" onClick={handleSignOut} />
     </Menu>

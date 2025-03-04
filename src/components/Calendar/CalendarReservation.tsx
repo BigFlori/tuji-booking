@@ -8,7 +8,6 @@ import PaymentState from "@/models/reservation/payment-state-model";
 import AnimatedModal from "../UI/Modal/AnimatedModal";
 import { Theme, darken } from "@mui/material";
 import EditReservationApollo from "../Forms/edit-reservation/EditReservationApollo";
-import { usePaymentStateColor } from "@/hooks/usePaymentStateColor";
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
@@ -121,16 +120,34 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
   const handleModalOpen = () => {
     setModalOpened(true);
   }
+
+  const getBgColor = (theme: Theme) => {
+    switch (props.reservation.paymentState) {
+      case PaymentState.NOT_PAID:
+        return theme.palette.notPaid.main;
+      case PaymentState.DEPOSIT_PAID:
+        return theme.palette.depositPaid.main;
+      case PaymentState.FULL_PAID:
+        return theme.palette.fullPaid.main;
+      case PaymentState.CANCELLED:
+        return theme.palette.cancelled.main;
+      case PaymentState.BLOCKED:
+        return theme.palette.blocked.main;
+      default:
+        return theme.palette.notPaid.main;
+    }
+  };
+
   const renderOverflowedYear = props.isOverflowing && props.viewYear !== props.reservation.endDate.get("year");
   return (
     <>
       <ReservationButton
-        sx={() => ({
+        sx={(theme) => ({
           left: !differentYearEnding ? left : !renderOverflowedYear ? 4 : left - 16,
           width: !differentYearEnding ? width : !renderOverflowedYear ? overflowWidth : widthWithYearEnding,
-          background: usePaymentStateColor(props.reservation.paymentState),
+          background: getBgColor(theme),
           "&:hover": {
-            background: darken(usePaymentStateColor(props.reservation.paymentState), 0.08),
+            background: darken(getBgColor(theme), 0.08),
           },
           fontSize:
             daysReserved === 1 ||
