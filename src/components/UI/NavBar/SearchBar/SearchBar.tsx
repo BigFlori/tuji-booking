@@ -36,49 +36,28 @@ const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
       clearTimeout(typingTimeout);
     }
 
-    const timeout = setTimeout(async () => {
+    const timeout = setTimeout(() => {
       if (searchText.trim() === "" || searchText.trim().length < 3 || searchText.trim().length > 50) {
         setFoundClients([]);
-        setFoundReservations([]);
         return;
       }
-    
       const clients = clientCtx.searchClients(searchText);
-    
-      // Itt lekéred az összes foglalást minden klienshez, és megvárod az eredményeket
-      const queryReservationsPromises = clients.map(async (client) => {
-        return await reservationCtx.getReservationsByClient(client.id);
+      const reservations = clients.flatMap((client) => reservationCtx.getReservationsByClient(client.id));
+      setFoundReservations(reservations);
+      const dbReservations = clients.flatMap((client) => searchReservationByClient(user!, client.id));
+      dbReservations.map((dbReservation) => {
+        dbReservation.then((reservations) => {
+          if (reservations) {
+            reservations.map((reservation) => {
+              if (reservationCtx.reservations.find((res) => res.id === reservation.id)) {
+                return;
+              }
+              reservationCtx.setReservations((prevReservations) => [...prevReservations, reservation]);
+              setFoundReservations((prevReservations) => [...prevReservations, reservation]);
+            });
+          }
+        });
       });
-    
-      // Várjuk meg, míg minden foglalás lekérés befejeződik
-      const allReservations = await Promise.all(queryReservationsPromises);
-    
-      // Az összes foglalást lapítjuk, és frissítjük az állapotot egy lépésben
-      const flattenedReservations = allReservations.flat();
-      setFoundReservations(flattenedReservations);
-    
-
-      // const reservations = clients.flatMap((client) => reservationCtx.getReservationsByClient(client.id));
-      // reservations.map((reservation) => {
-      //   reservation.then((reservations) => {
-
-      // });
-      // setFoundReservations(reservations);
-      // const dbReservations = clients.flatMap((client) => searchReservationByClient(user!, client.id));
-      // dbReservations.map((dbReservation) => {
-      //   dbReservation.then((reservations) => {
-      //     if (reservations) {
-      //       reservations.map((reservation) => {
-      //         if (reservationCtx.reservations.find((res) => res.id === reservation.id)) {
-      //           return;
-      //         }
-
-      //         reservationCtx.setReservations((prevReservations) => [...prevReservations, reservation]);
-      //         setFoundReservations((prevReservations) => [...prevReservations, reservation]);
-      //       });
-      //     }
-      //   });
-      // });
     }, 200);
 
     setTypingTimeout(timeout);

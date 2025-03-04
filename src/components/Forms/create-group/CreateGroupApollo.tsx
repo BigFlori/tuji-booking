@@ -5,7 +5,7 @@ import { SubmitHandler } from "react-hook-form";
 import { useContext } from "react";
 import { GroupContext } from "@/store/group-context";
 import { v4 as uuidv4 } from "uuid";
-import { useSnack } from "@/hooks/useSnack";
+import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
 
 interface ICreateGroupApolloProps {
   onClose: () => void;
@@ -13,7 +13,6 @@ interface ICreateGroupApolloProps {
 
 const CreateGroupApollo: React.FC<ICreateGroupApolloProps> = (props) => {
   const groupCtx = useContext(GroupContext);
-  const showSnackbar = useSnack();
 
   const submitHandler: SubmitHandler<ICreateGroupFormModel> = (data) => {
     const groupType = Object.values(GroupType).find((type) => type === data.type);
@@ -32,7 +31,12 @@ const CreateGroupApollo: React.FC<ICreateGroupApolloProps> = (props) => {
       order: groupCtx.groups.length,
     };
     groupCtx.addGroup(newGroup);
-    showSnackbar("Csoport létrehozva!", "success");
+    const key: SnackbarKey = enqueueSnackbar("Csoport létrehozva!", {
+      variant: "success",
+      SnackbarProps: {
+        onClick: () => closeSnackbar(key),
+      },
+    });
     props.onClose();
   };
 
