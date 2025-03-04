@@ -5,6 +5,7 @@ import {
   deleteReservationDb,
   fetchReservationsInPeriod,
   saveReservationDb,
+  searchReservationByClient,
 } from "@/firebase/firestore-helpers/reservation/reservation-utils";
 import { useUser } from "./user-context";
 import { useQuery } from "react-query";
@@ -17,7 +18,7 @@ interface IReservationContextObject {
   removeReservation: (id: string) => void;
   updateReservation: (id: string, reservation: Reservation) => void;
   getReservationsInGroup: (groupId: string) => Reservation[];
-  getReservationsByClient: (clientId: string) => Reservation[];
+  getReservationsByClient: (clientId: string) => Promise<Reservation[]>;
   shouldDateBeDisabled: (
     date: dayjs.Dayjs,
     type: "startDate" | "endDate",
@@ -37,7 +38,7 @@ export const ReservationContext = React.createContext<IReservationContextObject>
   removeReservation: () => {},
   updateReservation: () => {},
   getReservationsInGroup: () => [],
-  getReservationsByClient: () => [],
+  getReservationsByClient: () => Promise.resolve([]),
   shouldDateBeDisabled: () => false,
   getLatestReservation: () => null,
   getNextReservation: () => null,
@@ -154,9 +155,22 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     return reservations.filter((reservation) => reservation.groupId === groupId);
   };
 
-  //Visszaadja az összes foglalást, ami a megadott ügyfélhez tartozik
-  const getReservationsByClient = (clientId: string): Reservation[] => {
-    return reservations.filter((reservation) => reservation.clientId === clientId);
+  const getReservationsByClient = async (clientId: string): Promise<Reservation[]> => {
+    const dbReservations = await searchReservationByClient(user!, clientId); // Várakozás az adatbázisból való lekérésre
+    let newReservations: Reservation[] = [];
+    if (dbReservations) {
+      newReservations = dbReservations.filter(
+        (reservation) => !reservations.find((res) => res.id === reservation.id) // Csak az új foglalásokat adjuk hozzá
+      );
+
+      if (newReservations.length > 0) {
+        // Ha van új foglalás, állapotfrissítés
+        setReservations((prevReservations) => [...prevReservations, ...newReservations]);
+      }
+    }
+
+    // Visszaadjuk a frissített vagy korábban betöltött foglalásokat az adott ügyfélhez
+    return [...reservations, ...newReservations].filter((reservation) => reservation.clientId === clientId);
   };
 
   //Elméletileg csak akkor adhat vissza többet, ha a két különböző foglalásnak ugyanarra a napra esik a kezdő és záró dátuma

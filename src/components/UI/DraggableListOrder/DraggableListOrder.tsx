@@ -3,7 +3,7 @@ import DraggableListItem from "./DraggableListItem";
 import { Box, Button, Container } from "@mui/material";
 import { Reorder } from "framer-motion";
 import SaveIcon from "@mui/icons-material/Save";
-import { enqueueSnackbar } from "notistack";
+import { useSnack } from "@/hooks/useSnack";
 
 interface IDraggableListOrderProps<T> {
   clonedItems: T[];
@@ -13,6 +13,7 @@ interface IDraggableListOrderProps<T> {
 }
 
 const DraggableListOrder = <T extends { id: string; title: string }>(props: IDraggableListOrderProps<T>) => {
+  const showSnackbar = useSnack();
   const [orderChanged, setOrderChanged] = useState(false);
 
   const reorderHandler = (items: T[]) => {
@@ -22,7 +23,7 @@ const DraggableListOrder = <T extends { id: string; title: string }>(props: IDra
 
   const saveHandler = () => {
     props.onSave();
-    enqueueSnackbar("Sorrend mentve!", { variant: "success" });
+    showSnackbar("Sorrend mentve!", "success");
     setOrderChanged(false);
   };
 

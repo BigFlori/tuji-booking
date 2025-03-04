@@ -9,13 +9,15 @@ import { ReservationContext } from "@/store/reservation-context";
 import PaymentState from "@/models/reservation/payment-state-model";
 import Client from "@/models/client-model";
 import { v4 as uuidv4 } from "uuid";
-import { SnackbarKey, closeSnackbar, enqueueSnackbar } from "notistack";
+import { useSnack } from "@/hooks/useSnack";
 
 interface IEditReservationApolloProps {
   onClose: () => void;
+  onSubmit?: (updatedReservation?: Reservation) => void;
   reservation: Reservation;
   disableDateChange?: boolean;
   disableGroupChange?: boolean;
+  deleteEvent?: (deletedId: string) => void;
 }
 
 export type IEditReservationFormModelWithEmptyDate =
@@ -28,9 +30,10 @@ export type IEditReservationFormModelWithEmptyDate =
 const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => {
   const clientCtx = useContext(ClientContext);
   const reservationCtx = useContext(ReservationContext);
+  const showSnackbar = useSnack();
 
   //Foglalás módosítása
-  const submitHandler: SubmitHandler<IEditReservationFormModel> = (data) => {
+  const submitHandler: SubmitHandler<IEditReservationFormModel> = (data) => {    
     const paymentState = Object.values(PaymentState).find((state) => state === data.paymentState);
     if (!paymentState) return;
 
@@ -76,24 +79,16 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
     };
 
     reservationCtx.updateReservation(props.reservation.id, modifiedReservation);
-    const key: SnackbarKey = enqueueSnackbar("Foglalás módosítva!", {
-      variant: "success",
-      SnackbarProps: {
-        onClick: () => closeSnackbar(key),
-      },
-    });
+    showSnackbar("Foglalás módosítva!", "success");
+    props.onSubmit && props.onSubmit(modifiedReservation);
     props.onClose();
   };
 
   //Foglalás törlése
   const deleteHandler = () => {
     reservationCtx.removeReservation(props.reservation.id);
-    const key: SnackbarKey = enqueueSnackbar("Foglalás törölve!", {
-      variant: "success",
-      SnackbarProps: {
-        onClick: () => closeSnackbar(key),
-      },
-    });
+    props.deleteEvent && props.deleteEvent(props.reservation.id);
+    showSnackbar("Foglalás törölve!", "success");
     props.onClose();
   };
 
