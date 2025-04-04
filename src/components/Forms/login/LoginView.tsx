@@ -141,11 +141,12 @@ const LoginView: React.FC<ILoginViewProps> = ({
             textTransform: "initial",
             color: (theme) => (theme.palette.mode === "light" ? grey[800] : grey[300]),
           }}
-          onClick={() => onRedirect("forgetPassword")}
+          onClick={() => onRedirect("forgot-password")}
           disabled={isLoading || isSubmitting}
         >
           Elfelejtettem a jelszavam
         </Button>
+
         <Button
           sx={{ textTransform: "initial" }}
           color="success"
