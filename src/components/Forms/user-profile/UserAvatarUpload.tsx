@@ -10,7 +10,7 @@ import {
   Stack
 } from '@mui/material';
 import { useUser } from '@/store/user-context';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, getAuth } from 'firebase/auth';
 import { useSnack } from '@/hooks/useSnack';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -19,8 +19,11 @@ const UserAvatarUpload = () => {
   const showSnackbar = useSnack();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // URL a profilképhez - alapértelmezett érték üres string
   const [photoURL, setPhotoURL] = useState<string>('');
+  // Megjelenített avatar fotó URL-je
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const auth = getAuth();
 
   useEffect(() => {
     if (user?.photoURL) {
@@ -31,7 +34,7 @@ const UserAvatarUpload = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!user) return;
+    if (!user || !auth.currentUser) return;
 
     // Basic URL validation
     if (photoURL && !photoURL.match(/^https?:\/\/.+/)) {
@@ -43,8 +46,7 @@ const UserAvatarUpload = () => {
     setError(null);
 
     try {
-      // Update user profile with new photoURL
-      await updateProfile(user, {
+      await updateProfile(auth.currentUser, {
         photoURL: photoURL || null
       });
       
@@ -60,19 +62,19 @@ const UserAvatarUpload = () => {
   };
 
   const handleDeleteAvatar = async () => {
-    if (!user) return;
+    if (!user || !auth.currentUser) return;
     
     setIsLoading(true);
     setError(null);
     
     try {
-      // Update user profile
-      await updateProfile(user, {
-        photoURL: null
+      await updateProfile(auth.currentUser, {
+        photoURL: ""
       });
       
       setAvatarUrl(null);
       setPhotoURL('');
+      
       showSnackbar('Profilkép sikeresen törölve!', 'success');
     } catch (err: any) {
       console.error(err);
