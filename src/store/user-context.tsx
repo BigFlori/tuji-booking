@@ -1,7 +1,12 @@
 import { IRegisterFormModel } from "@/components/Forms/register/RegisterLogic";
 import { auth } from "@/firebase/firebase.config";
 import { createInitialUser, isUserdataExist } from "@/firebase/firestore-helpers/utils";
-import { AuthError, User, sendPasswordResetEmail, updateProfile } from "firebase/auth"; // Importáljuk a sendPasswordResetEmail funkciót
+import {
+  AuthError,
+  User,
+  sendPasswordResetEmail,
+  updateProfile,
+} from "firebase/auth";
 import React, { useState } from "react";
 import {
   useAuthState,
@@ -31,10 +36,9 @@ interface IUserContextObject {
     loading: boolean;
     error: AuthError | undefined;
   };
-  // Frissített resetPasswordState interfész
   resetPasswordState: {
     resetPassword: (email: string) => Promise<void>;
-    resetState: () => void; // Új állapot-visszaállító függvény
+    resetState: () => void;
     loading: boolean;
     error: AuthError | undefined;
     success: boolean;
@@ -78,10 +82,11 @@ export const useUser = () => {
   return userState.user;
 };
 
-//Duplán ellenőrizni a felhasználói adatok meglétét, ezt érdemes lenne javítani majd
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (props) => {
   const onAuthStateChangeEvent = async (user: User | null) => {
     if (!user) return;
+    
+    // Check if user data exists
     await isUserdataExist(user);
   };
 
@@ -89,36 +94,40 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const [_createUserWithEmailAndPassword, createUser, createUserloading, createUserError] =
     useCreateUserWithEmailAndPassword(auth);
+    
   const [
     _signInWithEmailAndPassword,
     emailPasswordUser,
     signInWithEmailAndPasswordLoading,
     signInWithEmailAndPasswordError,
   ] = useSignInWithEmailAndPassword(auth);
+  
   const [_signInWithGoogle, googleUser, signInWithGoogleLoading, signInWithGoogleError] = useSignInWithGoogle(auth);
 
-  // Új állapotok a jelszó-visszaállításhoz
+  // States for password reset
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [resetPasswordError, setResetPasswordError] = useState<AuthError | undefined>(undefined);
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
 
   const createUserWithEmailAndPassword = async (data: IRegisterFormModel) => {
-    await _createUserWithEmailAndPassword(data.email, data.password).then(async (userCredential) => {
-      const user = userCredential?.user;
-      if (!user) return;
-      const displayName = `${data.firstName} ${data.lastName}`;
+    const userCredential = await _createUserWithEmailAndPassword(data.email, data.password);
+    
+    const user = userCredential?.user;
+    if (!user) return;
+    
+    const displayName = `${data.firstName} ${data.lastName}`;
 
-      await updateProfile(user, { displayName: displayName });
-      await createInitialUser(user, displayName);
-    });
+    await updateProfile(user, { displayName: displayName });
+    await createInitialUser(user, displayName);
   };
 
   const signInWithEmailAndPassword = async (email: string, password: string) => {
-    await _signInWithEmailAndPassword(email, password).then(async (userCredential) => {
-      const user = userCredential?.user;
-      if (!user) return;
-      await isUserdataExist(user);
-    });
+    const userCredential = await _signInWithEmailAndPassword(email, password);
+    
+    const user = userCredential?.user;
+    if (!user) return;
+    
+    await isUserdataExist(user);
   };
 
   const signInWithGoogle = async () => {
@@ -129,7 +138,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
-  // Új jelszó-visszaállítási funkció
+  // Password reset function
   const resetPassword = async (email: string) => {
     setResetPasswordLoading(true);
     setResetPasswordError(undefined);
