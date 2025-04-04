@@ -1,8 +1,8 @@
 import { IRegisterFormModel } from "@/components/Forms/register/RegisterLogic";
 import { auth } from "@/firebase/firebase.config";
 import { createInitialUser, isUserdataExist } from "@/firebase/firestore-helpers/utils";
-import { AuthError, User, updateProfile } from "firebase/auth";
-import React from "react";
+import { AuthError, User, sendPasswordResetEmail, updateProfile } from "firebase/auth"; // Importáljuk a sendPasswordResetEmail funkciót
+import React, { useState } from "react";
 import {
   useAuthState,
   useCreateUserWithEmailAndPassword,
@@ -31,6 +31,14 @@ interface IUserContextObject {
     loading: boolean;
     error: AuthError | undefined;
   };
+  // Frissített resetPasswordState interfész
+  resetPasswordState: {
+    resetPassword: (email: string) => Promise<void>;
+    resetState: () => void; // Új állapot-visszaállító függvény
+    loading: boolean;
+    error: AuthError | undefined;
+    success: boolean;
+  };
 }
 
 export const UserContext = React.createContext<IUserContextObject>({
@@ -53,6 +61,13 @@ export const UserContext = React.createContext<IUserContextObject>({
     signInWithGoogle: async () => {},
     loading: false,
     error: undefined,
+  },
+  resetPasswordState: {
+    resetPassword: async () => {},
+    resetState: () => {},
+    loading: false,
+    error: undefined,
+    success: false,
   },
 });
 
@@ -82,6 +97,11 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   ] = useSignInWithEmailAndPassword(auth);
   const [_signInWithGoogle, googleUser, signInWithGoogleLoading, signInWithGoogleError] = useSignInWithGoogle(auth);
 
+  // Új állapotok a jelszó-visszaállításhoz
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
+  const [resetPasswordError, setResetPasswordError] = useState<AuthError | undefined>(undefined);
+  const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
+
   const createUserWithEmailAndPassword = async (data: IRegisterFormModel) => {
     await _createUserWithEmailAndPassword(data.email, data.password).then(async (userCredential) => {
       const user = userCredential?.user;
@@ -109,6 +129,28 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
+  // Új jelszó-visszaállítási funkció
+  const resetPassword = async (email: string) => {
+    setResetPasswordLoading(true);
+    setResetPasswordError(undefined);
+    setResetPasswordSuccess(false);
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetPasswordSuccess(true);
+    } catch (err) {
+      setResetPasswordError(err as AuthError);
+    } finally {
+      setResetPasswordLoading(false);
+    }
+  };
+
+  const resetPasswordState = () => {
+    setResetPasswordLoading(false);
+    setResetPasswordError(undefined);
+    setResetPasswordSuccess(false);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -120,6 +162,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
           error: signInWithEmailAndPasswordError,
         },
         signInWithGoogleState: { signInWithGoogle, loading: signInWithGoogleLoading, error: signInWithGoogleError },
+        resetPasswordState: {
+          resetPassword,
+          resetState: resetPasswordState,
+          loading: resetPasswordLoading,
+          error: resetPasswordError,
+          success: resetPasswordSuccess,
+        },
       }}
     >
       {props.children}
