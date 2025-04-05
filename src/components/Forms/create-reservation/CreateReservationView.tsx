@@ -28,6 +28,9 @@ import dayjs from "dayjs";
 import { ClientContext } from "@/store/client-context";
 import { GroupContext } from "@/store/group-context";
 import { ReservationContext } from "@/store/reservation-context";
+import { normalizeText } from "@/utils/helpers";
+import ClientSearch from "@/components/ClientSearch/ClientSearch";
+import ClientSection from "@/components/ClientSearch/ClientSection";
 
 interface ICreateReservationViewProps {
   form: UseFormReturn<ICreateReservationFormModel>;
@@ -450,112 +453,15 @@ const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => 
             )}
           />
 
-          <Typography variant="body1" fontWeight="500" marginTop={2}>
-            Ügyfél kiválasztása
-          </Typography>
-          <Controller
-            name="selectedClientOption"
+          <ClientSection
             control={control}
-            render={({ field }) => (
-              <Autocomplete
-                disablePortal
-                id="selectedClientOption"
-                options={props.clientOptions}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Ügyfél"
-                    error={!!errors.selectedClientOption}
-                    helperText={errors.selectedClientOption && errors.selectedClientOption.message}
-                  />
-                )}
-                getOptionLabel={(option) => option.label}
-                isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
-                {...field}
-                value={field.value}
-                onChange={(_, data) => {
-                  field.onChange(data!);
-                  updateClientData(clientCtx.getClientById(data?.clientId));
-                }}
-              />
-            )}
+            setValue={setValue}
+            getValues={getValues}
+            errors={errors}
+            clientOptions={props.clientOptions}
+            defaultMode="search"
           />
 
-          <Typography variant="body1" fontWeight="500" marginTop={2}>
-            Ügyfél adatai
-          </Typography>
-          <Controller
-            name="clientName"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                id="clientName"
-                label="Név"
-                type="text"
-                error={!!errors.clientName}
-                helperText={errors.clientName?.message}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="clientPhone"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                sx={{ flexGrow: 1 }}
-                id="clientPhone"
-                label="Telefonszám"
-                type="text"
-                error={!!errors.clientPhone}
-                helperText={errors.clientPhone && errors.clientPhone.message}
-                InputProps={{
-                  endAdornment: (
-                    <Box sx={{ display: "flex", gap: 1 }}>
-                      <ExternalActionButton type="tel" value={watch("clientPhone")} />
-                      <ExternalActionButton type="sms" value={watch("clientPhone")} />
-                    </Box>
-                  ),
-                }}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="clientEmail"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                sx={{ flexGrow: 1 }}
-                id="clientEmail"
-                label="E-mail cím"
-                type="email"
-                error={!!errors.clientEmail}
-                helperText={errors.clientEmail && errors.clientEmail.message}
-                InputProps={{
-                  endAdornment: <ExternalActionButton type="mailto" value={watch("clientEmail")} />,
-                }}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="clientAddress"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                id="clientAddress"
-                label="Lakcím"
-                type="text"
-                error={!!errors.clientAddress}
-                helperText={errors.clientAddress?.message}
-                {...field}
-              />
-            )}
-          />
         </Box>
       </ModalControls>
     </Box>

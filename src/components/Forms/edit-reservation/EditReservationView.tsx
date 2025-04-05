@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { IEditReservationFormModel } from "./EditReservationLogic";
 import { SubmitHandler, UseFormReturn, Controller, set } from "react-hook-form";
 import Client from "@/models/client-model";
 import Group from "@/models/group/group-model";
-import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
+import { clientToOption, IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import {
   Autocomplete,
   Box,
@@ -29,6 +29,10 @@ import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import { GroupContext } from "@/store/group-context";
 import { useIsDevMode } from "@/store/dev-context";
+import { normalizeText } from "@/utils/helpers";
+import ClientSearch from "@/components/ClientSearch/ClientSearch";
+import ClientSection from "@/components/ClientSearch/ClientSection";
+import Reservation from "@/models/reservation/reservation-model";
 
 interface IEditReservationViewProps {
   form: UseFormReturn<IEditReservationFormModel>;
@@ -36,8 +40,7 @@ interface IEditReservationViewProps {
   onClose: () => void;
   onDelete: () => void;
   clientOptions: IClientOption[];
-  reservationId: string;
-  reservationGroupId: string;
+  reservation: Reservation;
   disableDateChange?: boolean;
   disableGroupChange?: boolean;
 }
@@ -77,7 +80,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
 
   const [summaryPrice, setSummaryPrice] = useState<number>(getValues("fullPrice") - getValues("expenses") || 0);
   const [payToGo, setPayToGo] = useState<number>(calculatePayToGo());
-  const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(groupCtx.getGroup(props.reservationGroupId));
+  const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(groupCtx.getGroup(props.reservation.groupId));
 
   //Ha a kiválasztott ügyfél megváltozik, akkor frissíti az ügyfél adatait
   const updateClientData = (client?: Client) => {
@@ -94,6 +97,17 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
       setValue("clientAddress", "");
     }
   };
+
+  // A meglévő logikából felhasználjuk ezt:
+  const reservationClient = useMemo(() => {
+    const client = clientCtx.getClientById(props.reservation.clientId);
+    return client ? client : { id: "not-selected", name: "" };
+  }, [clientCtx.clients, props.reservation.clientId]);
+
+  // Kezdeti kiválasztott ügyfél
+  const initialSelectedClient = useMemo(() => {
+    return clientToOption(reservationClient);
+  }, [reservationClient]);
 
   const startDate = watch("startDate");
 
@@ -165,7 +179,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
                   }}
                   shouldDisableDate={(day) =>
                     !selectedGroup ||
-                    reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, props.reservationId)
+                    reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, props.reservation.id)
                   }
                   value={field.value}
                   inputRef={field.ref}
@@ -218,15 +232,15 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
                     return (
                       dayjs(day).isBefore(startDate) ||
                       dayjs(day).isSame(startDate) ||
-                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id, props.reservationId) ||
+                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id, props.reservation.id) ||
                       (nextReservation &&
-                        nextReservation.id !== props.reservationId &&
+                        nextReservation.id !== props.reservation.id &&
                         day.isAfter(nextReservation?.startDate)) ||
                       (day.isAfter(latestReservation?.endDate) && //Ha a vizsgált nap a legutolsó foglalás után van
                         !day.isAfter(field.value) && //Engedélyezi a kiválasztott nap után lévő napokat
                         !day.isSame(field.value) && //Engedélyezi a kiválasztott napot
                         !day.isBefore(field.value) && //Engedélyezi a kiválasztott nap előtti napokat
-                        latestReservation?.id !== props.reservationId && //Kizárja a jelenlegi foglalást
+                        latestReservation?.id !== props.reservation.id && //Kizárja a jelenlegi foglalást
                         latestReservation?.groupId === selectedGroup.id)
                     );
                   }}
@@ -459,7 +473,8 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
           />
 
           <Typography variant="body1" fontWeight="500" marginLeft={1}>
-            Összesítve: {summaryPrice > 0 ? "+" : ""}{summaryPrice.toLocaleString("hu-HU")} Ft
+            Összesítve: {summaryPrice > 0 ? "+" : ""}
+            {summaryPrice.toLocaleString("hu-HU")} Ft
           </Typography>
 
           <Controller
@@ -479,127 +494,24 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             )}
           />
 
-          <Typography variant="body1" fontWeight="500" marginTop={2}>
-            Ügyfél kiválasztása
-          </Typography>
-          <Controller
-            name="selectedClientOption"
+          <ClientSection
             control={control}
-            render={({ field }) => (
-              <Autocomplete
-                disablePortal
-                id="selectedClientOption"
-                options={props.clientOptions}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Ügyfél"
-                    error={!!errors.selectedClientOption}
-                    helperText={errors.selectedClientOption && errors.selectedClientOption.message}
-                  />
-                )}
-                getOptionLabel={(option) => option.label}
-                isOptionEqualToValue={(option, value) => option.clientId === value.clientId}
-                {...field}
-                value={field.value}
-                onChange={(_, data) => {
-                  field.onChange(data!);
-                  updateClientData(clientCtx.getClientById(data?.clientId));
-                }}
-              />
-            )}
-          />
-
-          <Typography variant="body1" fontWeight="500" marginTop={2}>
-            Ügyfél adatai
-          </Typography>
-          <Controller
-            name="clientName"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                id="clientName"
-                label="Név"
-                type="text"
-                error={!!errors.clientName}
-                helperText={errors.clientName?.message}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="clientPhone"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                sx={{ flexGrow: 1 }}
-                id="clientPhone"
-                label="Telefonszám"
-                type="text"
-                error={!!errors.clientPhone}
-                helperText={errors.clientPhone && errors.clientPhone.message}
-                InputProps={{
-                  endAdornment: (
-                    <Box sx={{ display: "flex", gap: 1 }}>
-                      <ExternalActionButton type="tel" value={watch("clientPhone")} />
-                      <ExternalActionButton type="sms" value={watch("clientPhone")} />
-                    </Box>
-                  ),
-                }}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="clientEmail"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                sx={{ flexGrow: 1 }}
-                id="clientEmail"
-                label="E-mail cím"
-                type="email"
-                error={!!errors.clientEmail}
-                helperText={errors.clientEmail && errors.clientEmail.message}
-                InputProps={{
-                  endAdornment: <ExternalActionButton type="mailto" value={watch("clientEmail")} />,
-                }}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="clientAddress"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                id="clientAddress"
-                label="Lakcím"
-                type="text"
-                error={!!errors.clientAddress}
-                helperText={errors.clientAddress?.message}
-                {...field}
-              />
-            )}
+            setValue={setValue}
+            getValues={getValues}
+            errors={errors}
+            clientOptions={props.clientOptions}
+            defaultMode="edit"
+            initialSelectedClient={initialSelectedClient}
           />
         </Box>
         {useIsDevMode() && (
-          <Box sx={{ display: "flex", gap: 1, marginBlock: 2, flexDirection: 'column' }}>
-            <TextField
-              id="reservationId"
-              label="Foglalás azonosító"
-              type="text"
-              value={props.reservationId}
-              disabled
-            />
+          <Box sx={{ display: "flex", gap: 1, marginBlock: 2, flexDirection: "column" }}>
+            <TextField id="reservationId" label="Foglalás azonosító" type="text" value={props.reservation.id} disabled />
             <TextField
               id="reservationGroupId"
               label="Csoport azonosító"
               type="text"
-              value={props.reservationGroupId}
+              value={props.reservation.groupId}
               disabled
             />
             <TextField
