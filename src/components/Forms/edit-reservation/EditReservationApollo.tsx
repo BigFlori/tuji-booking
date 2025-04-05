@@ -124,8 +124,7 @@ const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => 
       onSubmit={submitHandler}
       onClose={props.onClose}
       onDelete={deleteHandler}
-      reservationId={props.reservation.id}
-      reservationGroupId={props.reservation.groupId}
+      reservation={props.reservation}
       disableDateChange={props.disableDateChange}
       disableGroupChange={props.disableGroupChange}
     />

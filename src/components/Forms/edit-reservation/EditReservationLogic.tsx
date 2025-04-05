@@ -8,14 +8,14 @@ import { useContext, useMemo } from "react";
 import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import { IEditReservationFormModelWithEmptyDate } from "./EditReservationApollo";
+import Reservation from "@/models/reservation/reservation-model";
 
 interface IEditReservationLogicProps {
   defaultValues: IEditReservationFormModelWithEmptyDate;
   onSubmit: SubmitHandler<IEditReservationFormModel>;
   onClose: () => void;
   onDelete: () => void;
-  reservationId: string;
-  reservationGroupId: string;
+  reservation: Reservation;
   disableDateChange?: boolean;
   disableGroupChange?: boolean;
 }
@@ -61,7 +61,7 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       }
       startDate = dayjs(startDate);
 
-      return reservationCtx.canReserve(startDate, value, this.parent.groupId, props.reservationId);
+      return reservationCtx.canReserve(startDate, value, this.parent.groupId, props.reservation.id);
     });
 
   const canReserveStartDate = yup
@@ -76,7 +76,7 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       }
       endDate = dayjs(endDate);
 
-      return reservationCtx.canReserve(value, endDate, this.parent.groupId, props.reservationId);
+      return reservationCtx.canReserve(value, endDate, this.parent.groupId, props.reservation.id);
     });
 
   const validationSchema: yup.ObjectSchema<IEditReservationFormModel> = yup.object().shape({
@@ -137,8 +137,7 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       onClose={props.onClose}
       onDelete={props.onDelete}
       clientOptions={clientOptions}
-      reservationId={props.reservationId}
-      reservationGroupId={props.reservationGroupId}
+      reservation={props.reservation}
       disableDateChange={props.disableDateChange}
       disableGroupChange={props.disableGroupChange}
     />
