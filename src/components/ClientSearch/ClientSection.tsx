@@ -5,13 +5,16 @@ import {
   Divider, 
   Chip, 
   Alert, 
-  TextField 
+  TextField,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import { Controller, Control, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
 import { useClientContext } from '@/store/client-context';
+import ExternalActionButton from '@/components/UI/Button/ExternalActionButton';
 import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from '../Forms/client-option/clientOptionHelper';
 import ClientSearch from './ClientSearch';
 
@@ -39,6 +42,8 @@ const ClientSection: React.FC<ClientSectionProps> = ({
   const [selectedClient, setSelectedClient] = useState<IClientOption>(initialSelectedClient);
   
   const clientCtx = useClientContext();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
   // Frissítsük az állapotot, ha változik a kezdeti érték
   useEffect(() => {
@@ -92,18 +97,31 @@ const ClientSection: React.FC<ClientSectionProps> = ({
 
   return (
     <>
-      <Box sx={{ mb: 0 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="body1" fontWeight="500">
+      <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          gap: { xs: 2, sm: 0 },
+          mb: 2 
+        }}>
+          <Typography variant="body1" fontWeight="500" sx={{ mb: { xs: 1, sm: 0 } }}>
             Ügyfél kiválasztása
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap',
+            gap: 1,
+            width: { xs: '100%', sm: 'auto' }
+          }}>
             <Chip 
               icon={<SearchIcon />} 
               label="Keresés" 
               color={mode === 'search' ? "primary" : "default"}
               onClick={() => handleModeChange('search')}
               variant={mode === 'search' ? "filled" : "outlined"}
+              sx={{ flexGrow: { xs: 1, sm: 0 } }}
             />
             <Chip 
               icon={<PersonAddIcon />} 
@@ -111,6 +129,7 @@ const ClientSection: React.FC<ClientSectionProps> = ({
               color={mode === 'new' ? "primary" : "default"}
               onClick={() => handleModeChange('new')}
               variant={mode === 'new' ? "filled" : "outlined"}
+              sx={{ flexGrow: { xs: 1, sm: 0 } }}
             />
             {hasSelectedClient && (
               <Chip 
@@ -119,6 +138,7 @@ const ClientSection: React.FC<ClientSectionProps> = ({
                 color={mode === 'edit' ? "primary" : "default"}
                 onClick={() => handleModeChange('edit')}
                 variant={mode === 'edit' ? "filled" : "outlined"}
+                sx={{ flexGrow: { xs: 1, sm: 0 } }}
               />
             )}
           </Box>
@@ -163,10 +183,11 @@ const ClientSection: React.FC<ClientSectionProps> = ({
       
       <Divider />
       
-      <Typography variant="body1" fontWeight="500">
+      <Typography variant="body1" fontWeight="500" marginTop={2} marginBottom={2}>
         {mode === 'new' ? 'Új ügyfél adatai' : 'Ügyfél adatai'}
       </Typography>
       
+      {/* Az eredeti űrlapmezők, nem változnak a reszponzivitással */}
       <Controller
         name="clientName"
         control={control}
@@ -198,6 +219,14 @@ const ClientSection: React.FC<ClientSectionProps> = ({
             {...field}
             disabled={mode === 'search'}
             fullWidth
+            InputProps={{
+              endAdornment: field.value ? (
+                <Box sx={{ display: 'flex' }}>
+                  <ExternalActionButton type="tel" value={field.value} />
+                  <ExternalActionButton type="sms" value={field.value} />
+                </Box>
+              ) : null
+            }}
           />
         )}
       />
@@ -215,6 +244,9 @@ const ClientSection: React.FC<ClientSectionProps> = ({
             {...field}
             disabled={mode === 'search'}
             fullWidth
+            InputProps={{
+              endAdornment: field.value ? <ExternalActionButton type="mailto" value={field.value} /> : null
+            }}
           />
         )}
       />
