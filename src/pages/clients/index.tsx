@@ -77,7 +77,7 @@ const ClientPage: NextPage = () => {
                   Ügyfelek kezelése
                 </Typography>
                 <Typography variant="body1" sx={{ color: alpha(theme.palette.text.primary, 0.8) }}>
-                  Az alábbi táblázat az ügyfeleid kezelésére és megtekintésére szolgál.
+                  Az alábbi táblázat az ügyfeleid kezelésére és megtekintésére szolgál. A keresőmezőben kereshetsz ügyfél név, telefonszám, email cím vagy lakcím alapján.
                 </Typography>
               </Box>
             </Box>

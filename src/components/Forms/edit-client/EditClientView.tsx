@@ -10,6 +10,7 @@ interface IEditClientViewProps {
   onClose: () => void;
   onDelete: () => void;
   clientId: string;
+  isNewClient?: boolean;
 }
 
 const EditClientView: React.FC<IEditClientViewProps> = (props) => {
@@ -23,10 +24,10 @@ const EditClientView: React.FC<IEditClientViewProps> = (props) => {
   return (
     <Box component="form" autoComplete="off" noValidate onSubmit={handleSubmit(props.onSubmit)} sx={{ height: "100%" }}>
       <ModalControls
-        title="Ügyfél szerkesztése"
+        title={props.isNewClient ? "Új ügyfél létrehozása" : "Ügyfél szerkesztése"}
         onClose={props.onClose}
-        onDelete={props.onDelete}
-        isEdit
+        onDelete={!props.isNewClient ? props.onDelete : undefined}
+        isEdit={!props.isNewClient}
         saveButtonProps={{ type: "submit" }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
