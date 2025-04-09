@@ -9,6 +9,7 @@ interface IEditClientLogicProps {
   onClose: () => void;
   onDelete: () => void;
   clientId: string;
+  isNewClient?: boolean;
 }
 
 export interface IEditClientFormModel {
@@ -38,6 +39,7 @@ const EditClientLogic: React.FC<IEditClientLogicProps> = (props) => {
       onClose={props.onClose}
       onDelete={props.onDelete}
       clientId={props.clientId}
+      isNewClient={props.isNewClient}
     />
   );
 };
