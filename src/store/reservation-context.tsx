@@ -98,7 +98,6 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   const setFetchStartDate = (date: dayjs.Dayjs) => {
     if (date.isAfter(startDate) || date.isSame(startDate)) return;
-    console.log("setting start date" + date.format("YYYY-MM-DD"));
     setStartDate((prevValue) => {
       setEndDate(prevValue);
       return date;

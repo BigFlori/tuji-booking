@@ -1,5 +1,6 @@
 import { db } from "@/firebase/firebase.config";
 import Reservation from "@/models/reservation/reservation-model";
+import { chunkArray } from "@/utils/helpers";
 import dayjs from "dayjs";
 import { User } from "firebase/auth";
 import {
@@ -51,25 +52,66 @@ export const searchReservationByClient = async (user: User, clientId: string) =>
   return foundReservations;
 };
 
-export const fetchReservationsInPeriod = async (user: User, startDate: dayjs.Dayjs, endDate?: dayjs.Dayjs) => {
-  let queryRes = query(
-    collection(db, "users", user.uid, "reservations"),
-    where("endDateTimestamp", ">=", startDate.unix())
-  );
+// Módosított funkció, amely csoportok alapján is szűrhet
+export const fetchReservationsInPeriod = async (
+  user: User, 
+  startDate: dayjs.Dayjs, 
+  endDate?: dayjs.Dayjs,
+  groupIds?: string[]
+) => {
+  let queryResults: Query<DocumentData>[] = [];
+  const foundReservations: Reservation[] = [];
 
-  if (endDate) {
-    queryRes = query(
-      collection(db, "users", user.uid, "reservations"),
-      where("endDateTimestamp", ">=", startDate.unix()),
-      where("endDateTimestamp", "<=", endDate.unix())
-    );
+  // Ha nincs megadva csoport vagy üres a tömb, a funkció a hagyományos módon működik
+  if (!groupIds || groupIds.length === 0) {
+    let queryRes: Query<DocumentData>;
+    
+    if (endDate) {
+      queryRes = query(
+        collection(db, "users", user.uid, "reservations"),
+        where("endDateTimestamp", ">=", startDate.unix()),
+        where("endDateTimestamp", "<=", endDate.unix())
+      );
+    } else {
+      queryRes = query(
+        collection(db, "users", user.uid, "reservations"),
+        where("endDateTimestamp", ">=", startDate.unix())
+      );
+    }
+    
+    queryResults.push(queryRes);
+  } else {
+    // Firebase "in" query max 10 elemet támogat, így több lekérdezést kell indítanunk,
+    // ha több mint 10 csoport van kiválasztva
+    const groupChunks = chunkArray(groupIds, 10);
+    
+    for (const chunk of groupChunks) {
+      let queryRes: Query<DocumentData>;
+      
+      if (endDate) {
+        queryRes = query(
+          collection(db, "users", user.uid, "reservations"),
+          where("endDateTimestamp", ">=", startDate.unix()),
+          where("endDateTimestamp", "<=", endDate.unix()),
+          where("groupId", "in", chunk)
+        );
+      } else {
+        queryRes = query(
+          collection(db, "users", user.uid, "reservations"),
+          where("endDateTimestamp", ">=", startDate.unix()),
+          where("groupId", "in", chunk)
+        );
+      }
+      
+      queryResults.push(queryRes);
+    }
   }
 
-  const foundReservations: Reservation[] = [];
-  await processReservationQuerySnapshot(queryRes, user).then((reservations) => {
+  // Végrehajtunk minden lekérdezést és összegyűjtjük az eredményeket
+  for (const queryRes of queryResults) {
+    const reservations = await processReservationQuerySnapshot(queryRes, user);
     foundReservations.push(...reservations);
-  });
-  console.log(`fetched ${foundReservations.length} reservations from ${startDate} to ${endDate}`); // eslint-disable-line no-console
+  }
 
   return foundReservations;
 };
@@ -104,8 +146,6 @@ export const fetchReservationsInMonth = async (
     foundReservations.push(...reservations);
   });
 
-  //console.log(`found reservations from ${monthIndex + 1}: `, foundReservations);
-
   return foundReservations;
 };
 
@@ -129,20 +169,3 @@ export const deleteReservationDb = async (user: User, reservationId: string) => 
     console.error("Error removing document: ", error);
   });
 };
-
-// export const updateReservations = async (user: User) => {
-//   const readReservations = async (user: User) => {
-//     const reservationsRef = collection(db, "users", user.uid, "reservations");
-//     const reservations: Reservation[] = [];
-//     processReservationQuerySnapshot(reservationsRef).then((reservations) => {
-//       reservations.push(...reservations);
-//     });
-//     return reservations;
-//   };
-
-//   await readReservations(user).then(async (reservations) => {
-//     reservations.forEach(async (reservation) => {
-//       await saveReservationDb(user, reservation);
-//     });
-//   });
-// };
