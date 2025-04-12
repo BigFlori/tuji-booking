@@ -15,15 +15,64 @@ import GridActionsCellEdit from "../GridActionsCell/GridActionsCellEdit";
 import GridActionsCellDelete from "../GridActionsCell/GridActionsCellDelete";
 import { huHU as gridHuHu } from "@mui/x-data-grid";
 import { useRouter } from "next/router";
-import { Theme, useMediaQuery, Button, Box, alpha, useTheme, Tooltip, IconButton, Typography } from "@mui/material";
+import { Theme, useMediaQuery, Button, Box, alpha, useTheme, Tooltip, IconButton, Typography, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AnimatedModal from "../Modal/AnimatedModal";
 import EditClientApollo from "@/components/Forms/edit-client/EditClientApollo";
 import Client from "@/models/client-model";
 import { v4 as uuidv4 } from "uuid";
 import { useSnack } from "@/hooks/useSnack";
+
+// Ha nincs ügyfél, akkor megjelenít egy üzenetet és egy gombot új ügyfél hozzáadásához
+function NoRowsOverlay({ onAddClick }: { onAddClick: () => void }) {
+  const theme = useTheme();
+  
+  return (
+    <Stack
+      height="100%"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        p: 4,
+        backgroundColor: alpha(theme.palette.background.paper, 0.5),
+      }}
+    >
+      <Box
+        sx={{
+          textAlign: "center",
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: theme.shadows[1],
+          maxWidth: 450,
+        }}
+      >
+        <Typography variant="h6" color="text.primary" gutterBottom>
+          Nincsenek ügyfelek
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Jelenleg nincsenek ügyfelek a rendszerben. Kattints az alábbi gombra új ügyfél hozzáadásához.
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddCircleOutlineIcon />}
+          onClick={onAddClick}
+          sx={{
+            bgcolor: theme.palette.primary.main,
+            "&:hover": {
+              bgcolor: alpha(theme.palette.primary.main, 0.8),
+            },
+          }}
+        >
+          Új ügyfél hozzáadása
+        </Button>
+      </Box>
+    </Stack>
+  );
+}
 
 const ClientDataGrid = () => {
   const router = useRouter();
@@ -113,6 +162,10 @@ const ClientDataGrid = () => {
     setPaginationModel(newModel);
   };
 
+  const handleAddClientClick = () => {
+    setModalOpen(true);
+  };
+
   let columns: GridColDef[] = [];
 
   if (isMobile) {
@@ -182,27 +235,7 @@ const ClientDataGrid = () => {
                 minWidth: { md: 300 },
               }}
             />
-            <Tooltip
-              title={
-                <Box sx={{ p: 1 }}>
-                  <Typography variant="body2" fontWeight="medium" sx={{ mb: 1 }}>
-                    Keresés a következők alapján:
-                  </Typography>
-                  <ul style={{ paddingLeft: "16px", margin: 0 }}>
-                    <li>Név</li>
-                    <li>Telefonszám</li>
-                    <li>Email cím</li>
-                    <li>Lakcím</li>
-                  </ul>
-                </Box>
-              }
-              arrow
-              placement="bottom-start"
-            >
-              <IconButton size="small" sx={{ ml: 1, position: "absolute", right: 8 }}>
-                <HelpOutlineIcon fontSize="small" color="action" />
-              </IconButton>
-            </Tooltip>
+            
           </Box>
 
           <Button
@@ -222,9 +255,11 @@ const ClientDataGrid = () => {
           </Button>
         </Box>
 
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "flex-end", mt: 2 }}>
-          <GridPagination />
-        </Box>
+        {rows.length > 0 && (
+          <Box sx={{ width: "100%", display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <GridPagination />
+          </Box>
+        )}
       </GridToolbarContainer>
     );
   }
@@ -237,6 +272,7 @@ const ClientDataGrid = () => {
         slots={{
           toolbar: ClientGridToolbar,
           pagination: GridPagination,
+          noRowsOverlay: () => <NoRowsOverlay onAddClick={handleAddClientClick} />,
         }}
         localeText={{ ...gridHuHu.components.MuiDataGrid.defaultProps.localeText }}
         disableColumnMenu
@@ -246,6 +282,11 @@ const ClientDataGrid = () => {
         onPaginationModelChange={handlePaginationModelChange}
         pageSizeOptions={[5, 10, 20]}
         pagination
+        sx={{
+          '& .MuiDataGrid-virtualScroller': {
+            minHeight: rows.length > 0 ? 'auto' : 400,
+          },
+        }}
       />
       <AnimatedModal open={modalOpen} onClose={() => setModalOpen(false)}>
         <EditClientApollo onClose={() => setModalOpen(false)} client={emptyClient} onSubmit={handleCreateClient} />
