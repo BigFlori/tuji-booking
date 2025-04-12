@@ -29,7 +29,7 @@ import { ClientContext } from "@/store/client-context";
 import { ReservationContext } from "@/store/reservation-context";
 import { GroupContext } from "@/store/group-context";
 import { useIsDevMode } from "@/store/dev-context";
-import { normalizeText } from "@/utils/helpers";
+import { formatCurrency, normalizeText } from "@/utils/helpers";
 import ClientSearch from "@/components/ClientSearch/ClientSearch";
 import ClientSection from "@/components/ClientSearch/ClientSection";
 import Reservation from "@/models/reservation/reservation-model";
@@ -474,7 +474,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
 
           <Typography variant="body1" fontWeight="500" marginLeft={1}>
             Összesítve: {summaryPrice > 0 ? "+" : ""}
-            {summaryPrice.toLocaleString("hu-HU")} Ft
+            {formatCurrency(summaryPrice)}
           </Typography>
 
           <Controller
