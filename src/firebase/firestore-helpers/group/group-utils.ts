@@ -16,7 +16,6 @@ export const readGroups = async (user: User) => {
         groups.push(group);
       });
     });
-    console.log(`fetched groups: ${groups.length}`);
     
     return groups;
   };
