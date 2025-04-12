@@ -24,9 +24,18 @@ const EditClientApollo: React.FC<IEditClientApolloProps> = (props) => {
       address: data.address,
     };
 
-    clientCtx.updateClient(props.client.id, modifiedClient);
-    showSnackbar("Ügyfél módosítva!", "success");
-    props.onSubmit && props.onSubmit(modifiedClient);
+    // Ellenőrizzük, hogy új ügyfélről van-e szó (nincs még az adatbázisban)
+    const isNewClient = !clientCtx.clients.find(c => c.id === props.client.id);
+
+    if (isNewClient) {
+      // Új ügyfél létrehozása esetén nem hívjuk meg a clientCtx.updateClient függvényt
+      props.onSubmit && props.onSubmit(modifiedClient);
+    } else {
+      clientCtx.updateClient(props.client.id, modifiedClient);
+      showSnackbar("Ügyfél módosítva!", "success");
+      props.onSubmit && props.onSubmit(modifiedClient);
+    }
+    
     props.onClose();
   };
 
@@ -50,6 +59,7 @@ const EditClientApollo: React.FC<IEditClientApolloProps> = (props) => {
       onClose={props.onClose}
       onDelete={deleteHandler}
       clientId={props.client.id}
+      isNewClient={!clientCtx.clients.find(c => c.id === props.client.id)}
     />
   );
 };

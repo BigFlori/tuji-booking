@@ -1,38 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tuji Booking
 
-## Getting Started
+A modern booking and reservation management system built with Next.js, Firebase, and Material UI.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+- 📅 Interactive calendar view for managing reservations
+- 👥 Client management system
+- 🏢 Resource group management (cars, houses, drivers, etc.)
+- 💰 Financial reporting and analytics
+- 🔐 User authentication with email/password and Google
+- 🌓 Light/dark theme support
+- 📱 Responsive design for desktop and mobile
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js, React, TypeScript
+- **UI Framework**: Material UI
+- **State Management**: React Context API
+- **Data Fetching**: React Query
+- **Authentication**: Firebase Auth
+- **Database**: Firestore
+- **Animation**: Framer Motion
+- **Date Handling**: Day.js
+- **Form Handling**: React Hook Form, Yup
+
+## 📋 Main Components
+
+- **Calendar**: Interactive reservation calendar with drag capabilities
+- **Client Management**: Add, edit, search clients
+- **Reservation Forms**: Create and edit bookings
+- **Group Management**: Manage resource groups
+- **Financial Reports**: Generate reports for specific periods
+- **User Authentication**: Login, registration, password reset
+
+## 📐 Project Structure
+
+```
+src/
+├── components/     # React components
+├── firebase/       # Firebase config and helpers
+├── hooks/          # Custom React hooks
+├── models/         # TypeScript interfaces and types
+├── pages/          # Next.js pages
+├── store/          # Context providers
+├── themes/         # Material UI themes
+└── utils/          # Utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📄 License
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project is licensed under the MIT License - see the LICENSE file for details.
