@@ -2,11 +2,11 @@ import { Dayjs } from "dayjs";
 
 export default interface Report {
   id: string;
-  title: string;
   createdAt: Dayjs;
   period: Period;
   groups: GroupSummaryDictionary;
   summary: Summary;
+  selectedGroupIds?: string[];
 }
 
 interface Period {
@@ -26,4 +26,3 @@ export interface Summary {
 export interface GroupSummaryDictionary {
   [key: string]: Summary;
 }
-
