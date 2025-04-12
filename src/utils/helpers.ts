@@ -26,6 +26,15 @@ export const normalizeText = (text: string): string => {
     .trim();
 };
 
+export const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat("hu-HU", {
+    style: "currency",
+    currency: "HUF",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
 //DEBUG
 export const sumDuplicates = (array: string[]): number => {
   const countMap: { [key: string]: number } = {};

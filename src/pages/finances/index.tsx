@@ -10,7 +10,6 @@ import {
   CardContent, 
   alpha, 
   useTheme,
-  Divider
 } from "@mui/material";
 import { NextPage } from "next";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -18,9 +17,21 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import CreateReport from "@/components/FinanceReport/CreateReport/CreateReport";
 import ReportList from "@/components/FinanceReport/ReportList/ReportList";
+import { useState, useRef } from "react";
 
 const Finances: NextPage = () => {
   const theme = useTheme();
+  const createReportRef = useRef<HTMLDivElement>(null);
+  
+  // Function to scroll to create report section
+  const scrollToCreateReport = () => {
+    if (createReportRef.current) {
+      createReportRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   return (
     <ReportContextProvider>
@@ -33,6 +44,7 @@ const Finances: NextPage = () => {
         }}
       >
         <Container maxWidth="lg" component="main">
+          {/* Header */}
           <Paper 
             elevation={0}
             sx={{ 
@@ -52,6 +64,7 @@ const Finances: NextPage = () => {
             </Typography>
           </Paper>
 
+          {/* New Report Card */}
           <Card 
             sx={{ 
               mb: 4, 
@@ -59,6 +72,7 @@ const Finances: NextPage = () => {
               overflow: 'visible',
               boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.07)}`
             }}
+            ref={createReportRef}
           >
             <Box 
               sx={{ 
@@ -78,6 +92,7 @@ const Finances: NextPage = () => {
             </CardContent>
           </Card>
 
+          {/* Reports List Card */}
           <Card 
             sx={{ 
               borderRadius: 2,
@@ -99,7 +114,7 @@ const Finances: NextPage = () => {
               </Typography>
             </Box>
             <CardContent>
-              <ReportList />
+              <ReportList onCreateReport={scrollToCreateReport} />
             </CardContent>
           </Card>
         </Container>

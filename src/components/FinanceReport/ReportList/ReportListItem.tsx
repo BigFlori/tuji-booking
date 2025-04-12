@@ -12,6 +12,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Report from "@/models/report-model";
 import ReportTable from "./ReportTable";
 import { useGroupContext } from "@/store/group-context";
+import { formatCurrency } from "@/utils/helpers";
 
 interface IReportListItemProps {
   report: Report;
@@ -21,19 +22,11 @@ const ReportListItem: React.FC<IReportListItemProps> = (props: IReportListItemPr
   const theme = useTheme();
   const groupCtx = useGroupContext();
   
-  // Számoljuk ki, hogy a jelentés hány csoportot tartalmaz
   const selectedGroupCount = props.report.selectedGroupIds?.length || groupCtx.groups.length;
   const totalGroupCount = groupCtx.groups.length;
   
-  // Formázott egyenleg a summaryból
-  const formattedBalance = new Intl.NumberFormat('hu-HU', {
-    style: 'currency',
-    currency: 'HUF',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(props.report.summary.balance);
+  const formattedBalance = formatCurrency(props.report.summary.balance);
 
-  // Dátum formázás
   const formattedDateRange = `${props.report.period.from.format("YYYY.MM.DD")} — ${props.report.period.to.format("YYYY.MM.DD")}`;
 
   return (

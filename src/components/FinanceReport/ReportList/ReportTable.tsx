@@ -2,6 +2,7 @@ import StateDot from "@/components/UI/StateDot";
 import Report from "@/models/report-model";
 import PaymentState from "@/models/reservation/payment-state-model";
 import { useGroupContext } from "@/store/group-context";
+import { formatCurrency } from "@/utils/helpers";
 import { 
   Table, 
   TableBody, 
@@ -30,15 +31,6 @@ function createData(
 ) {
   return { groupId, groupTitle, notPaid, depositPaid, fullPaid, blocked, expenses, balance };
 }
-
-const formatCurrency = (value: number) => {
-  return value.toLocaleString("hu-HU", {
-    style: "currency",
-    currency: "HUF",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-};
 
 const ReportTable: React.FC<IReportTableProps> = (props: IReportTableProps) => {
   const groupCtx = useGroupContext();

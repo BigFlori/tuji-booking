@@ -79,7 +79,6 @@ const CreateReport: React.FC = () => {
     setError(null);
 
     try {
-      // Az adatbázis lekérdezés már a kiválasztott csoportokra szűrve történik
       const reservations = await fetchReservationsInPeriod(
         user, 
         startDate!, 
@@ -109,7 +108,6 @@ const CreateReport: React.FC = () => {
         };
       });
 
-      // A rezervációkat feldolgozzuk - ezek már csak a kiválasztott csoportokat tartalmazzák
       reservations.forEach((reservation) => {
         if (reservation.paymentState === PaymentState.CANCELLED) {
           return;
