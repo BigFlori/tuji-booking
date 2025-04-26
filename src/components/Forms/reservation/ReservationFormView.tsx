@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { IEditReservationFormModel } from "./EditReservationLogic";
+import { IReservationFormModel } from "./ReservationFormTypes";
 import { SubmitHandler, UseFormReturn, Controller } from "react-hook-form";
 import Client from "@/models/client-model";
 import Group from "@/models/group/group-model";
@@ -30,22 +30,13 @@ import { useClientContext } from "@/store/client-context";
 import { useReservationContext } from "@/store/reservation-context";
 import { useGroupContext } from "@/store/group-context";
 import ClientSection from "@/components/ClientSearch/ClientSection";
+import { IReservationFormViewProps } from "./ReservationFormTypes";
 
-interface IEditReservationViewProps {
-  form: UseFormReturn<IEditReservationFormModel>;
-  onSubmit: SubmitHandler<IEditReservationFormModel>;
-  onClose: () => void;
-  onDelete: () => void;
-  clientOptions: IClientOption[];
-  reservation: Reservation;
-  disableDateChange?: boolean;
-  disableGroupChange?: boolean;
-}
-
-const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
+const ReservationFormView: React.FC<IReservationFormViewProps> = (props) => {
   const clientCtx = useClientContext();
   const reservationCtx = useReservationContext();
   const groupCtx = useGroupContext();
+  const isDevMode = useIsDevMode();
 
   const {
     handleSubmit,
@@ -77,9 +68,13 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
 
   const [summaryPrice, setSummaryPrice] = useState<number>(getValues("fullPrice") - getValues("expenses") || 0);
   const [payToGo, setPayToGo] = useState<number>(calculatePayToGo());
-  const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(groupCtx.getGroup(props.reservation.groupId));
+  const [selectedGroup, setSelectedGroup] = useState<Group | undefined>(
+    props.mode === 'edit' && props.reservation 
+    ? groupCtx.getGroup(props.reservation.groupId) 
+    : undefined
+  );
 
-  //Ha a kiválasztott ügyfél megváltozik, akkor frissíti az ügyfél adatait
+  //Ügyfél adatainak frissítése
   const updateClientData = (client?: Client) => {
     if (client && client.id !== "not-selected") {
       setValue("clientName", client.name);
@@ -95,30 +90,33 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
     }
   };
 
-  // A meglévő logikából felhasználjuk ezt:
+  // Csak Edit módban használjuk
   const reservationClient = useMemo(() => {
-    const client = clientCtx.getClientById(props.reservation.clientId);
-    return client ? client : { id: "not-selected", name: "" };
-  }, [clientCtx.clients, props.reservation.clientId]);
+    if (props.mode === 'edit' && props.reservation) {
+      const client = clientCtx.getClientById(props.reservation.clientId);
+      return client ? client : { id: "not-selected", name: "" };
+    }
+    return { id: "not-selected", name: "" };
+  }, [clientCtx.clients, props.reservation, props.mode]);
 
-  // Kezdeti kiválasztott ügyfél
+  // Kezdeti kiválasztott ügyfél - csak Edit módban használjuk
   const initialSelectedClient = useMemo(() => {
-    return clientToOption(reservationClient);
-  }, [reservationClient]);
+    return props.mode === 'edit' ? clientToOption(reservationClient) : NOT_SELECTED_CLIENT_OPTION;
+  }, [reservationClient, props.mode]);
 
   const startDate = watch("startDate");
 
   return (
     <Box component="form" autoComplete="off" noValidate onSubmit={handleSubmit(props.onSubmit)}>
       <ModalControls
-        title="Foglalás szerkesztése"
+        title={props.mode === 'create' ? "Új foglalás" : "Foglalás szerkesztése"}
         onClose={props.onClose}
-        onDelete={props.onDelete}
-        isEdit
+        onDelete={props.mode === 'edit' ? props.onDelete : undefined}
+        isEdit={props.mode === 'edit'}
         saveButtonProps={{ type: "submit" }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Typography variant="body1" sx={{ fontWeight: "500" }}>
+          <Typography variant="body1" fontWeight="500">
             Alapinformációk
           </Typography>
           <FormControl>
@@ -174,10 +172,12 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
                       required: true,
                     },
                   }}
-                  shouldDisableDate={(day) =>
-                    !selectedGroup ||
-                    reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, props.reservation.id)
-                  }
+                  shouldDisableDate={(day) => {
+                    if (!selectedGroup) return true;
+                    // Edit módban ki kell zárni a jelenlegi foglalást
+                    const reservationId = props.mode === 'edit' && props.reservation ? props.reservation.id : undefined;
+                    return reservationCtx.shouldDateBeDisabled(day, "startDate", selectedGroup.id, reservationId);
+                  }}
                   value={field.value}
                   inputRef={field.ref}
                   onChange={(date) => {
@@ -226,18 +226,20 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
                     if (!selectedGroup) return true;
                     const latestReservation = reservationCtx.getLatestReservation(selectedGroup.id);
                     const nextReservation = reservationCtx.getNextReservation(startDate, selectedGroup.id);
+                    const reservationId = props.mode === 'edit' && props.reservation ? props.reservation.id : undefined;
+
                     return (
                       dayjs(day).isBefore(startDate) ||
                       dayjs(day).isSame(startDate) ||
-                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id, props.reservation.id) ||
+                      reservationCtx.shouldDateBeDisabled(day, "endDate", selectedGroup.id, reservationId) ||
                       (nextReservation &&
-                        nextReservation.id !== props.reservation.id &&
+                        nextReservation.id !== reservationId &&
                         day.isAfter(nextReservation?.startDate)) ||
                       (day.isAfter(latestReservation?.endDate) && //Ha a vizsgált nap a legutolsó foglalás után van
                         !day.isAfter(field.value) && //Engedélyezi a kiválasztott nap után lévő napokat
                         !day.isSame(field.value) && //Engedélyezi a kiválasztott napot
                         !day.isBefore(field.value) && //Engedélyezi a kiválasztott nap előtti napokat
-                        latestReservation?.id !== props.reservation.id && //Kizárja a jelenlegi foglalást
+                        latestReservation?.id !== reservationId && //Kizárja a jelenlegi foglalást
                         latestReservation?.groupId === selectedGroup.id)
                     );
                   }}
@@ -263,7 +265,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
           </Box>
 
           <FormControl sx={{ width: "fit-content" }}>
-            <FormLabel id="reservation-payment-state-label" required error={!!errors.paymentState}>
+            <FormLabel id="paymentState" required error={!!errors.paymentState}>
               Foglalás állapota
             </FormLabel>
             <Controller
@@ -362,6 +364,7 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
               />
             )}
           />
+
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Controller
               name="cautionPrice"
@@ -469,10 +472,12 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             )}
           />
 
-          <Typography variant="body1" fontWeight="500" marginLeft={1}>
-            Összesítve: {summaryPrice > 0 ? "+" : ""}
-            {formatCurrency(summaryPrice)}
-          </Typography>
+          {props.mode === 'edit' && (
+            <Typography variant="body1" fontWeight="500" marginLeft={1}>
+              Összesítve: {summaryPrice > 0 ? "+" : ""}
+              {formatCurrency(summaryPrice)}
+            </Typography>
+          )}
 
           <Controller
             name="comment"
@@ -497,11 +502,13 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
             getValues={getValues}
             errors={errors}
             clientOptions={props.clientOptions}
-            defaultMode="edit"
-            initialSelectedClient={initialSelectedClient}
+            defaultMode={props.mode === 'edit' ? "edit" : "search"}
+            initialSelectedClient={props.mode === 'edit' ? initialSelectedClient : undefined}
           />
         </Box>
-        {useIsDevMode() && (
+        
+        {/* Dev mód extra információk - csak Edit módban */}
+        {isDevMode && props.mode === 'edit' && props.reservation && (
           <Box sx={{ display: "flex", gap: 1, marginBlock: 2, flexDirection: "column" }}>
             <TextField id="reservationId" label="Foglalás azonosító" type="text" value={props.reservation.id} disabled />
             <TextField
@@ -532,4 +539,4 @@ const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
   );
 };
 
-export default EditReservationView;
+export default ReservationFormView;

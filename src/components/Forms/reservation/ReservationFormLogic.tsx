@@ -1,54 +1,24 @@
 import dayjs from "dayjs";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { CLIENT_OPTION_SCHEMA, IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
-import EditReservationView from "./EditReservationView";
+import ReservationFormView from "./ReservationFormView";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMemo } from "react";
-import { IEditReservationFormModelWithEmptyDate } from "./EditReservationApollo";
-import Reservation from "@/models/reservation/reservation-model";
+import { IReservationFormLogicProps, IReservationFormModel } from "./ReservationFormTypes";
 import { useReservationContext } from "@/store/reservation-context";
 import { useClientContext } from "@/store/client-context";
-
-interface IEditReservationLogicProps {
-  defaultValues: IEditReservationFormModelWithEmptyDate;
-  onSubmit: SubmitHandler<IEditReservationFormModel>;
-  onClose: () => void;
-  onDelete: () => void;
-  reservation: Reservation;
-  disableDateChange?: boolean;
-  disableGroupChange?: boolean;
-}
-
-export interface IEditReservationFormModel {
-  groupId: string;
-  startDate: dayjs.Dayjs;
-  startTime?: dayjs.Dayjs;
-  endDate: dayjs.Dayjs;
-  endTime?: dayjs.Dayjs;
-  paymentState: string;
-  fullPrice: number;
-  depositPrice: number;
-  cautionPrice: number;
-  cautionReturned: boolean;
-  expenses: number;
-  comment?: string;
-  selectedClientOption: IClientOption;
-  clientName?: string;
-  clientPhone?: string;
-  clientEmail?: string;
-  clientAddress?: string;
-}
 
 const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dátum", (value) => {
   if (!value) return true;
   return dayjs.isDayjs(value);
 });
 
-const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
+const ReservationFormLogic: React.FC<IReservationFormLogicProps> = (props) => {
   const reservationCtx = useReservationContext();
   const clientCtx = useClientContext();
-
+  
+  // Dátum validációs függvények
   const canReserveEndDate = yup
     .mixed<dayjs.Dayjs>()
     .test("canReserveEndDate", "Ebben az időszakban van foglalás", function test(value) {
@@ -61,7 +31,9 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       }
       startDate = dayjs(startDate);
 
-      return reservationCtx.canReserve(startDate, value, this.parent.groupId, props.reservation.id);
+      // Edit mód esetén kizárjuk a saját foglalást az ellenőrzésből
+      const reservationId = props.mode === 'edit' && props.reservation ? props.reservation.id : undefined;
+      return reservationCtx.canReserve(startDate, value, this.parent.groupId, reservationId);
     });
 
   const canReserveStartDate = yup
@@ -76,10 +48,13 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       }
       endDate = dayjs(endDate);
 
-      return reservationCtx.canReserve(value, endDate, this.parent.groupId, props.reservation.id);
+      // Edit mód esetén kizárjuk a saját foglalást az ellenőrzésből
+      const reservationId = props.mode === 'edit' && props.reservation ? props.reservation.id : undefined;
+      return reservationCtx.canReserve(value, endDate, this.parent.groupId, reservationId);
     });
 
-  const validationSchema: yup.ObjectSchema<IEditReservationFormModel> = yup.object().shape({
+  // Validációs schema
+  const validationSchema: yup.ObjectSchema<IReservationFormModel> = yup.object().shape({
     groupId: yup.string().required("Csoport megadása kötelező"),
     startDate: canReserveStartDate.required("Kezdő dátum megadása kötelező"),
     startTime: dayjsSchema.optional(),
@@ -108,13 +83,14 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
       .required("Költségek megadása kötelező")
       .min(0, "Költségek nem lehet negatív"),
     comment: yup.string().optional(),
-    selectedClientOption: CLIENT_OPTION_SCHEMA.required(),
+    selectedClientOption: CLIENT_OPTION_SCHEMA.required("Ügyfél megadása kötelező"),
     clientName: yup.string().optional(),
     clientPhone: yup.string().optional(),
-    clientEmail: yup.string().email().optional(),
+    clientEmail: yup.string().email("Valós email címet adj meg").optional(),
     clientAddress: yup.string().optional(),
   });
 
+  // Ügyfél opciók összeállítása
   const clientOptions = useMemo<IClientOption[]>(() => {
     const options = clientCtx.clients.map((client) => {
       return {
@@ -125,13 +101,14 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
     return [NOT_SELECTED_CLIENT_OPTION, ...options];
   }, [clientCtx.clients]);
 
-  const form = useForm<IEditReservationFormModel>({
-    defaultValues: props.defaultValues,
+  const form = useForm<IReservationFormModel>({
+    defaultValues: props.defaultValues as IReservationFormModel,
     resolver: yupResolver(validationSchema),
   });
 
   return (
-    <EditReservationView
+    <ReservationFormView
+      mode={props.mode}
       form={form}
       onSubmit={props.onSubmit}
       onClose={props.onClose}
@@ -144,4 +121,4 @@ const EditReservationLogic: React.FC<IEditReservationLogicProps> = (props) => {
   );
 };
 
-export default EditReservationLogic;
+export default ReservationFormLogic;

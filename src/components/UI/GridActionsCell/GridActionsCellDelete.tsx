@@ -1,7 +1,7 @@
 import { GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useClientContext } from "@/store/client-context";
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -10,18 +10,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Slide,
-  TextField,
 } from "@mui/material";
 import { useSnack } from "@/hooks/useSnack";
 import ReservationCard from "../Card/ReservationCard";
 import { useReservationContext } from "@/store/reservation-context";
 import AnimatedModal from "../Modal/AnimatedModal";
-import EditReservationApollo from "@/components/Forms/edit-reservation/EditReservationApollo";
 import Reservation from "@/models/reservation/reservation-model";
 import { CircularProgress } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
 import Client from "@/models/client-model";
+import ReservationFormApollo from "@/components/Forms/reservation";
 
 interface GridActionsCellDeleteProps {
   params: GridRowParams<Client>;
@@ -136,7 +133,8 @@ const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
           setModalOpen(false);
         }}
       >
-        <EditReservationApollo
+        <ReservationFormApollo
+          mode="edit"
           onClose={() => {
             setModalOpen(false);
           }}
