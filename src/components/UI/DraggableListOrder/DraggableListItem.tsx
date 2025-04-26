@@ -3,13 +3,14 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { darken } from "@mui/material";
 import { Reorder, useDragControls, useMotionValue } from "framer-motion";
 import { useRaisedShadow } from "@/hooks/useRaisedShadow";
-import { grey } from "@mui/material/colors";
 import { useEffect, useRef } from "react";
 
 interface IDraggableListItemProps {
   item: { id: string; title: string };
 }
 
+// Draggable listaelem, amely lehetővé teszi a felhasználó számára, hogy áthúzza az elemeket
+// A listaelem tartalmaz egy címet és egy fogantyút a húzáshoz
 const DraggableListItem: React.FC<IDraggableListItemProps> = (props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);

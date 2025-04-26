@@ -7,12 +7,12 @@ import {
 } from "../client-option/clientOptionHelper";
 import dayjs from "dayjs";
 import * as yup from "yup";
-import { useContext, useMemo } from "react";
-import { ReservationContext } from "@/store/reservation-context";
-import { ClientContext } from "@/store/client-context";
+import { useMemo } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CreateReservationView from "./CreateReservationView";
 import { ICreateReservationFormModelWithEmptyDate } from "./CreateReservationApollo";
+import { useReservationContext } from "@/store/reservation-context";
+import { useClientContext } from "@/store/client-context";
 
 interface ICreateReservationLogicProps {
   defaultValues: ICreateReservationFormModelWithEmptyDate;
@@ -46,8 +46,8 @@ const dayjsSchema = yup.mixed<dayjs.Dayjs>().test("isDayjs", "Érvénytelen dát
 });
 
 const CreateReservationLogic: React.FC<ICreateReservationLogicProps> = (props) => {
-  const reservationCtx = useContext(ReservationContext);
-  const clientCtx = useContext(ClientContext);
+  const reservationCtx = useReservationContext();
+  const clientCtx = useClientContext();
 
   const canReserveEndDate = yup
     .mixed<dayjs.Dayjs>()

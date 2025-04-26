@@ -2,14 +2,14 @@ import Reservation from "@/models/reservation/reservation-model";
 import EditReservationLogic, { IEditReservationFormModel } from "./EditReservationLogic";
 import dayjs from "dayjs";
 import { clientToOption } from "../client-option/clientOptionHelper";
-import { useContext, useMemo } from "react";
-import { ClientContext } from "@/store/client-context";
+import { useMemo } from "react";
 import { SubmitHandler } from "react-hook-form";
-import { ReservationContext } from "@/store/reservation-context";
 import PaymentState from "@/models/reservation/payment-state-model";
 import Client from "@/models/client-model";
 import { v4 as uuidv4 } from "uuid";
 import { useSnack } from "@/hooks/useSnack";
+import { useReservationContext } from "@/store/reservation-context";
+import { useClientContext } from "@/store/client-context";
 
 interface IEditReservationApolloProps {
   onClose: () => void;
@@ -28,8 +28,8 @@ export type IEditReservationFormModelWithEmptyDate =
     };
 
 const EditReservationApollo: React.FC<IEditReservationApolloProps> = (props) => {
-  const clientCtx = useContext(ClientContext);
-  const reservationCtx = useContext(ReservationContext);
+  const clientCtx = useClientContext();
+  const reservationCtx = useReservationContext();
   const showSnackbar = useSnack();
 
   //Foglalás módosítása

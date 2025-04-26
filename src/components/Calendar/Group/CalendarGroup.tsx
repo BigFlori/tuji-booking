@@ -1,9 +1,9 @@
-import { useMemo, useContext, useRef } from "react";
+import { useMemo, useRef } from "react";
 import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import { useIntersectionObserver } from "usehooks-ts";
 import CalendarReservation from "../CalendarReservation";
-import { ReservationContext } from "@/store/reservation-context";
+import { useReservationContext } from "@/store/reservation-context";
 import CalendarItemContainer from "../CalendarItemContainer";
 import { CALENDAR_ITEM_HEIGHT } from "@/utils/config";
 
@@ -16,8 +16,9 @@ interface ICalendarGroupProps {
 
 //Minden hónapban renderelődik és a csoportok sorait fogja össze
 const CalendarGroup: React.FC<ICalendarGroupProps> = (props: ICalendarGroupProps) => {
-  const reservationCtx = useContext(ReservationContext);
+  const reservationCtx = useReservationContext();
 
+  // Csak akkor rendereljük a cellákát, ha a komponens látható
   const ref = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserver(ref, {});
   const isVisible = !!entry?.isIntersecting;
@@ -38,10 +39,12 @@ const CalendarGroup: React.FC<ICalendarGroupProps> = (props: ICalendarGroupProps
     return items;
   }, [props.monthDate, props.isLastGroup]);
 
+  // Az aktuális csoporthoz és hónaphoz tartozó foglalásokat generálja
   const generateReservations = useMemo(() => {
     const items = [];
     for (let i = 0; i < reservationCtx.reservations.length; i++) {
       const reservation = reservationCtx.reservations[i];
+      // Éveken átnyúló foglalás kezelése
       const isOverflowing =
         reservation.groupId === props.groupId && reservation.startDate.get("year") < reservation.endDate.get("year");
 

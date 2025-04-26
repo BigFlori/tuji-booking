@@ -17,13 +17,13 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import CreateReport from "@/components/FinanceReport/CreateReport/CreateReport";
 import ReportList from "@/components/FinanceReport/ReportList/ReportList";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 
 const Finances: NextPage = () => {
   const theme = useTheme();
   const createReportRef = useRef<HTMLDivElement>(null);
   
-  // Function to scroll to create report section
+  // Új jelentés szekcióra görgetés
   const scrollToCreateReport = () => {
     if (createReportRef.current) {
       createReportRef.current.scrollIntoView({ 

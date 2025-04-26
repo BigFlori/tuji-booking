@@ -64,9 +64,6 @@ const ClientSearch: React.FC<ClientSearchProps> = ({
       setIsLoading(true);
 
       try {
-        // Ezt szimuláltan késleltetjük, hogy mutassuk a loading állapotot
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
         const normalizedInput = normalizeText(inputValue);
         const filtered = options.filter((option) => normalizeText(option.label).includes(normalizedInput)).slice(0, 50); // Maximum 50 találat a teljesítmény miatt
 

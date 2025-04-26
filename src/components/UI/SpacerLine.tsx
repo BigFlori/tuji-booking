@@ -7,6 +7,8 @@ interface ISpacerLineProps {
   sx?: SxProps;
 }
 
+// Egy elválasztó vonalat ábrázoló komponens, amely a szülő elem szélességét használja
+// és a gyerek elemeket középre helyezi. A vonal színe testreszabható.
 const SpacerLine: React.FC<ISpacerLineProps> = ({ children, color, sx }) => {
   const styles: SxProps = {
     flexGrow: 1,

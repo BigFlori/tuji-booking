@@ -32,7 +32,7 @@ const ReportList: React.FC<ReportListProps> = ({ onCreateReport }) => {
 
   const totalGroupCount = groupCtx.groups.length;
   
-  // Sort reports by creation date (newest first)
+  // Jelentések rendezése létrehozás dátuma szerint (legújabb elöl)
   const sortedReports = useMemo(() => {
     return [...reportCtx.reports].sort((a, b) => 
       b.createdAt.unix() - a.createdAt.unix()
@@ -49,12 +49,12 @@ const ReportList: React.FC<ReportListProps> = ({ onCreateReport }) => {
     }
   };
   
-  // Handler for viewing report details
+  // Jelentés részleteinek megjelenítése
   const handleViewDetails = (report: Report) => {
     setSelectedReport(report);
   };
   
-  // Handler for deleting a report
+  // Jelentés törlése
   const handleDeleteReport = (report: Report) => {
     reportCtx.removeReport(report.id);
     if (selectedReport?.id === report.id) {
@@ -62,14 +62,13 @@ const ReportList: React.FC<ReportListProps> = ({ onCreateReport }) => {
     }
   };
   
-  // If there are no reports, show the empty state
+  // Ha nincs jelentés, akkor üres állapotot jelenítünk meg
   if (reportCtx.reports.length === 0) {
     return <EmptyReportState onCreateReport={onCreateReport} />;
   }
   
   return (
     <Box>
-      {/* Only view mode toggle control */}
       <Box 
         sx={{ 
           display: 'flex', 
@@ -93,9 +92,8 @@ const ReportList: React.FC<ReportListProps> = ({ onCreateReport }) => {
         </ToggleButtonGroup>
       </Box>
       
-      {/* Report content based on view mode */}
       {viewMode === 'card' ? (
-        // Card view
+        // Kártya nézet
         <Grid container spacing={3}>
           {sortedReports.map((report) => (
             <Grid item xs={12} sm={6} md={4} key={report.id}>
@@ -116,7 +114,7 @@ const ReportList: React.FC<ReportListProps> = ({ onCreateReport }) => {
           ))}
         </Grid>
       ) : (
-        // List view
+        // Lista nézet
         <List sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
           {sortedReports.map((report, index) => (
             <React.Fragment key={report.id}>

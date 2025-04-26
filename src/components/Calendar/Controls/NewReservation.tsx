@@ -4,6 +4,7 @@ import { useState } from "react";
 import AnimatedModal from "@/components/UI/Modal/AnimatedModal";
 import CreateReservationApollo from "@/components/Forms/create-reservation/CreateReservationApollo";
 
+// Új foglalás létrehozó gomb, amely modális ablakot nyit az űrlappal
 const NewReservation: React.FC = () => {
   const [modalOpened, setModalOpened] = useState(false);
 

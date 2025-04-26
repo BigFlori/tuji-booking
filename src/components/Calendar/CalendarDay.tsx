@@ -8,6 +8,9 @@ interface ICalendarDayProps {
   isLast?: boolean;
 };
 
+/**
+ * Egy naptári napot megjelenítő komponens, amely a nap nevét és számát formázva jeleníti meg
+ */
 const CalendarDay: React.FC<ICalendarDayProps> = (props: ICalendarDayProps) => {
   const formattedDateName = props.date.format("ddd");
   const formattedDateDay = props.date.format("DD");

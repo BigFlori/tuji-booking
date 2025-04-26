@@ -19,7 +19,7 @@ import { useReservationContext } from "@/store/reservation-context";
 import AnimatedModal from "../Modal/AnimatedModal";
 import EditReservationApollo from "@/components/Forms/edit-reservation/EditReservationApollo";
 import Reservation from "@/models/reservation/reservation-model";
-import { CircularProgress } from "@mui/material"; // Importáljuk a CircularProgress-t
+import { CircularProgress } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import Client from "@/models/client-model";
 
@@ -27,14 +27,9 @@ interface GridActionsCellDeleteProps {
   params: GridRowParams<Client>;
 }
 
-// Transition komponens létrehozása
-const Transition = forwardRef(function Transition(
-  props: TransitionProps & { children: React.ReactElement },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
+// Ügyfél törlésére szolgáló gomb a táblázatban
+// Betölti a kapcsolódó foglalásokat, és lehetőséget ad azok törlésére is
+// A törlés megerősítést igényel
 const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
   const client = props.params.row;
   const clientsCtx = useClientContext();
@@ -52,9 +47,9 @@ const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
   };
 
   const handleDialogOpen = async () => {
-    setLoading(true); // Indítjuk a betöltést
+    setLoading(true);
     await updateRelatedReservations();
-    setLoading(false); // Befejezzük a betöltést
+    setLoading(false);
     setOpenDialog(true);
   };
 
@@ -102,7 +97,7 @@ const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
         <DialogTitle>Biztosan törölni szeretnéd?</DialogTitle>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", padding: 2 }}>
-            <CircularProgress /> {/* Betöltés közben megjelenítjük a spinnert */}
+            <CircularProgress />
           </Box>
         ) : (
           relatedReservations.length !== 0 && (

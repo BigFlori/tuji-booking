@@ -43,7 +43,6 @@ const ClientSection: React.FC<ClientSectionProps> = ({
   
   const clientCtx = useClientContext();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
   // Frissítsük az állapotot, ha változik a kezdeti érték
   useEffect(() => {
@@ -187,7 +186,6 @@ const ClientSection: React.FC<ClientSectionProps> = ({
         {mode === 'new' ? 'Új ügyfél adatai' : 'Ügyfél adatai'}
       </Typography>
       
-      {/* Az eredeti űrlapmezők, nem változnak a reszponzivitással */}
       <Controller
         name="clientName"
         control={control}

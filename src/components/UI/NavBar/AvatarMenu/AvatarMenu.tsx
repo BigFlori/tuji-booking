@@ -16,6 +16,7 @@ interface IAvatarMenuProps {
   onClose: () => void;
 }
 
+// A felhasználói menü, amely a felhasználó profilképére kattintva jelenik meg
 const AvatarMenu: React.FC<IAvatarMenuProps> = (props) => {
   const user = useUser();
   const showSnackbar = useSnack();

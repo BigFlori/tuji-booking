@@ -1,11 +1,10 @@
 import Group from "@/models/group/group-model";
 import EditGroupLogic, { IEditGroupFormModel } from "./EditGroupLogic";
 import { SubmitHandler } from "react-hook-form";
-import { GroupContext } from "@/store/group-context";
-import { useContext } from "react";
 import GroupType from "@/models/group/group-type-model";
 import GroupState from "@/models/group/group-state-model";
 import { useSnack } from "@/hooks/useSnack";
+import { useGroupContext } from "@/store/group-context";
 
 interface IEditGroupApolloProps {
   onClose: () => void;
@@ -13,7 +12,7 @@ interface IEditGroupApolloProps {
 }
 
 const EditGroupApollo: React.FC<IEditGroupApolloProps> = (props) => {
-  const groupCtx = useContext(GroupContext);
+  const groupCtx = useGroupContext();
   const showSnackbar = useSnack();
 
   const submitHandler: SubmitHandler<IEditGroupFormModel> = (data) => {

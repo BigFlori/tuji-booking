@@ -8,18 +8,23 @@ interface IMonthSelectorProps {
   jumpToId: (id: string) => void;
 }
 
+// Hónapnevek létrehozása magyar lokalizációval
 const monthNames = Array.from(Array(12).keys()).map((month) => dayjs().locale("hu-hu").month(month).format("MMM"));
 
+// Hónap választó komponens, ami lehetővé teszi a felhasználónak, hogy navigáljon a naptár hónapjai között
+// Mobil nézeten legördülő menüt, asztali nézeten gombsort jelenít meg
 const MonthSelector: React.FC<IMonthSelectorProps> = (props: IMonthSelectorProps) => {
-  //950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
+  // 950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down(950));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  // Menü megnyitása
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
+  // Menü bezárása
   const handleClose = () => {
     setAnchorEl(null);
   };

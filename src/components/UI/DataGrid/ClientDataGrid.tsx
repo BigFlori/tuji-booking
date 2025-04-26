@@ -6,19 +6,16 @@ import {
   GridRowParams,
   GridToolbarContainer,
   GridToolbarQuickFilter,
-  gridClasses,
   GridSortModel,
   GridPagination,
-  GridToolbar,
 } from "@mui/x-data-grid";
 import GridActionsCellEdit from "../GridActionsCell/GridActionsCellEdit";
 import GridActionsCellDelete from "../GridActionsCell/GridActionsCellDelete";
 import { huHU as gridHuHu } from "@mui/x-data-grid";
 import { useRouter } from "next/router";
-import { Theme, useMediaQuery, Button, Box, alpha, useTheme, Tooltip, IconButton, Typography, Stack } from "@mui/material";
+import { Theme, useMediaQuery, Button, Box, alpha, useTheme, Typography, Stack } from "@mui/material";
 import { useState, useEffect } from "react";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AnimatedModal from "../Modal/AnimatedModal";
 import EditClientApollo from "@/components/Forms/edit-client/EditClientApollo";
@@ -74,6 +71,7 @@ function NoRowsOverlay({ onAddClick }: { onAddClick: () => void }) {
   );
 }
 
+// Ügyfél adatokat megjelenítő táblázat
 const ClientDataGrid = () => {
   const router = useRouter();
   const clientsCtx = useClientContext();
@@ -144,6 +142,7 @@ const ClientDataGrid = () => {
     address: "",
   };
 
+  // Ügyfél létrehozása és hozzáadása a táblázathoz
   const handleCreateClient = (updatedClient?: Client) => {
     if (updatedClient) {
       clientsCtx.addClient(updatedClient);
@@ -153,21 +152,25 @@ const ClientDataGrid = () => {
     setModalOpen(false);
   };
 
+  // Rendezési modell változása
   const handleSortModelChange = (newModel: GridSortModel) => {
     setSortModel(newModel);
     setRows(sortRows([...rows], newModel));
   };
 
+  // Lapozási modell változása
   const handlePaginationModelChange = (newModel: GridPaginationModel) => {
     setPaginationModel(newModel);
   };
 
+  // Új ügyfél gomb megnyomása
   const handleAddClientClick = () => {
     setModalOpen(true);
   };
 
   let columns: GridColDef[] = [];
 
+  // Oszlopok definiálása mobil és asztali nézethez
   if (isMobile) {
     columns = [
       { field: "name", headerName: "Név", minWidth: 180, flex: 1 },

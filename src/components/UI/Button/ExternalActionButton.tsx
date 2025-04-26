@@ -8,6 +8,7 @@ interface ExternalActionButtonProps {
   value?: string;
 }
 
+// Komponens, amely lehetővé teszi a felhasználó számára, hogy külső alkalmazásokat indítson (telefon, SMS, e-mail)
 const ExternalActionButton: React.FC<ExternalActionButtonProps> = ({ type, value }) => {
   const handleOnClick = () => {
     if (value) {

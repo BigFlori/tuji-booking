@@ -13,6 +13,8 @@ interface ICalendarItemContainerProps {
   sx?: SxProps<Theme>;
 }
 
+
+// Egy naptári elemet megjelenítő konténer, amely a dátum alapján dinamikusan állítja be a stílusokat és a mai naphoz görget
 const CalendarItemContainer: React.FC<ICalendarItemContainerProps> = (props: ICalendarItemContainerProps) => {
   const theme = useTheme();
   const todayRef = useRef<HTMLDivElement>(null);

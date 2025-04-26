@@ -1,11 +1,10 @@
-import { useContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { IEditReservationFormModel } from "./EditReservationLogic";
-import { SubmitHandler, UseFormReturn, Controller, set } from "react-hook-form";
+import { SubmitHandler, UseFormReturn, Controller } from "react-hook-form";
 import Client from "@/models/client-model";
 import Group from "@/models/group/group-model";
 import { clientToOption, IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import {
-  Autocomplete,
   Box,
   Checkbox,
   FormControl,
@@ -24,15 +23,13 @@ import {
 import ModalControls from "@/components/UI/Modal/ModalControls";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import ExternalActionButton from "@/components/UI/Button/ExternalActionButton";
-import { ClientContext } from "@/store/client-context";
-import { ReservationContext } from "@/store/reservation-context";
-import { GroupContext } from "@/store/group-context";
 import { useIsDevMode } from "@/store/dev-context";
-import { formatCurrency, normalizeText } from "@/utils/helpers";
-import ClientSearch from "@/components/ClientSearch/ClientSearch";
-import ClientSection from "@/components/ClientSearch/ClientSection";
+import { formatCurrency } from "@/utils/helpers";
 import Reservation from "@/models/reservation/reservation-model";
+import { useClientContext } from "@/store/client-context";
+import { useReservationContext } from "@/store/reservation-context";
+import { useGroupContext } from "@/store/group-context";
+import ClientSection from "@/components/ClientSearch/ClientSection";
 
 interface IEditReservationViewProps {
   form: UseFormReturn<IEditReservationFormModel>;
@@ -46,9 +43,9 @@ interface IEditReservationViewProps {
 }
 
 const EditReservationView: React.FC<IEditReservationViewProps> = (props) => {
-  const clientCtx = useContext(ClientContext);
-  const reservationCtx = useContext(ReservationContext);
-  const groupCtx = useContext(GroupContext);
+  const clientCtx = useClientContext();
+  const reservationCtx = useReservationContext();
+  const groupCtx = useGroupContext();
 
   const {
     handleSubmit,

@@ -2,8 +2,8 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import dayjs from "dayjs";
 import CalendarDay from "./CalendarDay";
-import { useMemo, useContext } from "react";
-import { GroupContext } from "@/store/group-context";
+import { useMemo } from "react";
+import { useGroupContext } from "@/store/group-context";
 import CalendarGroup from "./Group/CalendarGroup";
 import "intersection-observer";
 
@@ -16,7 +16,7 @@ interface ICalendarMonthProps {
 
 //Egy teljes hónapot renderel, a napokat és a csoportokat beleértve a csoportok sorait és celláit
 const CalendarMonth: React.FC<ICalendarMonthProps> = (props: ICalendarMonthProps) => {
-  const groupCtx = useContext(GroupContext);
+  const groupCtx = useGroupContext();
 
   const monthDate = useMemo(() => {
     return dayjs().locale("hu-hu").year(props.year).month(props.month);

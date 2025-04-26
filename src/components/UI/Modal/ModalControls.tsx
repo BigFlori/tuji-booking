@@ -16,6 +16,7 @@ interface ModalControlsProps {
   };
 }
 
+// Modal fejlécét és láblécét kezelő komponens
 const ModalControls: React.FC<ModalControlsProps> = (props) => {
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
   const [openDialog, setOpenDialog] = useState(false);

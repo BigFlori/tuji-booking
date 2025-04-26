@@ -10,6 +10,7 @@ interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
 }
 
+// Új csoport létrehozó gomb, amely modális ablakot nyit az űrlappal
 const NewGroup: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHeaderProps) => {
   const [modalOpened, setModalOpened] = useState(false);
 

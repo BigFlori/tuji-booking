@@ -16,7 +16,11 @@ import {
   where,
 } from "firebase/firestore";
 
-const processReservationQuerySnapshot = async (queryRes: Query<DocumentData> | CollectionReference<DocumentData>, user: User) => {
+// Egységesített logika a foglalások feldolgozására
+const processReservationQuerySnapshot = async (
+  queryRes: Query<DocumentData> | CollectionReference<DocumentData>,
+  user: User
+) => {
   const reservations: Reservation[] = [];
   await getDocs(queryRes).then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -42,7 +46,7 @@ const processReservationQuerySnapshot = async (queryRes: Query<DocumentData> | C
   return reservations;
 };
 
-//Used by SearchBar
+// Lekérdezi egy ügyfélhez tartozó összes foglalást
 export const searchReservationByClient = async (user: User, clientId: string) => {
   const queryRes = query(collection(db, "users", user.uid, "reservations"), where("clientId", "==", clientId));
   const foundReservations: Reservation[] = [];
@@ -52,20 +56,20 @@ export const searchReservationByClient = async (user: User, clientId: string) =>
   return foundReservations;
 };
 
-// Módosított funkció, amely csoportok alapján is szűrhet
+// Lekérdezi a felhasználó foglalásait a megadott időszakban, tovább szűrhető csoportok szerint
 export const fetchReservationsInPeriod = async (
-  user: User, 
-  startDate: dayjs.Dayjs, 
+  user: User,
+  startDate: dayjs.Dayjs,
   endDate?: dayjs.Dayjs,
   groupIds?: string[]
 ) => {
   let queryResults: Query<DocumentData>[] = [];
   const foundReservations: Reservation[] = [];
 
-  // Ha nincs megadva csoport vagy üres a tömb, a funkció a hagyományos módon működik
   if (!groupIds || groupIds.length === 0) {
+    // Ha nincs megadva csoport vagy üres a tömb, akkor az összes foglalást lekérdezi az időszakban
     let queryRes: Query<DocumentData>;
-    
+
     if (endDate) {
       queryRes = query(
         collection(db, "users", user.uid, "reservations"),
@@ -78,16 +82,16 @@ export const fetchReservationsInPeriod = async (
         where("endDateTimestamp", ">=", startDate.unix())
       );
     }
-    
+
     queryResults.push(queryRes);
   } else {
     // Firebase "in" query max 10 elemet támogat, így több lekérdezést kell indítanunk,
     // ha több mint 10 csoport van kiválasztva
     const groupChunks = chunkArray(groupIds, 10);
-    
+
     for (const chunk of groupChunks) {
       let queryRes: Query<DocumentData>;
-      
+
       if (endDate) {
         queryRes = query(
           collection(db, "users", user.uid, "reservations"),
@@ -102,12 +106,11 @@ export const fetchReservationsInPeriod = async (
           where("groupId", "in", chunk)
         );
       }
-      
+
       queryResults.push(queryRes);
     }
   }
 
-  // Végrehajtunk minden lekérdezést és összegyűjtjük az eredményeket
   for (const queryRes of queryResults) {
     const reservations = await processReservationQuerySnapshot(queryRes, user);
     foundReservations.push(...reservations);
@@ -116,6 +119,7 @@ export const fetchReservationsInPeriod = async (
   return foundReservations;
 };
 
+// Lekérdezi a felhasználó foglalásait a megadott hónapban
 export const fetchReservationsInMonth = async (
   user: User,
   isInitialFetch: boolean,
@@ -149,6 +153,7 @@ export const fetchReservationsInMonth = async (
   return foundReservations;
 };
 
+// Elmenti a foglalást az adatbázisba
 export const saveReservationDb = async (user: User, reservation: Reservation) => {
   const modifiedReservation = {
     ...reservation,
@@ -163,6 +168,7 @@ export const saveReservationDb = async (user: User, reservation: Reservation) =>
   await setDoc(reservationRef, modifiedReservation);
 };
 
+// Törli a foglalást az adatbázisból
 export const deleteReservationDb = async (user: User, reservationId: string) => {
   const reservationRef = doc(db, "users", user.uid, "reservations", reservationId);
   await deleteDoc(reservationRef).catch((error) => {

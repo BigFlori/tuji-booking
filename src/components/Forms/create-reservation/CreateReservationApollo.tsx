@@ -3,12 +3,11 @@ import CreateReservationLogic, { ICreateReservationFormModel } from "./CreateRes
 import { NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import { SubmitHandler } from "react-hook-form";
 import Client from "@/models/client-model";
-import { useContext } from "react";
-import { ClientContext } from "@/store/client-context";
 import { v4 as uuidv4 } from "uuid";
 import Reservation from "@/models/reservation/reservation-model";
-import { ReservationContext } from "@/store/reservation-context";
 import { useSnack } from "@/hooks/useSnack";
+import { useReservationContext } from "@/store/reservation-context";
+import { useClientContext } from "@/store/client-context";
 
 interface ICreateReservationApolloProps {
   onClose: () => void;
@@ -24,8 +23,8 @@ export type ICreateReservationFormModelWithEmptyDate =
     };
 
 const CreateReservationApollo: React.FC<ICreateReservationApolloProps> = (props) => {
-  const clientCtx = useContext(ClientContext);
-  const reservationCtx = useContext(ReservationContext);
+  const clientCtx = useClientContext();
+  const reservationCtx = useReservationContext();
   const showSnackbar = useSnack();
 
   const submitHandler: SubmitHandler<ICreateReservationFormModel> = (data) => {
