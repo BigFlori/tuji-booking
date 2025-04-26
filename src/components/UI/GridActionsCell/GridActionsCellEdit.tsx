@@ -9,6 +9,7 @@ interface GridActionsCellEditProps {
   params: GridRowParams<Client>;
 }
 
+// Ügyfél szerkesztésére szolgáló gomb a táblázatban
 const GridActionsCellEdit = (props: GridActionsCellEditProps) => {
   const client = props.params.row;
   const [modalOpen, setModalOpen] = useState(false);

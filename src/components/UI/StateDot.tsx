@@ -6,6 +6,7 @@ interface IStateDotProps {
   state: PaymentState;
 }
 
+// Egy pontot ábrázoló komponens, amely a fizetési állapot színét használja
 const StateDot: React.FC<IStateDotProps> = (props: IStateDotProps) => {
   return (
     <Box sx={{ width: 12, height: 12, backgroundColor: usePaymentStateColor(props.state), borderRadius: "50%", display: "inline-block" }} />

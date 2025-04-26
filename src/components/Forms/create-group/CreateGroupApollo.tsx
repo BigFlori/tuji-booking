@@ -2,17 +2,16 @@ import GroupState from "@/models/group/group-state-model";
 import CreateGroupLogic, { ICreateGroupFormModel } from "./CreateGroupLogic";
 import GroupType from "@/models/group/group-type-model";
 import { SubmitHandler } from "react-hook-form";
-import { useContext } from "react";
-import { GroupContext } from "@/store/group-context";
 import { v4 as uuidv4 } from "uuid";
 import { useSnack } from "@/hooks/useSnack";
+import { useGroupContext } from "@/store/group-context";
 
 interface ICreateGroupApolloProps {
   onClose: () => void;
 }
 
 const CreateGroupApollo: React.FC<ICreateGroupApolloProps> = (props) => {
-  const groupCtx = useContext(GroupContext);
+  const groupCtx = useGroupContext();
   const showSnackbar = useSnack();
 
   const submitHandler: SubmitHandler<ICreateGroupFormModel> = (data) => {

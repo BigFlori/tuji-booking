@@ -8,16 +8,19 @@ import ReservationContextProvider from "@/store/reservation-context";
 import GroupContextProvider from "@/store/group-context";
 import LoadingScreen from "@/components/UI/LoadingScreen";
 
+// Publikus útvonalakhoz, ahol nem bejelentkezett felhasználókat várunk
 export function withPublic<T>(Component: React.ComponentType<T>) {
   return function WithPublic(props: T) {
     const userCtx = useAuthContext();
     const { user, loading, error } = userCtx.userState;
     const router = useRouter();
 
+    // Betöltés közben
     if (loading) {
       return <LoadingScreen />;
     }
 
+    // Ha már betöltött de van felhasználó vagy hiba történt, akkor átirányítjuk a főoldalra
     if (user && !error) {
       router.replace("/");
       return <LoadingScreen />;
@@ -33,6 +36,7 @@ export function withPublic<T>(Component: React.ComponentType<T>) {
   };
 }
 
+// Védett útvonalakhoz, ahol bejelentkezett felhasználókat várunk
 export function withProtected<T>(Component: React.ComponentType<T>) {
   return function WithProtected(props: T) {
     const userCtx = useAuthContext();
@@ -40,10 +44,12 @@ export function withProtected<T>(Component: React.ComponentType<T>) {
 
     const router = useRouter();
 
+    // Betöltés közben
     if (loading && !user) {
       return <LoadingScreen />;
     }
 
+    // Ha már betöltött de nincs felhasználó vagy hiba történt, akkor átirányítjuk a bejelentkezéshez
     if (!user || error) {
       router.replace("/login");
       return <LoadingScreen />;

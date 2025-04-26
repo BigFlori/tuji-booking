@@ -86,7 +86,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   const onAuthStateChangeEvent = async (user: User | null) => {
     if (!user) return;
     
-    // Check if user data exists
+    // Ellenőrizzük, hogy a felhasználó már létezik-e
     await isUserdataExist(user);
   };
 
@@ -95,6 +95,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   const [_createUserWithEmailAndPassword, createUser, createUserloading, createUserError] =
     useCreateUserWithEmailAndPassword(auth);
     
+  // E-mail és jelszó regisztrációval kapcsolatos állapotok
   const [
     _signInWithEmailAndPassword,
     emailPasswordUser,
@@ -104,11 +105,12 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
   
   const [_signInWithGoogle, googleUser, signInWithGoogleLoading, signInWithGoogleError] = useSignInWithGoogle(auth);
 
-  // States for password reset
+  // Jelszó visszaállítással kapcsolatos állapotok
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [resetPasswordError, setResetPasswordError] = useState<AuthError | undefined>(undefined);
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
 
+  // Regisztráció e-mail és jelszó alapján
   const createUserWithEmailAndPassword = async (data: IRegisterFormModel) => {
     const userCredential = await _createUserWithEmailAndPassword(data.email, data.password);
     
@@ -121,6 +123,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     await createInitialUser(user, displayName);
   };
 
+  // E-mail és jelszó bejelentkezés
   const signInWithEmailAndPassword = async (email: string, password: string) => {
     const userCredential = await _signInWithEmailAndPassword(email, password);
     
@@ -130,6 +133,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     await isUserdataExist(user);
   };
 
+  // Google bejelentkezés
   const signInWithGoogle = async () => {
     await _signInWithGoogle().then(async (userCredential) => {
       const user = userCredential?.user;
@@ -138,7 +142,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = (pro
     });
   };
 
-  // Password reset function
+  // Jelszó visszaállítás
   const resetPassword = async (email: string) => {
     setResetPasswordLoading(true);
     setResetPasswordError(undefined);

@@ -12,9 +12,11 @@ interface ISearchResultsProps {
   setModalOpened: Dispatch<SetStateAction<boolean>>;
 }
 
+// A keresési eredmények megjelenítése
 const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps) => {
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
+  // Keresési eredmény elemre kattintáskor megnyitja a modalt
   const handleResultItemClick = (reservation: Reservation) => {
     setSelectedReservation(reservation);
     props.setModalOpened(true);

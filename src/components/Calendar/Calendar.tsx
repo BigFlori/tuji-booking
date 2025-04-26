@@ -10,7 +10,6 @@ import { CALENDAR_MONTH_GAP } from "@/utils/config";
 import CalendarGroupHeaderController from "./Group/CalendarGroupHeaderController";
 import NewGroup from "./Controls/NewGroup";
 import { useReservationContext } from "@/store/reservation-context";
-import { useClientContext } from "@/store/client-context";
 
 const months = Array.from(Array(12).keys());
 
@@ -53,8 +52,6 @@ const Calendar: React.FC<{}> = () => {
   const [scrolledMonth, setScrolledMonth] = useState(new Date().getMonth());
   const [scrollLeftPosition, setScrollLeftPosition] = useState(0);
   const reservationCtx = useReservationContext();
-  const clientCtx = useClientContext();
-  // const isLoading = reservationCtx.isFetching || clientCtx.isFetching;
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const scrollPosition = event.currentTarget.scrollLeft;
@@ -72,10 +69,6 @@ const Calendar: React.FC<{}> = () => {
 
     const scrolledMonth = dayjs().year(year).month(i).startOf("month");
     reservationCtx.setFetchStartDate(scrolledMonth.subtract(2, "month"));
-  };
-
-  const disableScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    event.currentTarget.scrollTo(scrollLeftPosition, 0);
   };
 
   return (
@@ -96,7 +89,6 @@ const Calendar: React.FC<{}> = () => {
         </Box>
         <Box
           sx={{ display: "flex", gap: `${CALENDAR_MONTH_GAP}px`, overflowX: "scroll" }}
-          // onScroll={isLoading ? disableScroll : handleScroll}
           onScroll={handleScroll}
         >
           {months.map((month, index) => {

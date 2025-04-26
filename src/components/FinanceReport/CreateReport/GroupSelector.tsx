@@ -21,9 +21,9 @@ import GroupType from '@/models/group/group-type-model';
 import Group from '@/models/group/group-model';
 import HomeIcon from '@mui/icons-material/Home';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
-import TaxiAlert from '@mui/icons-material/Person';
+import PersonIcon from '@mui/icons-material/Person';
 import LocalCarWashIcon from '@mui/icons-material/LocalCarWash';
-import OtherIcon from '@mui/icons-material/Pending';
+import PendingIcon from '@mui/icons-material/Pending';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
 interface GroupSelectorProps {
@@ -39,11 +39,11 @@ const getGroupTypeIcon = (type: GroupType) => {
     case GroupType.HOUSE:
       return <HomeIcon fontSize="small" />;
     case GroupType.DRIVER:
-      return <TaxiAlert fontSize="small" />;
+      return <PersonIcon fontSize="small" />;
     case GroupType.CAR_WASH:
       return <LocalCarWashIcon fontSize="small" />;
     default:
-      return <OtherIcon fontSize="small" />;
+      return <PendingIcon fontSize="small" />;
   }
 };
 

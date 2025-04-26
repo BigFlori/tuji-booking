@@ -40,6 +40,7 @@ const NavBar: React.FC = () => {
     setAnchorElUser(null);
   };
 
+  // Témaváltás kezelése
   const handleThemeChange = () => {
     themeChanger.setTheme(themeChanger.theme === "light" ? "dark" : "light");
   };

@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 
+// A PageTransition komponens a framer-motion könyvtárat használja az oldalváltások animálására
 const PageTransition: React.FC<{
   children: React.ReactNode;
   path: string;

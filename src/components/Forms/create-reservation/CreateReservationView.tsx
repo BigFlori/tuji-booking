@@ -19,18 +19,15 @@ import {
 } from "@mui/material";
 import ModalControls from "@/components/UI/Modal/ModalControls";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import ExternalActionButton from "@/components/UI/Button/ExternalActionButton";
 import Group from "@/models/group/group-model";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import Client from "@/models/client-model";
 import dayjs from "dayjs";
-import { ClientContext } from "@/store/client-context";
-import { GroupContext } from "@/store/group-context";
-import { ReservationContext } from "@/store/reservation-context";
-import { normalizeText } from "@/utils/helpers";
-import ClientSearch from "@/components/ClientSearch/ClientSearch";
 import ClientSection from "@/components/ClientSearch/ClientSection";
+import { useClientContext } from "@/store/client-context";
+import { useGroupContext } from "@/store/group-context";
+import { useReservationContext } from "@/store/reservation-context";
 
 interface ICreateReservationViewProps {
   form: UseFormReturn<ICreateReservationFormModel>;
@@ -40,9 +37,9 @@ interface ICreateReservationViewProps {
 }
 
 const CreateReservationView: React.FC<ICreateReservationViewProps> = (props) => {
-  const clientCtx = useContext(ClientContext);
-  const groupCtx = useContext(GroupContext);
-  const reservationCtx = useContext(ReservationContext);
+  const clientCtx = useClientContext();
+  const groupCtx = useGroupContext();
+  const reservationCtx = useReservationContext();
 
   const {
     handleSubmit,

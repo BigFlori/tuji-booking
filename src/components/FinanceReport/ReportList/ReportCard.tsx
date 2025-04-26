@@ -65,7 +65,6 @@ const MiniChart: React.FC<{ isPositive: boolean }> = ({ isPositive }) => {
   );
 };
 
-// Get icon by group type
 const getGroupIcon = (type: GroupType) => {
   switch (type) {
     case GroupType.CAR:

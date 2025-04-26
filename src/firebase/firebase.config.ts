@@ -13,7 +13,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
+// Firebase inicializáció
 if (!getApps().length) {
   const app = initializeApp(firebaseConfig);
   if (typeof window !== "undefined") {
@@ -25,4 +25,3 @@ if (!getApps().length) {
 
 export const auth = getAuth(getApp());
 export const db = getFirestore(getApp());
-//auth.languageCode = "hu";
