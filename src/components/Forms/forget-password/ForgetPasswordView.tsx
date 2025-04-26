@@ -1,11 +1,10 @@
-import { Box, Button, TextField, Typography, Alert, CircularProgress } from "@mui/material";
+import { Button, TextField, Typography, Alert, CircularProgress } from "@mui/material";
 import { IForgetPasswordFormModel } from "./ForgetPasswordLogic";
 import { UseFormReturn, SubmitHandler, Controller } from "react-hook-form";
 import { grey } from "@mui/material/colors";
 import ElevatedFormBox from "@/components/UI/styled/ElevatedFormBox";
 import SpacerLine from "@/components/UI/SpacerLine";
 import { translate } from "@/firebase/auth-error/auth-error-translator";
-import AuthErrorType from "@/firebase/auth-error/auth-error-type-model";
 
 interface IForgetPasswordViewProps {
   form: UseFormReturn<IForgetPasswordFormModel>;

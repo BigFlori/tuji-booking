@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
-import { IReservationFormModel } from "./ReservationFormTypes";
-import { SubmitHandler, UseFormReturn, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import Client from "@/models/client-model";
 import Group from "@/models/group/group-model";
-import { clientToOption, IClientOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
+import { clientToOption, NOT_SELECTED_CLIENT_OPTION } from "../client-option/clientOptionHelper";
 import {
   Box,
   Checkbox,
@@ -25,7 +24,6 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useIsDevMode } from "@/store/dev-context";
 import { formatCurrency } from "@/utils/helpers";
-import Reservation from "@/models/reservation/reservation-model";
 import { useClientContext } from "@/store/client-context";
 import { useReservationContext } from "@/store/reservation-context";
 import { useGroupContext } from "@/store/group-context";

@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import GroupFormView from "./GroupFormView";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
