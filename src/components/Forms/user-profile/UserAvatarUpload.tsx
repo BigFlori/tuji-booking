@@ -36,7 +36,7 @@ const UserAvatarUpload = () => {
     event.preventDefault();
     if (!user || !auth.currentUser) return;
 
-    // Basic URL validation
+    // Egyszerű URL validáció
     if (photoURL && !photoURL.match(/^https?:\/\/.+/)) {
       setError('Kérjük, adjon meg egy érvényes URL-t (http:// vagy https:// előtaggal)');
       return;
@@ -61,6 +61,7 @@ const UserAvatarUpload = () => {
     }
   };
 
+  // Profilkép törlése
   const handleDeleteAvatar = async () => {
     if (!user || !auth.currentUser) return;
     

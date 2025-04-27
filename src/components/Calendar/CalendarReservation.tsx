@@ -1,14 +1,13 @@
-import { useState, useMemo, useContext } from "react";
+import { useState, useMemo } from "react";
 import Reservation from "@/models/reservation/reservation-model";
 import dayjs from "dayjs";
 import { CALENDAR_ITEM_WIDTH, CALENDAR_MONTH_GAP } from "@/utils/config";
 import ReservationButton from "../UI/styled/ReservationButton";
-import { ClientContext } from "@/store/client-context";
-import PaymentState from "@/models/reservation/payment-state-model";
+import { useClientContext } from "@/store/client-context";
 import AnimatedModal from "../UI/Modal/AnimatedModal";
-import { Theme, darken } from "@mui/material";
-import EditReservationApollo from "../Forms/edit-reservation/EditReservationApollo";
+import { darken } from "@mui/material";
 import { usePaymentStateColor } from "@/hooks/usePaymentStateColor";
+import ReservationFormApollo from "../Forms/reservation";
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
@@ -77,7 +76,7 @@ const formatName = (name: string, reservedDays: number) => {
 };
 
 const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICalendarReserverationProps) => {
-  const clientCtx = useContext(ClientContext);
+  const clientCtx = useClientContext();
 
   //Ha van hozzárendelt ügyfél, akkor azt adja vissza, ha nincs, akkor egy új ügyfelet ami amolyan placeholderként szolgál
   const reservationClient = useMemo(() => {
@@ -157,7 +156,11 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
         )}
       </ReservationButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <EditReservationApollo onClose={handleModalClose} reservation={props.reservation} />
+        <ReservationFormApollo
+          mode="edit"
+          onClose={handleModalClose}
+          reservation={props.reservation}
+        />
       </AnimatedModal>
     </>
   );

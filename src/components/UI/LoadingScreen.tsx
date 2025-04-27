@@ -1,6 +1,7 @@
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 
+// Egy töltőképernyőt ábrázoló komponens, amely egy kör alakú töltő animációt jelenít meg
 const LoadingScreen: React.FC = () => {
   return (
     <div

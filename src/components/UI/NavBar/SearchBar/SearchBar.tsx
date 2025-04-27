@@ -1,15 +1,13 @@
-import { Box, IconButton, TextField, Theme, Typography, useMediaQuery } from "@mui/material";
+import { Box, IconButton, TextField, Theme, useMediaQuery } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Client from "@/models/client-model";
-import { ClientContext } from "@/store/client-context";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchResults from "./SearchResults";
 import Reservation from "@/models/reservation/reservation-model";
-import { ReservationContext } from "@/store/reservation-context";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { searchReservationByClient } from "@/firebase/firestore-helpers/reservation/reservation-utils";
-import { useUser } from "@/store/user-context";
+import { useClientContext } from "@/store/client-context";
+import { useReservationContext } from "@/store/reservation-context";
 
 interface ISearchBarProps {
   placeholder: string;
@@ -18,11 +16,10 @@ interface ISearchBarProps {
 }
 
 const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
-  const user = useUser();
   //950px a töréspont ami alatt mobil nézet van (md breakpoint 900px-nél van)
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down(950));
-  const clientCtx = useContext(ClientContext);
-  const reservationCtx = useContext(ReservationContext);
+  const clientCtx = useClientContext();
+  const reservationCtx = useReservationContext();
 
   const [modalOpened, setModalOpened] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -31,6 +28,7 @@ const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
   const [showResults, setShowResults] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
 
+  // A keresési eredmények frissítése, amikor a felhasználó beír valamit a keresőmezőbe
   useEffect(() => {
     if (typingTimeout) {
       clearTimeout(typingTimeout);
@@ -44,34 +42,14 @@ const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
       }
 
       const clients = clientCtx.searchClients(searchText);
-      // Itt lekéred az összes foglalást minden klienshez, és megvárod az eredményeket
       const queryReservationsPromises = clients.map(async (client) => {
         return await reservationCtx.getReservationsByClient(client.id);
       });
 
-      // Várjuk meg, míg minden foglalás lekérés befejeződik
       const allReservations = await Promise.all(queryReservationsPromises);
 
-      // Az összes foglalást lapítjuk, és frissítjük az állapotot egy lépésben
       const flattenedReservations = allReservations.flat();
       setFoundReservations(flattenedReservations);
-      
-      // const reservations = clients.flatMap((client) => reservationCtx.getReservationsByClient(client.id));
-      // setFoundReservations(reservations);
-      // const dbReservations = clients.flatMap((client) => searchReservationByClient(user!, client.id));
-      // dbReservations.map((dbReservation) => {
-      //   dbReservation.then((reservations) => {
-      //     if (reservations) {
-      //       reservations.map((reservation) => {
-      //         if (reservationCtx.reservations.find((res) => res.id === reservation.id)) {
-      //           return;
-      //         }
-      //         reservationCtx.setReservations((prevReservations) => [...prevReservations, reservation]);
-      //         setFoundReservations((prevReservations) => [...prevReservations, reservation]);
-      //       });
-      //     }
-      //   });
-      // });
     }, 200);
 
     setTypingTimeout(timeout);
@@ -83,6 +61,7 @@ const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
     };
   }, [searchText, modalOpened]);
 
+  // A keresési szöveg változásának kezelése
   const handleSearchTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputText = event.target.value;
     setSearchText(inputText);
@@ -93,12 +72,14 @@ const SearchBar: React.FC<ISearchBarProps> = (props: ISearchBarProps) => {
     }
   };
 
+  // A keresési eredmények eltüntetése, ha a felhasználó a keresőmezőn kívülre kattint
   const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
     if (!event.currentTarget.contains(event.relatedTarget as Node) && !modalOpened) {
       setShowResults(false);
     }
   };
 
+  // A keresési eredmények megjelenítése, ha a felhasználó a keresőmezőre kattint
   const handleFocus = () => {
     setShowResults(true);
   };

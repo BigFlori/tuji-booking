@@ -16,17 +16,19 @@ const initialGroup: Group = {
   order: 0,
 };
 
+// Ellenőrzi, hogy a felhasználó adatai léteznek-e
 export const isUserdataExist = async (user: User) => {
   const docRef = doc(db, "users", user.uid);
   const docSnap = await getDoc(docRef);
   return docSnap.exists();
 };
 
+// User létrehozása, ha még nem létezik
 export const createInitialUser = async (user: User, displayName?: string | null) => {
   await isUserdataExist(user).then(async (exists) => {
     if (exists) return;
 
-    //Create user document
+    // User dokumentum létrehozása
     setDoc(
       doc(db, "users", user.uid),
       {

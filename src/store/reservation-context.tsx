@@ -156,20 +156,18 @@ const ReservationContextProvider: React.FC<{ children: React.ReactNode }> = (pro
 
   //Visszaadja az összes foglalást, ami a megadott ügyfélhez tartozik
   const getReservationsByClient = async (clientId: string): Promise<Reservation[]> => {
-    const dbReservations = await searchReservationByClient(user!, clientId); // Várakozás az adatbázisból való lekérésre
+    const dbReservations = await searchReservationByClient(user!, clientId);
     let newReservations: Reservation[] = [];
     if (dbReservations) {
       newReservations = dbReservations.filter(
-        (reservation) => !reservations.find((res) => res.id === reservation.id) // Csak az új foglalásokat adjuk hozzá
+        (reservation) => !reservations.find((res) => res.id === reservation.id)
       );
 
       if (newReservations.length > 0) {
-        // Ha van új foglalás, állapotfrissítés
         setReservations((prevReservations) => [...prevReservations, ...newReservations]);
       }
     }
 
-    // Visszaadjuk a frissített vagy korábban betöltött foglalásokat az adott ügyfélhez
     return [...reservations, ...newReservations].filter((reservation) => reservation.clientId === clientId);
   };
 

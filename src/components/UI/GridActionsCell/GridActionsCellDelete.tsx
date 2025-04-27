@@ -1,7 +1,7 @@
 import { GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useClientContext } from "@/store/client-context";
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -10,31 +10,23 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Slide,
-  TextField,
 } from "@mui/material";
 import { useSnack } from "@/hooks/useSnack";
 import ReservationCard from "../Card/ReservationCard";
 import { useReservationContext } from "@/store/reservation-context";
 import AnimatedModal from "../Modal/AnimatedModal";
-import EditReservationApollo from "@/components/Forms/edit-reservation/EditReservationApollo";
 import Reservation from "@/models/reservation/reservation-model";
-import { CircularProgress } from "@mui/material"; // Importáljuk a CircularProgress-t
-import { TransitionProps } from "@mui/material/transitions";
+import { CircularProgress } from "@mui/material";
 import Client from "@/models/client-model";
+import ReservationFormApollo from "@/components/Forms/reservation";
 
 interface GridActionsCellDeleteProps {
   params: GridRowParams<Client>;
 }
 
-// Transition komponens létrehozása
-const Transition = forwardRef(function Transition(
-  props: TransitionProps & { children: React.ReactElement },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
+// Ügyfél törlésére szolgáló gomb a táblázatban
+// Betölti a kapcsolódó foglalásokat, és lehetőséget ad azok törlésére is
+// A törlés megerősítést igényel
 const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
   const client = props.params.row;
   const clientsCtx = useClientContext();
@@ -52,9 +44,9 @@ const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
   };
 
   const handleDialogOpen = async () => {
-    setLoading(true); // Indítjuk a betöltést
+    setLoading(true);
     await updateRelatedReservations();
-    setLoading(false); // Befejezzük a betöltést
+    setLoading(false);
     setOpenDialog(true);
   };
 
@@ -102,7 +94,7 @@ const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
         <DialogTitle>Biztosan törölni szeretnéd?</DialogTitle>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", padding: 2 }}>
-            <CircularProgress /> {/* Betöltés közben megjelenítjük a spinnert */}
+            <CircularProgress />
           </Box>
         ) : (
           relatedReservations.length !== 0 && (
@@ -141,7 +133,8 @@ const GridActionsCellDelete = (props: GridActionsCellDeleteProps) => {
           setModalOpen(false);
         }}
       >
-        <EditReservationApollo
+        <ReservationFormApollo
+          mode="edit"
           onClose={() => {
             setModalOpen(false);
           }}

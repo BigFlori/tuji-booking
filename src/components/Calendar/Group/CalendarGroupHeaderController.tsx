@@ -7,6 +7,7 @@ interface ICalendarGroupHeaderControllerProps {
   toggleIsExpanded: () => void;
 };
 
+// Gomb a naptárcsoport kinyitott állapotának vezérlésére
 const CalendarGroupHeaderController: React.FC<ICalendarGroupHeaderControllerProps> = (
   props: ICalendarGroupHeaderControllerProps
 ) => {

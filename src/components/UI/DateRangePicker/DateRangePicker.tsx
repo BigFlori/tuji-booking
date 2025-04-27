@@ -10,6 +10,7 @@ interface IDateRangePickerProps {
     onEndDateChange: (date: dayjs.Dayjs | null) => void;
 }
 
+// Dátumválasztó komponens, amely lehetővé teszi a felhasználó számára, hogy kiválasszon egy kezdő és egy záró dátumot
 const DateRangePicker: React.FC<IDateRangePickerProps> = (props: IDateRangePickerProps) => {
   const theme = useTheme();
   

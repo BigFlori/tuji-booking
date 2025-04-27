@@ -1,9 +1,8 @@
-import { useContext } from "react";
-import { ClientContext } from "@/store/client-context";
 import Client from "@/models/client-model";
 import EditClientLogic, { IEditClientFormModel } from "./EditClientLogic";
 import { SubmitHandler } from "react-hook-form";
 import { useSnack } from "@/hooks/useSnack";
+import { useClientContext } from "@/store/client-context";
 
 interface IEditClientApolloProps {
   onClose: () => void;
@@ -12,7 +11,7 @@ interface IEditClientApolloProps {
 }
 
 const EditClientApollo: React.FC<IEditClientApolloProps> = (props) => {
-  const clientCtx = useContext(ClientContext);
+  const clientCtx = useClientContext();
   const showSnackbar = useSnack();
 
   const submitHandler: SubmitHandler<IEditClientFormModel> = (data) => {

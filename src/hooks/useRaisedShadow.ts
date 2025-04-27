@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 const inactiveShadow = "0px 0px 0px rgba(0,0,0,0.8)";
 
-//Framer motion hook to animate the shadow of a component when it is raised
+// Framer motion hook egy komponens árnyékának animálására, amikor az felemelkedik
 export function useRaisedShadow(value: MotionValue<number>) {
   const boxShadow = useMotionValue(inactiveShadow);
 

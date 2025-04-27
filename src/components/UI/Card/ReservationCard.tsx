@@ -9,6 +9,7 @@ interface IReservationCardProps {
   reservation: Reservation;
 }
 
+// Foglalás kártya komponens, amely fontosabb infókat jelenít meg a foglalásról
 const ReservationCard: React.FC<IReservationCardProps> = (props: IReservationCardProps) => {
   const clientCtx = useClientContext();
   const groupCtx = useGroupContext();

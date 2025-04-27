@@ -3,12 +3,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import Client from "@/models/client-model";
 import { useState } from "react";
 import AnimatedModal from "../Modal/AnimatedModal";
-import EditClientApollo from "@/components/Forms/edit-client/EditClientApollo";
+import ClientFormApollo from "@/components/Forms/client";
 
 interface GridActionsCellEditProps {
   params: GridRowParams<Client>;
 }
 
+// Ügyfél szerkesztésére szolgáló gomb a táblázatban
 const GridActionsCellEdit = (props: GridActionsCellEditProps) => {
   const client = props.params.row;
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,7 +29,7 @@ const GridActionsCellEdit = (props: GridActionsCellEditProps) => {
       />
 
       <AnimatedModal open={modalOpen} onClose={handleModalClose}>
-        <EditClientApollo onClose={handleModalClose} client={client} />
+        <ClientFormApollo mode="edit" onClose={handleModalClose} client={client} />
       </AnimatedModal>
     </>
   );

@@ -17,6 +17,7 @@ export const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
   return chunks;
 };
 
+// Normalizálja a szöveget: kisbetűsre alakítja, eltávolítja az ékezeteket és a felesleges szóközöket
 export const normalizeText = (text: string): string => {
   const lowerCaseText = text.toLowerCase();
   return lowerCaseText
@@ -26,6 +27,7 @@ export const normalizeText = (text: string): string => {
     .trim();
 };
 
+// Számot formáz HUF pénznemre
 export const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat("hu-HU", {
     style: "currency",

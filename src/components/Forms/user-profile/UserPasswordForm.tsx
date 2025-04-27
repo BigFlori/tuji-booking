@@ -63,7 +63,7 @@ const UserPasswordForm = () => {
     setError(null);
     
     try {
-      // First reauthenticate the user with current credentials
+      // Újra bejelentkezés a felhasználó hitelesítő adataival
       const credential = EmailAuthProvider.credential(
         user.email!, 
         data.currentPassword
@@ -71,7 +71,7 @@ const UserPasswordForm = () => {
       
       await reauthenticateWithCredential(user, credential);
       
-      // Then update the password
+      // Jelszó módosítása
       await updatePassword(user, data.newPassword);
       
       showSnackbar('Jelszó sikeresen megváltoztatva!', 'success');
@@ -83,7 +83,7 @@ const UserPasswordForm = () => {
     } catch (err: any) {
       console.error(err);
       
-      // Handle specific Firebase errors
+      // Specifikus hibák kezelése
       if (err.code === 'auth/wrong-password') {
         setError('Helytelen jelenlegi jelszó');
       } else if (err.code === 'auth/weak-password') {

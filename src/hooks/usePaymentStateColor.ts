@@ -1,6 +1,7 @@
 import PaymentState from "@/models/reservation/payment-state-model";
 import { useTheme } from "@mui/material";
 
+// Ez a hook a foglalások fizetési állapota alapján visszaadja a megfelelő színt
 export const usePaymentStateColor = (state: PaymentState) => {
   const theme = useTheme();
   switch (state) {

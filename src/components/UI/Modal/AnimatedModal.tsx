@@ -1,13 +1,13 @@
 import { Box, Fade, Slide, Theme, useMediaQuery } from "@mui/material";
 import LayoutModal from "../styled/LayoutModal";
 
-
 interface IAnimatedModalProps {
   children?: React.ReactNode;
   open: boolean;
   onClose: () => void;
 };
 
+// A modal animációs komponens, amely a mobil és asztali nézetekhez különböző animációkat használ
 const AnimatedModal: React.FC<IAnimatedModalProps> = (props: IAnimatedModalProps) => {
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
 

@@ -12,6 +12,8 @@ interface IDraggableListOrderProps<T> {
   onDiscard: () => void;
 }
 
+// Újrafelhasználható komponens, amely lehetővé teszi a lista elemeinek átrendezését
+// A lista elemei draggable elemek, amelyeket a felhasználó áthúzhat
 const DraggableListOrder = <T extends { id: string; title: string }>(props: IDraggableListOrderProps<T>) => {
   const showSnackbar = useSnack();
   const [orderChanged, setOrderChanged] = useState(false);

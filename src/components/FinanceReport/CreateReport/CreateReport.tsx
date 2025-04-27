@@ -11,6 +11,7 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import GroupSelector from "./GroupSelector";
 
+// Jelentés létrehozása funkció
 const CreateReport: React.FC = () => {
   const user = useUser();
   const reportCtx = useReportContext();
@@ -70,7 +71,9 @@ const CreateReport: React.FC = () => {
     return true;
   };
 
+  // Jelentés létrehozása
   const handleCreateReport = async () => {
+    // Ellenőrizzük a bemeneti értékeket és a felhasználót
     if (!validateInputs() || !user) {
       return;
     }
@@ -79,6 +82,7 @@ const CreateReport: React.FC = () => {
     setError(null);
 
     try {
+      // Foglalások lekérése a megadott időszakra és csoportokra
       const reservations = await fetchReservationsInPeriod(
         user, 
         startDate!, 
@@ -108,6 +112,7 @@ const CreateReport: React.FC = () => {
         };
       });
 
+      // A foglalások feldolgozása és a jelentés összegzése
       reservations.forEach((reservation) => {
         if (reservation.paymentState === PaymentState.CANCELLED) {
           return;

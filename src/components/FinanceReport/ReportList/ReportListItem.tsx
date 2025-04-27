@@ -18,6 +18,7 @@ interface IReportListItemProps {
   report: Report;
 }
 
+// Egy pénzügyi jelentés összefoglalóját és részleteit megjelenítő komponens
 const ReportListItem: React.FC<IReportListItemProps> = (props: IReportListItemProps) => {
   const theme = useTheme();
   const groupCtx = useGroupContext();

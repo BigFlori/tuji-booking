@@ -9,6 +9,7 @@ interface IMenuIconItemProps {
   disabled?: boolean;
 }
 
+// A menü ikon elem, amely egy ikont és szöveget tartalmaz
 const MenuIconItem: React.FC<IMenuIconItemProps> = (props: IMenuIconItemProps) => {
   const router = useRouter();
 

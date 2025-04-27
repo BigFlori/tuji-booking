@@ -120,6 +120,7 @@ const hu: Record<string, TranslatedAuthError> = {
   },
 };
 
+// A fordító függvény, amely lefordítja a Firebase Auth hibakódokat magyar nyelvre
 export const translate = (code?: string): TranslatedAuthError => {
   if (!code) return { message: "", type: AuthErrorType.DEV };
   const error = hu[code];

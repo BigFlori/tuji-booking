@@ -7,14 +7,14 @@ import { Box } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupState from "@/models/group/group-state-model";
-import GroupType from "@/models/group/group-type-model";
-import HomeIcon from "@mui/icons-material/Home";
-import TaxiAlert from "@mui/icons-material/Person";
 import AnimatedModal from "../../UI/Modal/AnimatedModal";
-import LocalCarWashIcon from "@mui/icons-material/LocalCarWash";
-import OtherIcon from "@mui/icons-material/Pending";
-import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
-import EditGroupApollo from "@/components/Forms/edit-group/EditGroupApollo";
+import GroupType from "@/models/group/group-type-model";
+import HomeIcon from '@mui/icons-material/Home';
+import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
+import PersonIcon from '@mui/icons-material/Person';
+import LocalCarWashIcon from '@mui/icons-material/LocalCarWash';
+import PendingIcon from '@mui/icons-material/Pending';
+import GroupFormApollo from "@/components/Forms/group";
 
 interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
@@ -22,32 +22,32 @@ interface ICalendarGroupHeaderProps {
   group: Group;
 }
 
+// Segédfunkció a csoport típus ikonjának megjelenítéséhez
+const getGroupTypeIcon = (type: GroupType) => {
+  switch (type) {
+    case GroupType.CAR:
+      return <AirportShuttleIcon fontSize="small" />;
+    case GroupType.HOUSE:
+      return <HomeIcon fontSize="small" />;
+    case GroupType.DRIVER:
+      return <PersonIcon fontSize="small" />;
+    case GroupType.CAR_WASH:
+      return <LocalCarWashIcon fontSize="small" />;
+    default:
+      return <PendingIcon fontSize="small" />;
+  }
+};
+
+// Csoport fejléc komponens, ami megjeleníti a csoport nevét, állapotát és típusának ikonját
 const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHeaderProps) => {
   const [modalOpened, setModalOpened] = useState(false);
-
+  
   const handleGroupClick = () => {
     setModalOpened(true);
   };
 
   const handleModalClose = () => {
     setModalOpened(false);
-  };
-
-  const getIcon = () => {
-    switch (props.group.type) {
-      case GroupType.CAR:
-        return <AirportShuttleIcon />;
-      case GroupType.HOUSE:
-        return <HomeIcon />;
-      case GroupType.DRIVER:
-        return <TaxiAlert />;
-      case GroupType.CAR_WASH:
-        return <LocalCarWashIcon />;
-      case GroupType.OTHER:
-        return <OtherIcon />;
-      default:
-        return <OtherIcon />;
-    }
   };
 
   return (
@@ -67,13 +67,13 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
         </Typography>
         {props.isExpanded && (
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {getIcon()}
+            {getGroupTypeIcon(props.group.type)}
             {props.group.state === GroupState.ACTIVE ? <CheckIcon color="success" /> : <CloseIcon color="error" />}
           </Box>
         )}
       </GroupHeaderButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <EditGroupApollo group={props.group} onClose={handleModalClose} />
+        <GroupFormApollo mode="edit" group={props.group} onClose={handleModalClose} />
       </AnimatedModal>
     </>
   );
