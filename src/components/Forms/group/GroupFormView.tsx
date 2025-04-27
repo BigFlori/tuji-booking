@@ -1,15 +1,9 @@
-import ModalControls from "@/components/UI/Modal/ModalControls";
+import { Controller } from "react-hook-form";
 import { Box, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { Controller, SubmitHandler, UseFormReturn } from "react-hook-form";
-import { ICreateGroupFormModel } from "./CreateGroupLogic";
+import ModalControls from "@/components/UI/Modal/ModalControls";
+import { IGroupFormViewProps } from "./GroupFormTypes";
 
-interface ICreateGroupViewProps {
-  form: UseFormReturn<ICreateGroupFormModel>;
-  onSubmit: SubmitHandler<ICreateGroupFormModel>;
-  onClose: () => void;
-}
-
-const CreateGroupView: React.FC<ICreateGroupViewProps> = (props) => {
+const GroupFormView: React.FC<IGroupFormViewProps> = (props) => {
   const {
     handleSubmit,
     control,
@@ -19,13 +13,19 @@ const CreateGroupView: React.FC<ICreateGroupViewProps> = (props) => {
   return (
     <Box
       component="form"
-      noValidate
       autoComplete="off"
+      noValidate
       onSubmit={handleSubmit(props.onSubmit)}
     >
-      <ModalControls title="Új csoport" onClose={props.onClose} saveButtonProps={{ type: "submit" }}>
+      <ModalControls
+        title={props.mode === 'create' ? "Új csoport" : "Csoport szerkesztése"}
+        onClose={props.onClose}
+        onDelete={props.mode === 'edit' ? props.onDelete : undefined}
+        isEdit={props.mode === 'edit'}
+        saveButtonProps={{ type: "submit" }}
+      >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          <Typography variant="body1" sx={{ fontWeight: 500 }}>
             Alapinformációk
           </Typography>
           <Controller
@@ -110,4 +110,4 @@ const CreateGroupView: React.FC<ICreateGroupViewProps> = (props) => {
   );
 };
 
-export default CreateGroupView;
+export default GroupFormView;

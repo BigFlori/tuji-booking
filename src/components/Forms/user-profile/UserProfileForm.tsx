@@ -39,7 +39,7 @@ const UserProfileForm = () => {
     }
   });
 
-  // Reset form when user data changes
+  // Form resetelése, ha a felhasználó adatai megváltoznak
   useEffect(() => {
     if (user) {
       reset({
@@ -55,7 +55,7 @@ const UserProfileForm = () => {
     setError(null);
     
     try {
-      // Update display name
+      // Display name frissítése
       if (data.displayName !== user.displayName) {
         await updateProfile(user, {
           displayName: data.displayName

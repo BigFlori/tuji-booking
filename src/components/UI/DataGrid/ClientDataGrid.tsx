@@ -18,9 +18,8 @@ import { useState, useEffect } from "react";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AnimatedModal from "../Modal/AnimatedModal";
-import EditClientApollo from "@/components/Forms/edit-client/EditClientApollo";
+import ClientFormApollo from "@/components/Forms/client";
 import Client from "@/models/client-model";
-import { v4 as uuidv4 } from "uuid";
 import { useSnack } from "@/hooks/useSnack";
 
 // Ha nincs ügyfél, akkor megjelenít egy üzenetet és egy gombot új ügyfél hozzáadásához
@@ -134,20 +133,10 @@ const ClientDataGrid = () => {
     );
   }, [paginationModel]);
 
-  const emptyClient: Client = {
-    id: uuidv4(),
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-  };
-
-  // Ügyfél létrehozása és hozzáadása a táblázathoz
+  // Ügyfél hozzáadása a táblázathoz
   const handleCreateClient = (updatedClient?: Client) => {
     if (updatedClient) {
-      clientsCtx.addClient(updatedClient);
-      setRows((prevRows) => sortRows([...prevRows, updatedClient], sortModel));
-      showSnackbar("Ügyfél sikeresen létrehozva!", "success");
+      setRows((prevRows) => sortRows([...prevRows], sortModel));
     }
     setModalOpen(false);
   };
@@ -292,7 +281,11 @@ const ClientDataGrid = () => {
         }}
       />
       <AnimatedModal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <EditClientApollo onClose={() => setModalOpen(false)} client={emptyClient} onSubmit={handleCreateClient} />
+        <ClientFormApollo
+          mode="create"
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleCreateClient}
+        />
       </AnimatedModal>
     </>
   );

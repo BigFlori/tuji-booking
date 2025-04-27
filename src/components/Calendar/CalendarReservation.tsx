@@ -6,8 +6,8 @@ import ReservationButton from "../UI/styled/ReservationButton";
 import { useClientContext } from "@/store/client-context";
 import AnimatedModal from "../UI/Modal/AnimatedModal";
 import { darken } from "@mui/material";
-import EditReservationApollo from "../Forms/edit-reservation/EditReservationApollo";
 import { usePaymentStateColor } from "@/hooks/usePaymentStateColor";
+import ReservationFormApollo from "../Forms/reservation";
 
 interface ICalendarReserverationProps {
   reservation: Reservation;
@@ -156,7 +156,11 @@ const CalendarReservation: React.FC<ICalendarReserverationProps> = (props: ICale
         )}
       </ReservationButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <EditReservationApollo onClose={handleModalClose} reservation={props.reservation} />
+        <ReservationFormApollo
+          mode="edit"
+          onClose={handleModalClose}
+          reservation={props.reservation}
+        />
       </AnimatedModal>
     </>
   );

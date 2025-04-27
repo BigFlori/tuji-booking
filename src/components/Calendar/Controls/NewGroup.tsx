@@ -2,9 +2,9 @@ import AnimatedModal from "@/components/UI/Modal/AnimatedModal";
 import { Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import CreateGroupApollo from "@/components/Forms/create-group/CreateGroupApollo";
 import GroupHeaderButton from "@/components/UI/styled/GroupHeaderButton";
 import { CALENDAR_GROUP_WIDTH } from "@/utils/config";
+import GroupFormApollo from "@/components/Forms/group";
 
 interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
@@ -45,7 +45,7 @@ const NewGroup: React.FC<ICalendarGroupHeaderProps> = (props: ICalendarGroupHead
         </Typography>
       </GroupHeaderButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <CreateGroupApollo onClose={handleModalClose} />
+        <GroupFormApollo mode="create" onClose={handleModalClose} />
       </AnimatedModal>
     </>
   );

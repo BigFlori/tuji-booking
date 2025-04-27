@@ -3,8 +3,8 @@ import { List, Paper } from "@mui/material";
 import SpacerLine from "../../SpacerLine";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import AnimatedModal from "../../Modal/AnimatedModal";
-import EditReservationApollo from "@/components/Forms/edit-reservation/EditReservationApollo";
 import ReservationCard from "../../Card/ReservationCard";
+import ReservationFormApollo from "@/components/Forms/reservation";
 
 interface ISearchResultsProps {
   results: Reservation[];
@@ -49,7 +49,8 @@ const SearchResults: React.FC<ISearchResultsProps> = (props: ISearchResultsProps
         </List>
       </Paper>
       <AnimatedModal open={props.isModalOpened} onClose={() => props.setModalOpened(false)}>
-        <EditReservationApollo
+        <ReservationFormApollo
+          mode="edit"
           onClose={() => props.setModalOpened(false)}
           reservation={selectedReservation!}
           disableDateChange

@@ -8,13 +8,13 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import GroupState from "@/models/group/group-state-model";
 import AnimatedModal from "../../UI/Modal/AnimatedModal";
-import EditGroupApollo from "@/components/Forms/edit-group/EditGroupApollo";
 import GroupType from "@/models/group/group-type-model";
 import HomeIcon from '@mui/icons-material/Home';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import PersonIcon from '@mui/icons-material/Person';
 import LocalCarWashIcon from '@mui/icons-material/LocalCarWash';
 import PendingIcon from '@mui/icons-material/Pending';
+import GroupFormApollo from "@/components/Forms/group";
 
 interface ICalendarGroupHeaderProps {
   isExpanded: boolean;
@@ -73,7 +73,7 @@ const CalendarGroupHeader: React.FC<ICalendarGroupHeaderProps> = (props: ICalend
         )}
       </GroupHeaderButton>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <EditGroupApollo group={props.group} onClose={handleModalClose} />
+        <GroupFormApollo mode="edit" group={props.group} onClose={handleModalClose} />
       </AnimatedModal>
     </>
   );

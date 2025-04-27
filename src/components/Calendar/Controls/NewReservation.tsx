@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import AnimatedModal from "@/components/UI/Modal/AnimatedModal";
-import CreateReservationApollo from "@/components/Forms/create-reservation/CreateReservationApollo";
+import ReservationFormApollo from "@/components/Forms/reservation";
 
 // Új foglalás létrehozó gomb, amely modális ablakot nyit az űrlappal
 const NewReservation: React.FC = () => {
@@ -22,7 +22,7 @@ const NewReservation: React.FC = () => {
         Új foglalás
       </Button>
       <AnimatedModal open={modalOpened} onClose={handleModalClose}>
-        <CreateReservationApollo onClose={handleModalClose} />
+        <ReservationFormApollo mode="create" onClose={handleModalClose} />
       </AnimatedModal>
     </>
   );

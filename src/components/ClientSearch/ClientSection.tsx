@@ -12,17 +12,19 @@ import {
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
-import { Controller, Control, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
+import { Controller, Control, UseFormSetValue, UseFormGetValues, FieldErrors } from 'react-hook-form';
 import { useClientContext } from '@/store/client-context';
 import ExternalActionButton from '@/components/UI/Button/ExternalActionButton';
 import { IClientOption, NOT_SELECTED_CLIENT_OPTION } from '../Forms/client-option/clientOptionHelper';
 import ClientSearch from './ClientSearch';
+import { IReservationFormModel } from '../Forms/reservation';
+import Client from '@/models/client-model';
 
 interface ClientSectionProps {
-  control: Control<any>;
-  setValue: UseFormSetValue<any>;
-  getValues: UseFormGetValues<any>;
-  errors: any;
+  control: Control<IReservationFormModel>;
+  setValue: UseFormSetValue<IReservationFormModel>;
+  getValues: UseFormGetValues<IReservationFormModel>;
+  errors: FieldErrors<IReservationFormModel>;
   clientOptions: IClientOption[];
   defaultMode?: 'search' | 'new' | 'edit';
   initialSelectedClient?: IClientOption;
@@ -56,7 +58,7 @@ const ClientSection: React.FC<ClientSectionProps> = ({
   const hasSelectedClient = selectedClient && selectedClient.clientId !== 'not-selected';
   
   // Ügyfél adatainak frissítése
-  const updateClientData = (client?: any) => {
+  const updateClientData = (client?: Client) => {
     if (client && client.id !== 'not-selected') {
       setValue("clientName", client.name);
       setValue("clientPhone", client.phone ? client.phone : "");
