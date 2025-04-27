@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import ForgetPasswordView from "./ForgetPasswordView";
+import { AuthError } from "firebase/auth";
 
 interface IForgetPasswordLogicProps {
   defaultValues: IForgetPasswordFormModel;
   onSubmit: SubmitHandler<IForgetPasswordFormModel>;
   isLoading: boolean;
-  error?: any;
+  error?: AuthError;
   success: boolean;
 }
 

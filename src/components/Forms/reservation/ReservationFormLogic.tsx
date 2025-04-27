@@ -84,7 +84,7 @@ const ReservationFormLogic: React.FC<IReservationFormLogicProps> = (props) => {
       .min(0, "Költségek nem lehet negatív"),
     comment: yup.string().optional(),
     selectedClientOption: CLIENT_OPTION_SCHEMA.required("Ügyfél megadása kötelező"),
-    clientName: yup.string().optional(),
+    clientName: yup.string().required("Az ügyfél neve kötelező"),
     clientPhone: yup.string().optional(),
     clientEmail: yup.string().email("Valós email címet adj meg").optional(),
     clientAddress: yup.string().optional(),
