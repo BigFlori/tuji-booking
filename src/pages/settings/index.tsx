@@ -7,20 +7,10 @@ import { cloneArray } from "@/utils/helpers";
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useDevContext } from "@/store/dev-context";
-import { 
-  Box, 
-  Container, 
-  Switch, 
-  Typography,
-  Paper, 
-  Card,
-  CardContent,
-  alpha,
-  useTheme
-} from "@mui/material";
-import SettingsIcon from '@mui/icons-material/Settings';
-import ReorderIcon from '@mui/icons-material/Reorder';
-import CodeIcon from '@mui/icons-material/Code';
+import { Box, Container, Switch, Typography, Paper, Card, CardContent, alpha, useTheme } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
+import ReorderIcon from "@mui/icons-material/Reorder";
+import CodeIcon from "@mui/icons-material/Code";
 
 const Settings: NextPage = () => {
   const theme = useTheme();
@@ -44,52 +34,55 @@ const Settings: NextPage = () => {
   return (
     <>
       <PageHead page="Beállítások" metaDescription="Tuji-booking foglalási felületének beállításai" />
-      <Box 
-        sx={{ 
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.1)}, ${alpha(theme.palette.primary.main, 0.05)})`,
-          minHeight: '100vh',
-          py: 4
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.1)}, ${alpha(
+            theme.palette.primary.main,
+            0.05
+          )})`,
+          minHeight: "100vh",
+          py: 4,
         }}
       >
         <Container maxWidth="md" component="main">
-          <Paper 
+          <Paper
             elevation={0}
-            sx={{ 
-              p: 3, 
-              mb: 4, 
+            sx={{
+              p: 3,
+              mb: 4,
               borderRadius: 2,
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-              color: 'white',
-              boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.3)}`
+              color: "white",
+              boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.3)}`,
             }}
           >
             <SettingsIcon sx={{ fontSize: 40, mr: 2 }} />
-            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h4" sx={{ fontWeight: "bold" }}>
               Alkalmazás beállítások
             </Typography>
           </Paper>
-          
-          <Card 
-            sx={{ 
-              mb: 4, 
+
+          <Card
+            sx={{
+              mb: 4,
               borderRadius: 2,
-              overflow: 'visible',
-              boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.07)}`
-            }} 
+              overflow: "visible",
+              boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.07)}`,
+            }}
             component="section"
           >
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center',
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
                 p: 3,
-                borderBottom: `1px solid ${theme.palette.divider}`
+                borderBottom: `1px solid ${theme.palette.divider}`,
               }}
             >
               <ReorderIcon sx={{ color: theme.palette.primary.main, mr: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+              <Typography variant="h5" sx={{ fontWeight: "medium" }}>
                 Csoportok sorrendje
               </Typography>
             </Box>
@@ -103,49 +96,45 @@ const Settings: NextPage = () => {
             </CardContent>
           </Card>
 
-          <Card 
-            sx={{ 
-              mb: 4, 
+          <Card
+            sx={{
+              mb: 4,
               borderRadius: 2,
-              overflow: 'hidden',
-              boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.07)}`
-            }} 
+              overflow: "hidden",
+              boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.07)}`,
+            }}
             component="section"
           >
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center',
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
                 p: 3,
-                borderBottom: `1px solid ${theme.palette.divider}`
+                borderBottom: `1px solid ${theme.palette.divider}`,
               }}
             >
               <CodeIcon sx={{ color: theme.palette.primary.main, mr: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 'medium' }}>
+              <Typography variant="h5" sx={{ fontWeight: "medium" }}>
                 Fejlesztői mód
               </Typography>
             </Box>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="body1" sx={{ mb: 3 }}>
-                A fejlesztői mód bekapcsolásával a rendszer több információt jelenít meg a hibákról, és a hibakeresés egyszerűbbé válik.
+                A fejlesztői mód bekapcsolásával a rendszer több információt jelenít meg a hibákról, és a hibakeresés
+                egyszerűbbé válik.
               </Typography>
-              <Box 
-                sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center',
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
                   p: 2,
                   borderRadius: 1.5,
                   backgroundColor: alpha(theme.palette.primary.main, 0.05),
                 }}
               >
-                {/* <Switch
+                <Switch
                   checked={devCtx.devMode}
                   onChange={() => devCtx.setDevMode(!devCtx.devMode)}
-                  inputProps={{ "aria-label": "controlled" }}
-                  id="dev-mode-switch"
-                  color="primary"
-                /> */}
-                <Switch
                   inputProps={{ "aria-label": "controlled" }}
                   id="dev-mode-switch"
                   color="primary"
